@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {CachedImage} from "react-native-img-cache";
 import {
     StyleSheet,
     Text,
@@ -151,9 +152,10 @@ class Explore extends Component {
                         enableEmptySections={true}
                         renderRow={(row) =>
                             <View style={styles.displayRow}>
-                                <Image
+                                <CachedImage
                                     source={{uri: "https://thousanday.com/img/pet/" + row.pet_id + "/moment/" + row.image_name}}
                                     style={styles.rowImage}
+                                    mutable
                                 />
                                 <View style={styles.rowView}>
                                     <Text
@@ -162,9 +164,10 @@ class Explore extends Component {
                                     >
                                         {row.moment_message}
                                     </Text>
-                                    <Image
+                                    <CachedImage
                                         source={{uri: "https://thousanday.com/img/pet/" + row.pet_id + "/cover/0.png" }}
                                         style={styles.viewImage}
+                                        mutable
                                     />
                                     <Text
                                         style={styles.viewDate}

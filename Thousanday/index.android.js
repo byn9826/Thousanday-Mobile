@@ -23,29 +23,13 @@ export default class Thousanday extends Component {
             //store login user id
             userId: null,
             //store all info for user page
-            userData: null
+            userData: null,
+            //store error info
+            error: null
         };
     }
+    //get public watch images
     componentWillMount() {
-        //get stayed login user
-        let userId
-        try{
-            userId = AsyncStorage.getItem("userId");
-        } finally{
-            alert(userId);
-        }
-        
-        try {
-            AsyncStorage.removeItem("userId");
-        } catch (error) {
-            alert(error);
-        }
-        if (userId !== null){
-            this.setState({userId: userId});
-            //AsyncStorage.setItem("userId", null);
-        }
-        //AsyncStorage.setItem("userId", null);
-        //get data to show image gallery
         fetch("https://thousanday.com/watch/view", {
             method: "POST",
             headers: {
@@ -58,13 +42,36 @@ export default class Thousanday extends Component {
             this.setState({gallery: result[0]});
         });
     }
+    //load logged in users
+    componentDidMount() {
+        this._loadUserData().done();
+    }
+    async _loadUserData() {
+        try {
+            let userId = await AsyncStorage.getItem("USER_KEY");
+            if (userId != null) {
+                this.setState({userId: userId});
+            }
+        }
+        catch(error) {
+            alert(error.message);
+        }
+    }
+    //set up user id
+    async _setUserData(key) {
+        try{
+            await AsyncStorage.setItem("USER_KEY", key);
+        } catch(error) {
+            alert("seterror" + error.message);
+        }
+    }
     //change view after click
     viewRoute(view) {
         if (this.state.route != view) {
             this.setState({route: view});
         }
     }
-    //login by facebook
+    //get user data by userId
     userLogin(result) {
         let data = {
             "id": result[0]
@@ -80,25 +87,20 @@ export default class Thousanday extends Component {
             }).join('&')
         })
         .then((response) => response.json())
-        .then((result) => {
-            switch (result) {
+        .then((user) => {
+            switch (user) {
                 case "0":
-                    console.log("Can't connect to db");
+                    alert("Can't connect to db");
                     break;
                 case "1":
-                    console.log("User not exist");
+                    alert("User not exist");
                     break;
                 default:
                     if (!this.state.userId) {
-                        try {
-                            AsyncStorage.setItem("userId", result[0]);
-                        } catch (error) {
-                            console.log(error);
-                        } finally {
-                            this.setState({userData: result, userId: result[0]});
-                        }
+                        this._setUserData(result[0].toString());
+                        this.setState({userData: user, userId: result[0]});
                     } else {
-                        this.setState({userData: result});
+                        this.setState({userData: user});
                     }
                     break;
                     //ReactDOM.render(<User user={result[0]} relative={result[1]} relation={result[2]} pet={result[3]} moment={result[4]} visitorId={result[5]} visitorName={result[6]} petsList={result[7]} unread={result[8]} />, document.getElementById("root"));
@@ -120,7 +122,7 @@ export default class Thousanday extends Component {
                     if (this.state.userData) {
                         route = <Home data={this.state.userData} />
                     } {
-                        //get data for user first 
+                        //get data for user first
                         //this.userLogin([this.state.userId]);
                         route = <Home data={this.state.userData} />
                     }

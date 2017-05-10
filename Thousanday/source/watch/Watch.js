@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {CachedImage} from "react-native-img-cache";
 import {
     StyleSheet,
     Text,
@@ -13,7 +14,7 @@ class Watch extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            
+
         };
     }
     render() {
@@ -35,7 +36,7 @@ class Watch extends Component {
                     ]
                 )
             }
-            
+
         }
         let dataSource = ds.cloneWithRows(gallery);
         return (
@@ -45,13 +46,15 @@ class Watch extends Component {
                     enableEmptySections={true}
                     renderRow={(row) =>
                         <View style={styles.row}>
-                            <Image
+                            <CachedImage
                                 source={{uri: row[0]}}
                                 style={styles.rowImage}
+                                mutable
                             />
-                            <Image
+                            <CachedImage
                                 source={{uri: row[1]}}
                                 style={styles.rowImage}
+                                mutable
                             />
                         </View>
                     }
@@ -65,7 +68,7 @@ class Watch extends Component {
 <FlatList
                 contentContainerStyle={styles.list}
                 data = {gallery}
-                renderItem={({item}) => 
+                renderItem={({item}) =>
                     <Image
                         source={{uri: item.key}}
                         style={styles.rowImage}
