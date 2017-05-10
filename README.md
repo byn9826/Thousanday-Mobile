@@ -1,4 +1,4 @@
-# Thousand-Day Mobile version
+# Thousanday-Mobile
 An image sharing social app for pets. <br/>
 
 [Website Version](https://github.com/byn9826/Thousand-Day)<br/>
