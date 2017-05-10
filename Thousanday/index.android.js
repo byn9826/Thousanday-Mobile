@@ -11,6 +11,7 @@ import Watch from "./source/watch/Watch";
 import Explore from "./source/explore/Explore";
 import Login from "./source/home/Login";
 import Home from "./source/home/Home";
+import Pet from "./source/pet/Pet";
 
 export default class Thousanday extends Component {
     constructor(props) {
@@ -25,7 +26,9 @@ export default class Thousanday extends Component {
             //store all info for user page
             userData: null,
             //store error info
-            error: null
+            error: null,
+            //information to show one pet
+            petData: null
         };
     }
     //get public watch images
@@ -71,6 +74,12 @@ export default class Thousanday extends Component {
             this.setState({route: view});
         }
     }
+    //if user click one pet
+    clickPet(id) {
+
+        //alert(id);
+        this.setState({route: "pet"});
+    }
     //get user data by userId
     userLogin(result) {
         let data = {
@@ -103,7 +112,6 @@ export default class Thousanday extends Component {
                         this.setState({userData: user});
                     }
                     break;
-                    //ReactDOM.render(<User user={result[0]} relative={result[1]} relation={result[2]} pet={result[3]} moment={result[4]} visitorId={result[5]} visitorName={result[6]} petsList={result[7]} unread={result[8]} />, document.getElementById("root"));
             }
         });
     }
@@ -120,15 +128,20 @@ export default class Thousanday extends Component {
             case "home":
                 if (this.state.userId) {
                     if (this.state.userData) {
-                        route = <Home data={this.state.userData} />
-                    } {
+                        route = <Home data={this.state.userData} clickPet={this.clickPet.bind(this)} />
+                    } else {
                         //get data for user first
-                        //this.userLogin([this.state.userId]);
-                        route = <Home data={this.state.userData} />
+                        this.userLogin([this.state.userId], () => {
+                            route = <Home data={this.state.userData} clickPet={this.clickPet.bind(this)} />
+                        });
+
                     }
                 } else {
                     route = <Login facebookLogin={this.userLogin.bind(this)} />;
                 }
+                break;
+            case "pet":
+                route = <Pet />;
                 break;
         }
         return (
