@@ -1,10 +1,8 @@
 # Thousand-Day Mobile version
-An image sharing social app for your pets and you. <br/>
+An image sharing social app for pets. <br/>
 
-Stacks
+[Website Version](https://github.com/byn9826/Thousand-Day)<br/>
+
+Stack
 --
 React-Native
-
-Progress
---
-Under development.
