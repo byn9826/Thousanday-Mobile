@@ -1,106 +1,43 @@
 import React, { Component } from "react";
-import {CachedImage} from "react-native-img-cache";
 import {
     StyleSheet,
-    Text,
-    Image,
-    View,
     Dimensions,
-    //FlatList,
-    ListView
+    FlatList,
 } from "react-native";
+import {CachedImage} from "react-native-img-cache";
 
 class Watch extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-
-        };
-    }
     render() {
-        let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        let gallery = [], i;
-        for (i = 0; i < this.props.gallery.length; i += 2) {
-            if (this.props.gallery[i+1]) {
-                gallery.push(
-                    [
-                        "https://thousanday.com/img/pet/" + this.props.gallery[i].pet_id + "/moment/" + this.props.gallery[i].image_name,
-                        "https://thousanday.com/img/pet/" + this.props.gallery[i+1].pet_id + "/moment/" + this.props.gallery[i+1].image_name
-                    ]
-                )
-            } else {
-                gallery.push(
-                    [
-                        "https://thousanday.com/img/pet/" + this.props.gallery[i].pet_id + "/moment/" + this.props.gallery[i].image_name,
-                        null
-                    ]
-                )
-            }
-
-        }
-        let dataSource = ds.cloneWithRows(gallery);
         return (
-            <View>
-                <ListView
-                    dataSource={dataSource}
-                    enableEmptySections={true}
-                    renderRow={(row) =>
-                        <View style={styles.row}>
-                            <CachedImage
-                                source={{uri: row[0]}}
-                                style={styles.rowImage}
-                                mutable
-                            />
-                            <CachedImage
-                                source={{uri: row[1]}}
-                                style={styles.rowImage}
-                                mutable
-                            />
-                        </View>
-                    }
-                />
-            </View>
+            <FlatList
+                contentContainerStyle={styles.container}
+                data = {this.props.data}
+                renderItem={({item}) =>
+                    <CachedImage
+                        source={{uri: item.key}}
+                        style={styles.containerImage}
+                    />
+                }
+                onEndReached={()=>{
+                    //Scroll to end, Call load more images function
+                    this.props.loadWatch();
+                }}
+            />
         )
     }
 }
 
-/*
-<FlatList
-                contentContainerStyle={styles.list}
-                data = {gallery}
-                renderItem={({item}) =>
-                    <Image
-                        source={{uri: item.key}}
-                        style={styles.rowImage}
-                    />
-                }
-                getItemLayout={(data, index) => (
-                    {length: 180, offset: 180 * index, index}
-                )}
-            />
-*/
-
-
 const styles = StyleSheet.create({
-    /*
-    list: {
+    container: {
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "space-between",
+        marginTop: 2
     },
-    rowImage: {
+    containerImage: {
         width: Dimensions.get("window").width/2.01,
         height: 180,
-        marginBottom: 2,
-        borderRadius: 5
-    }*/
-    row: {
-        flexDirection: "row",
-        justifyContent: "space-between"
-    },
-    rowImage: {
-        width: Dimensions.get("window").width/2.01,
-        height: 180,
+        resizeMode: "cover",
         marginBottom: 2,
         borderRadius: 5
     }

@@ -17,6 +17,9 @@ class Header extends Component {
             case "home":
                 title = "A space for your pets";
                 break;
+            case "pet":
+                title = "Pet in digital hub";
+                break;
         }
         return (
             <View style={styles.header}>

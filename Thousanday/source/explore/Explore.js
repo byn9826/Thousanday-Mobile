@@ -1,34 +1,36 @@
 import React, { Component } from "react";
-import {CachedImage} from "react-native-img-cache";
 import {
     StyleSheet,
     Text,
-    ListView,
+    Dimensions,
     Image,
-    View
+    View,
+    FlatList,
+    ScrollView
 } from "react-native";
+import {CachedImage} from "react-native-img-cache";
 
 class Explore extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            //store choose of type
+            //store init images
+            initImages: [],
+            //indicate choose of type
             type: null,
-            //store choose of nature
+            //indicate choose of nature
             nature: null,
-            //store load for how many times
-            load: 0,
-            //store all moment data
-            moment: [],
-            //indicate more to load or not
-            more: true,
-            //indicate connect error
-            error: null
+            //indicate lock the load more function or not
+            moreLocker: false,
+            //indicate have load how many times
+            loadTimes: 1
         };
     }
+    //user click on one type
     chooseType(type) {
         if (this.state.type === type) {
-            this.setState({type: null});
+            //empty state
+            this.setState({type: null, initImages: [], loadTimes: 1, moreLocker: false});
         } else {
             this.setState({type: type});
             //require info
@@ -50,24 +52,35 @@ class Explore extends Component {
                 })
                 .then((response) => response.json())
                 .then((result) => {
-                    console.log(result);
                     switch(result) {
                         case 0:
-                            this.setState({error: "Can't connect to database"});
+                            alert("Can't get data, try later");
                             break;
                         default:
-                            let more = (result.length < 20)?false:true;
-                            this.setState({moment: result, load: 1, more: more, error: null});
+                            //build data with all images
+                            let gallery = [], i;
+                            for (i = 0; i < result.length; i++) {
+                                gallery.push(
+                                    {
+                                        key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name
+                                    }
+                                )
+                            }
+                            let moreLocker = (result.length < 20)? true: false;
+                            this.setState({initImages: gallery, moreLocker: moreLocker});
                     }
                 });
 			}
         }
     }
+    //user click on one nature
     chooseNature(nature) {
         if (this.state.nature === nature) {
-            this.setState({nature: null});
+            //empty state if already choosed it
+            this.setState({nature: null, initImages: [], loadTimes: 1, moreLocker: false});
         } else {
             this.setState({nature: nature});
+            //if chosed nature and type do search
             if (this.state.type) {
                 let data = {
                     "type": this.state.type,
@@ -86,25 +99,84 @@ class Explore extends Component {
                 })
                 .then((response) => response.json())
                 .then((result) => {
-                    console.log(result);
                     switch(result) {
                         case 0:
-                            this.setState({error: "Can't connect to database"});
+                            alert("Can't get data, try later");
                             break;
                         default:
-                            let more = (result.length < 20)?false:true;
-                            this.setState({moment: result, load: 1, more: more, error: null});
+                            //build data with all images
+                            let gallery = [], i;
+                            for (i = 0; i < result.length; i++) {
+                                gallery.push(
+                                    {
+                                        key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name
+                                    }
+                                )
+                            }
+                            let moreLocker = (result.length < 20)? true: false;
+                            this.setState({initImages: gallery, moreLocker: moreLocker});
                     }
                 });
 			}
         }
     }
+    loadMore() {
+        let data = {
+            "type": this.state.type,
+            "nature": this.state.nature,
+            "load": this.state.loadTimes
+        };
+        fetch("https://thousanday.com/explore/getMoment", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+            },
+            body: Object.keys(data).map((key) => {
+                return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+            }).join('&')
+        })
+        .then((response) => response.json())
+        .then((result) => {
+            switch (result) {
+                case 0:
+                    alert("Can't get data, try later");
+                    break;
+                default:
+                    //update when there's new data
+                    if (result.length !== 0) {
+                        //consist watch data with all image src
+                        let newImages = [], i;
+                        for (i = 0; i < result.length; i++) {
+                            newImages.push(
+                                {
+                                    key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name
+                                }
+                            )
+                        }
+                        //lock load more watch public image function
+                        if (result.length < 20) {
+                            this.setState({
+                                initImages: this.state.initImages.concat(newImages),
+                                loadTimes: this.state.loadTimes + 1,
+                                moreLocker: true
+                            });
+                        } else {
+                            this.setState({
+                                initImages: this.state.initImages.concat(newImages),
+                                loadTimes: this.state.loadTimes + 1
+                            });
+                        }
+                    } else {
+                        //active lock when no more images
+                        this.setState({moreLocker: true});
+                    }
+            }
+        });
+    }
     render() {
-        //data to show image gallery
-        let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        let gallery = ds.cloneWithRows(this.state.moment);
         return (
-            <View style={styles.watch}>
+            <ScrollView contentContainerStyle={styles.watch}>
                 <View style={styles.watchHeader}>
                     <View style={styles.headerFilter}>
                         <Image style={styles.filterIcon} source={require("../../image/filter.png")} />
@@ -146,53 +218,33 @@ class Explore extends Component {
                         </View>
                     </View>
                 </View>
-                <View style={styles.watchDisplay}>
-                    <ListView
-                        dataSource={gallery}
-                        enableEmptySections={true}
-                        renderRow={(row) =>
-                            <View style={styles.displayRow}>
-                                <CachedImage
-                                    source={{uri: "https://thousanday.com/img/pet/" + row.pet_id + "/moment/" + row.image_name}}
-                                    style={styles.rowImage}
-                                    mutable
-                                />
-                                <View style={styles.rowView}>
-                                    <Text
-                                        style={styles.viewMessage}
-                                        numberOfLines={4}
-                                    >
-                                        {row.moment_message}
-                                    </Text>
-                                    <CachedImage
-                                        source={{uri: "https://thousanday.com/img/pet/" + row.pet_id + "/cover/0.png" }}
-                                        style={styles.viewImage}
-                                        mutable
-                                    />
-                                    <Text
-                                        style={styles.viewDate}
-                                        numberOfLines={2}
-                                    >
-                                        {new Date(row.moment_date).toISOString().substring(0, 10)}
-                                    </Text>
-                                </View>
-                            </View>
+                <FlatList
+                    contentContainerStyle={styles.watchContainer}
+                    data = {this.state.initImages}
+                    renderItem={({item}) =>
+                        <CachedImage
+                            source={{uri: item.key}}
+                            style={styles.containerImage}
+                        />
+                    }
+                    onEndReached={()=>{
+                        //Scroll to end, Call load more images function
+                        if (!this.state.moreLocker) {
+                            this.loadMore();
                         }
-                    />
-                </View>
-            </View>
+                    }}
+                />
+            </ScrollView>
         )
     }
 }
 
 const styles = StyleSheet.create({
     watch: {
-        flex: 1,
         flexDirection: "column",
         justifyContent: "flex-start"
     },
     watchHeader: {
-        flex: 1,
         flexDirection: "row",
         alignItems: "center",
         paddingVertical: 10,
@@ -223,17 +275,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
-    typeSingle: {
-        fontSize: 16,
-        paddingHorizontal: 10,
-        marginHorizontal: 6,
-        marginVertical: 8,
-        paddingVertical: 2,
-        borderStyle: "solid",
-        borderColor: "#f7d7b4",
-        borderWidth: 1,
-        borderRadius: 3
-    },
     typeChoose: {
         fontSize: 16,
         paddingHorizontal: 10,
@@ -247,40 +288,29 @@ const styles = StyleSheet.create({
         borderRadius: 3,
         color: "white"
     },
-    watchDisplay: {
-        flex: 5,
-        flexDirection: "column",
-        justifyContent: "flex-start"
-    },
-    displayRow: {
-        flex: 1,
-        backgroundColor: "#f7f9fc",
-        marginVertical: 5,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "flex-start"
-    },
-    rowImage: {
-        width: 250,
-        height: 250
-    },
-    rowView: {
-        flex: 1,
+    typeSingle: {
+        fontSize: 16,
         paddingHorizontal: 10,
-        paddingVertical: 5
-    },
-    viewMessage: {
-        marginVertical: 10,
-        fontSize: 16
-    },
-    viewImage: {
-        width: 40,
-        height: 40,
+        marginHorizontal: 6,
+        marginVertical: 8,
+        paddingVertical: 2,
+        borderStyle: "solid",
+        borderColor: "#f7d7b4",
+        borderWidth: 1,
         borderRadius: 3
     },
-    viewDate: {
-        marginVertical: 5,
-        fontSize: 12
+    watchContainer: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+        marginTop: 2
+    },
+    containerImage: {
+        width: Dimensions.get("window").width/2.01,
+        height: 180,
+        resizeMode: "cover",
+        marginBottom: 2,
+        borderRadius: 5
     }
 });
 
