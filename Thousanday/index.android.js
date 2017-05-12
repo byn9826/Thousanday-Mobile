@@ -278,11 +278,11 @@ export default class Thousanday extends Component {
                 //user already logged in
                 if (this.state.userId) {
                     if (this.state.userData) {
-                        route = <User key={"user" + this.state.userId} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} />;
+                        route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} />;
                     } else {
                         //get data for user first
                         this.userLogin([this.state.userId], () => {
-                            route = <User key={"user" + this.state.userId} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} />;
+                            route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} />;
                         });
                     }
                 } else {

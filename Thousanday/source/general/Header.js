@@ -18,7 +18,7 @@ class Header extends Component {
                 title = "Pet in digital hub";
                 break;
             case "user":
-                title = "Pets Mommy & Daddy";
+                title = "Pets Mommy or Daddy";
                 break;
             case "home":
                 title = "A space for your pets";

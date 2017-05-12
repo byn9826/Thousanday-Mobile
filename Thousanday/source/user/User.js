@@ -111,6 +111,65 @@ class User extends Component {
                 />
             </TouchableOpacity>
         )
+        //show admin panel, show welcome message
+        let panel, welcome;
+        if (this.props.home) {
+            panel = (
+                <View style={styles.mainAction}>
+                    <View style={styles.actionCircle}>
+                        <Text style={styles.circleContent}>
+                            Add
+                        </Text>
+                        <Text style={styles.circleContent}>
+                            Pet
+                        </Text>
+                    </View>
+                    <View style={styles.actionCircle}>
+                        <Text style={styles.circleContent}>
+                            Edit
+                        </Text>
+                        <Text style={styles.circleContent}>
+                            Pet
+                        </Text>
+                    </View>
+                    <View style={styles.actionCircle}>
+                        <Text style={styles.circleContent}>
+                            Edit
+                        </Text>
+                        <Text style={styles.circleContent}>
+                            Profile
+                        </Text>
+                    </View>
+                    <View style={styles.actionCircle}>
+                        <Text style={styles.circleContent}>
+                            Post
+                        </Text>
+                        <Text style={styles.circleContent}>
+                            Moment
+                        </Text>
+                    </View>
+                    <View style={styles.actionCircle}>
+                        <Text style={styles.circleContent}>
+                            Friend
+                        </Text>
+                        <Text style={styles.circleContent}>
+                            List
+                        </Text>
+                    </View>
+                </View>
+            );
+            welcome = (
+                <Text style={styles.headerHome}>
+                    Welcome Home! {this.props.data[0].user_name}
+                </Text>
+            )
+        } else {
+            welcome = (
+                <Text style={styles.headerName}>
+                    Welcome to {this.props.data[0].user_name + "'s"} Home
+                </Text>
+            );
+        }
         return (
             <ScrollView contentContainerStyle={styles.main}>
                 <View style={styles.mainHeader}>
@@ -119,10 +178,9 @@ class User extends Component {
                         style={styles.headerAvatar}
                         mutable
                     />
-                    <Text style={styles.headerName}>
-                        Welcome to {this.props.data[0].user_name + "'s"} Home
-                    </Text>
+                    {welcome}
                 </View>
+                {panel}
                 <Text style={styles.mainTitle}>
                     Pets List
                 </Text>
@@ -178,6 +236,38 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         fontWeight: "bold",
         fontSize: 16
+    },
+    headerHome: {
+        marginLeft: 20,
+        fontWeight: "bold",
+        fontSize: 16,
+        backgroundColor: "#052456",
+        color: "white",
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 5
+    },
+    mainAction: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        marginTop: 20,
+        backgroundColor: "#e5e5e5",
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 5
+    },
+    actionCircle: {
+        backgroundColor: "#ef8513",
+        width: 50,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 25,
+        marginRight: 15
+    },
+    circleContent: {
+        fontSize: 12,
+        color: "white",
     },
     mainTitle: {
         marginLeft: 10,

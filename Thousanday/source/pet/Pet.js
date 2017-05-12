@@ -142,7 +142,7 @@ class Pet extends Component {
                 <View style={styles.rootTeam}>
                     <View style={styles.teamParent}>
                         <Text style={styles.parentTitle}>
-                            {this.props.data[0].pet_gender === 0 ? "His ": "Her "}Parents
+                            {this.props.data[0].pet_gender === 0 ? "His ": "Her "}Family
                         </Text>
                         <View style={styles.parentBox}>
                             <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[1][0].user_id)}>
