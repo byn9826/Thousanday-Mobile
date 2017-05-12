@@ -74,7 +74,8 @@ class User extends Component {
         for (i = 0; i < this.state.userImages.length; i++) {
             gallery.push(
                 {
-                    key: "https://thousanday.com/img/pet/" + this.state.userImages[i].pet_id + "/moment/" + this.state.userImages[i].image_name
+                    key: "https://thousanday.com/img/pet/" + this.state.userImages[i].pet_id + "/moment/" + this.state.userImages[i].image_name,
+                    id: this.state.userImages[i].moment_id
                 }
             )
         }
@@ -200,10 +201,12 @@ class User extends Component {
                     contentContainerStyle={styles.mainContainer}
                     data = {gallery}
                     renderItem={({item}) =>
-                        <CachedImage
-                            source={{uri: item.key}}
-                            style={styles.containerImage}
-                        />
+                        <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.id)}>
+                            <CachedImage
+                                source={{uri: item.key}}
+                                style={styles.containerImage}
+                            />
+                        </TouchableOpacity>
                     }
                     onEndReached={()=>{
                         //Scroll to end, Call load more images function

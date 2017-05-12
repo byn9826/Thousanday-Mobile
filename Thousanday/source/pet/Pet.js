@@ -114,7 +114,8 @@ class Pet extends Component {
         for (i = 0; i < this.state.petImages.length; i++) {
             gallery.push(
                 {
-                    key: "https://thousanday.com/img/pet/" + this.state.petImages[i][3] + "/moment/" + this.state.petImages[i][1]
+                    key: "https://thousanday.com/img/pet/" + this.state.petImages[i][3] + "/moment/" + this.state.petImages[i][1],
+                    id: this.state.petImages[i][0]
                 }
             )
         }
@@ -175,10 +176,12 @@ class Pet extends Component {
                     contentContainerStyle={styles.rootContainer}
                     data = {gallery}
                     renderItem={({item}) =>
-                        <CachedImage
-                            source={{uri: item.key}}
-                            style={styles.containerImage}
-                        />
+                        <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.id)} >
+                            <CachedImage
+                                source={{uri: item.key}}
+                                style={styles.containerImage}
+                            />
+                        </TouchableOpacity>
                     }
                     onEndReached={()=>{
                         //Scroll to end, Call load more images function

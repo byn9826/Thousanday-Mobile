@@ -3,20 +3,24 @@ import {
     StyleSheet,
     Dimensions,
     FlatList,
+    TouchableOpacity
 } from "react-native";
 import {CachedImage} from "react-native-img-cache";
 
 class Watch extends Component {
     render() {
+        console.log(this.props.data);
         return (
             <FlatList
                 contentContainerStyle={styles.container}
                 data = {this.props.data}
                 renderItem={({item}) =>
-                    <CachedImage
-                        source={{uri: item.key}}
-                        style={styles.containerImage}
-                    />
+                    <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.id)}>
+                        <CachedImage
+                            source={{uri: item.key}}
+                            style={styles.containerImage}
+                        />
+                    </TouchableOpacity>
                 }
                 onEndReached={()=>{
                     //Scroll to end, Call load more images function

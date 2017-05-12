@@ -6,7 +6,8 @@ import {
     Image,
     View,
     FlatList,
-    ScrollView
+    ScrollView,
+    TouchableOpacity
 } from "react-native";
 import {CachedImage} from "react-native-img-cache";
 
@@ -62,7 +63,8 @@ class Explore extends Component {
                             for (i = 0; i < result.length; i++) {
                                 gallery.push(
                                     {
-                                        key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name
+                                        key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name,
+                                        id: result[i].moment_id
                                     }
                                 )
                             }
@@ -109,7 +111,8 @@ class Explore extends Component {
                             for (i = 0; i < result.length; i++) {
                                 gallery.push(
                                     {
-                                        key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name
+                                        key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name,
+                                        id: result[i].moment_id
                                     }
                                 )
                             }
@@ -222,10 +225,12 @@ class Explore extends Component {
                     contentContainerStyle={styles.watchContainer}
                     data = {this.state.initImages}
                     renderItem={({item}) =>
-                        <CachedImage
-                            source={{uri: item.key}}
-                            style={styles.containerImage}
-                        />
+                        <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.id)}>
+                            <CachedImage
+                                source={{uri: item.key}}
+                                style={styles.containerImage}
+                            />
+                        </TouchableOpacity>
                     }
                     onEndReached={()=>{
                         //Scroll to end, Call load more images function

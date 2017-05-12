@@ -11,6 +11,9 @@ import Watch from "./source/watch/Watch";
 import Pet from "./source/pet/Pet";
 import User from "./source/user/User";
 import Explore from "./source/explore/Explore";
+import Moment from "./source/moment/Moment";
+
+
 import Login from "./source/home/Login";
 
 export default class Thousanday extends Component {
@@ -37,6 +40,10 @@ export default class Thousanday extends Component {
             userId: null,
             //store all info for user page
             userData: null,
+            //store visit moment id
+            momentId: null,
+            //store all moment data
+            momentData: []
         };
     }
     //get most recent public images for watch on app open
@@ -56,7 +63,8 @@ export default class Thousanday extends Component {
             for (i = 0; i < result[0].length; i++) {
                 watch.push(
                     {
-                        key: "https://thousanday.com/img/pet/" + result[0][i].pet_id + "/moment/" + result[0][i].image_name
+                        key: "https://thousanday.com/img/pet/" + result[0][i].pet_id + "/moment/" + result[0][i].image_name,
+                        id: result[0][i].moment_id
                     }
                 )
             }
@@ -102,7 +110,8 @@ export default class Thousanday extends Component {
                             for (i = 0; i < result.length; i++) {
                                 newWatch.push(
                                     {
-                                        key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name
+                                        key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name,
+                                        id: result[i].moment_id
                                     }
                                 )
                             }
@@ -204,6 +213,42 @@ export default class Thousanday extends Component {
             }
         }
     }
+    //if user click on one moment, read moment data
+    clickMoment(id) {
+        //last visit is not same moment, get data
+        if (this.state.momentId !== id) {
+            let data = {
+                "id": id
+            };
+            fetch("https://thousanday.com/moment/view", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                },
+                body: Object.keys(data).map((key) => {
+                    return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+                }).join('&')
+            })
+            .then((response) => response.json())
+            .then((moment) => {
+                switch (moment) {
+                    case 0:
+                        alert("Can't get data, try later");
+                        break;
+                    case 1:
+                        alert("Moment not exist");
+                        break;
+                    default:
+                        this.setState({route: "moment", momentData: moment, momentId: id});
+                        break;
+                }
+            });
+        } else {
+            //go to user page directlly
+            this.setState({route: "moment"});
+        }
+    }
     //load logged in user info
     componentDidMount() {
         this._loadUserData().done();
@@ -260,29 +305,32 @@ export default class Thousanday extends Component {
         switch (this.state.route) {
             //default page, watch public images
             case "watch":
-                route = <Watch data={this.state.watchData} loadWatch={this.loadWatch.bind(this)} />;
+                route = <Watch data={this.state.watchData} loadWatch={this.loadWatch.bind(this)} clickMoment={this.clickMoment.bind(this)} />;
                 break;
             //explore page could be seen by public
             case "explore":
-                route = <Explore />;
+                route = <Explore clickMoment={this.clickMoment.bind(this)} />;
                 break;
             //go to pet page when user click on pet
             case "pet":
-                route = <Pet key={"pet" + this.state.petId} data={this.state.petData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} />;
+                route = <Pet key={"pet" + this.state.petId} data={this.state.petData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} />;
                 break;
             //go to user page when user click on one user
             case "user":
-                route = <User key={"user" + this.state.pageId} data={this.state.pageData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} />;
+                route = <User key={"user" + this.state.pageId} data={this.state.pageData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} />;
+                break;
+            case "moment":
+                route = <Moment data={this.state.momentData} clickPet={this.clickPet.bind(this)} />
                 break;
             case "home":
                 //user already logged in
                 if (this.state.userId) {
                     if (this.state.userData) {
-                        route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} />;
+                        route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} />;
                     } else {
                         //get data for user first
                         this.userLogin([this.state.userId], () => {
-                            route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} />;
+                            route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} />;
                         });
                     }
                 } else {
