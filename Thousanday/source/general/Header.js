@@ -14,11 +14,14 @@ class Header extends Component {
             case "explore":
                 title = "Explore the cute";
                 break;
-            case "home":
-                title = "A space for your pets";
-                break;
             case "pet":
                 title = "Pet in digital hub";
+                break;
+            case "user":
+                title = "Pets Mommy & Daddy";
+                break;
+            case "home":
+                title = "A space for your pets";
                 break;
         }
         return (

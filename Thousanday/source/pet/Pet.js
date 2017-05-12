@@ -6,7 +6,8 @@ import {
     Image,
     FlatList,
     Dimensions,
-    ScrollView
+    ScrollView,
+    TouchableOpacity
 } from "react-native";
 import {CachedImage} from "react-native-img-cache";
 import noGetGender from "../../js/noGetGender.js";
@@ -31,7 +32,7 @@ class Pet extends Component {
             "showMore": this.state.loadTimes,
             "addOne": 0
         };
-        fetch("/pet/loadMoment", {
+        fetch("https://thousanday.com/pet/loadMoment", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -55,7 +56,7 @@ class Pet extends Component {
                             this.setState({
                                 petImages: this.state.petImages.concat(result),
                                 loadTimes: this.state.loadTimes + 1,
-                                moreLocker: true
+                                petLocker: true
                             });
                         } else {
                             this.setState({
@@ -75,31 +76,37 @@ class Pet extends Component {
         let parent;
         if (this.props.data[1][1]) {
             parent = (
-                <Image
-                    style={styles.boxImage}
-                    source={{uri: "https://thousanday.com/img/user/" + this.props.data[1][1].user_id + ".jpg"}}
-                    mutable
-                />
+                <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[1][1].user_id)}>
+                    <Image
+                        style={styles.boxImage}
+                        source={{uri: "https://thousanday.com/img/user/" + this.props.data[1][1].user_id + ".jpg"}}
+                        mutable
+                    />
+                </TouchableOpacity>
             )
         }
         //show friends if exist
         let friend1, friend2;
         if (this.props.data[0].companion_first) {
             friend1 = (
-                <Image
-                    style={styles.boxImage}
-                    source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].companion_first + "/cover/0.png"}}
-                    mutable
-                />
+                <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[0].companion_first)}>
+                    <Image
+                        style={styles.boxImage}
+                        source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].companion_first + "/cover/0.png"}}
+                        mutable
+                    />
+                </TouchableOpacity>
             )
         }
         if (this.props.data[0].companion_second) {
             friend2 = (
-                <Image
-                    style={styles.boxImage}
-                    source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].companion_second + "/cover/0.png"}}
-                    mutable
-                />
+                <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[0].companion_second)}>
+                    <Image
+                        style={styles.boxImage}
+                        source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].companion_second + "/cover/0.png"}}
+                        mutable
+                    />
+                </TouchableOpacity>
             )
         }
         //process data to get all images
@@ -138,11 +145,13 @@ class Pet extends Component {
                             {this.props.data[0].pet_gender === 0 ? "His ": "Her "}Parents
                         </Text>
                         <View style={styles.parentBox}>
-                            <Image
-                                style={styles.boxImage}
-                                source={{uri: "https://thousanday.com/img/user/" + this.props.data[1][0].user_id + ".jpg"}}
-                                mutable
-                            />
+                            <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[1][0].user_id)}>
+                                <Image
+                                    style={styles.boxImage}
+                                    source={{uri: "https://thousanday.com/img/user/" + this.props.data[1][0].user_id + ".jpg"}}
+                                    mutable
+                                />
+                            </TouchableOpacity>
                             {parent}
                         </View>
                     </View>
