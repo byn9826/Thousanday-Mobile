@@ -8,6 +8,11 @@ import {
     ScrollView,
     TouchableOpacity
 } from "react-native";
+const FBSDK = require('react-native-fbsdk');
+const {
+    LoginButton,
+    AccessToken
+} = FBSDK;
 import noGetGender from "../../js/noGetGender.js";
 import noGetType from "../../js/noGetType.js";
 import {CachedImage} from "react-native-img-cache";
@@ -164,6 +169,9 @@ class User extends Component {
                     Welcome Home! {this.props.data[0].user_name}
                 </Text>
             )
+            logout = (
+                <Facebook fbLogout={this.props.fbLogout.bind(this)}/>
+            )
         } else {
             welcome = (
                 <Text style={styles.headerName}>
@@ -182,6 +190,7 @@ class User extends Component {
                     {welcome}
                 </View>
                 {panel}
+                {logout}
                 <Text style={styles.mainTitle}>
                     Pets List
                 </Text>
@@ -220,6 +229,39 @@ class User extends Component {
     }
 }
 
+let Facebook = React.createClass({
+    render: function() {
+        return (
+            <View style={styles.mainLogout}>
+                <LoginButton
+                    onLogoutFinished={
+                        () => {
+                            fetch("https://thousanday.com/account/logOut", {
+                                method: "POST",
+                                headers: {
+                                    "Accept": "application/json",
+                                    "Content-Type": "application/json",
+                                },
+                            })
+                            .then((response) => response.json())
+                            .then((result) => {
+                                switch (result) {
+                                    case 0:
+                                        this.props.fbLogout();
+                                        break;
+                                    case 1:
+                                        alert("Something wrong, please try again");
+                                        break;
+                                }
+                            });
+                        }
+                    }
+                />
+            </View>
+        );
+    }
+});
+
 const styles = StyleSheet.create({
     main: {
         marginHorizontal: 10
@@ -249,6 +291,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 5
+    },
+    mainLogout: {
+        marginTop: 20,
     },
     mainAction: {
         flexDirection: "row",

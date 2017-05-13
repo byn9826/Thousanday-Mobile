@@ -26,6 +26,9 @@ class Header extends Component {
             case "moment":
                 title = "Love Moments with pets";
                 break;
+            case "love":
+                title = "Moments on your list";
+                break;
         }
         return (
             <View style={styles.header}>

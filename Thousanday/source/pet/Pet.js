@@ -78,7 +78,7 @@ class Pet extends Component {
             parent = (
                 <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[1][1].user_id)}>
                     <Image
-                        style={styles.boxImage}
+                        style={styles.boxRound}
                         source={{uri: "https://thousanday.com/img/user/" + this.props.data[1][1].user_id + ".jpg"}}
                         mutable
                     />
@@ -148,7 +148,7 @@ class Pet extends Component {
                         <View style={styles.parentBox}>
                             <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[1][0].user_id)}>
                                 <Image
-                                    style={styles.boxImage}
+                                    style={styles.boxRound}
                                     source={{uri: "https://thousanday.com/img/user/" + this.props.data[1][0].user_id + ".jpg"}}
                                     mutable
                                 />
@@ -266,6 +266,13 @@ const styles = StyleSheet.create({
     },
     parentBox: {
         flexDirection: "row"
+    },
+    boxRound: {
+        width: 50,
+        height: 50,
+        marginHorizontal: 6,
+        borderRadius: 25,
+        resizeMode: "contain"
     },
     boxImage: {
         width: 50,

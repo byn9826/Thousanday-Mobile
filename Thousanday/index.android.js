@@ -12,6 +12,7 @@ import Pet from "./source/pet/Pet";
 import User from "./source/user/User";
 import Explore from "./source/explore/Explore";
 import Moment from "./source/moment/Moment";
+import Love from "./source/love/Love";
 
 
 import Login from "./source/home/Login";
@@ -264,6 +265,10 @@ export default class Thousanday extends Component {
     async _setUserData(key) {
         await AsyncStorage.setItem("USER_KEY", key);
     }
+    //remove user data
+    async _removeUser() {
+        await AsyncStorage.removeItem("USER_KEY");
+    }
     //get user data by userId
     userLogin(result) {
         let data = {
@@ -299,6 +304,11 @@ export default class Thousanday extends Component {
             }
         });
     }
+    //facebook user logout
+    fbLogout() {
+        this._removeUser();
+        this.setState({userId: null, userData: null, route: "watch"});
+    }
     render() {
         //page route system
         let route;
@@ -322,19 +332,22 @@ export default class Thousanday extends Component {
             case "moment":
                 route = <Moment data={this.state.momentData} clickPet={this.clickPet.bind(this)} />
                 break;
+            case "love":
+                route = <Love />
+                break;
             case "home":
                 //user already logged in
                 if (this.state.userId) {
                     if (this.state.userData) {
-                        route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} />;
+                        route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} fbLogout={this.fbLogout.bind(this)} />;
                     } else {
                         //get data for user first
                         this.userLogin([this.state.userId], () => {
-                            route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} />;
+                            route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} fbLogout={this.fbLogout.bind(this)} />;
                         });
                     }
                 } else {
-                    route = <Login facebookLogin={this.userLogin.bind(this)} />;
+                    route = <Login facebookLogin={this.userLogin.bind(this)} googleLogin={this.userLogin.bind(this)} />;
                 }
                 break;
         }

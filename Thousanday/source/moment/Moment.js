@@ -9,7 +9,6 @@ import {
 import {CachedImage} from "react-native-img-cache";
 class Moment extends Component {
     render() {
-        console.log(this.props.data);
         let likeUsers = [], i;
         if (this.props.data[1].length !== 0) {
             for (i = 0; i < this.props.data[1].length; i++) {

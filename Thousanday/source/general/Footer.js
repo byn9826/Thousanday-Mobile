@@ -19,7 +19,7 @@ class Footer extends Component {
                     <Image style={styles.touchIcon} source={require("../../image/camera1.png")} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.footerTouch} onPress={this.props.changeView.bind(this, "love")}>
-                    <Image style={styles.touchIcon} source={require("../../image/love1.png")} />
+                    <Image style={styles.touchIcon} source={this.props.view === "love"?require("../../image/love.png"):require("../../image/love1.png")} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.footerTouch} onPress={this.props.changeView.bind(this, "home")}>
                     <Image style={styles.touchIcon} source={this.props.view === "home"?require("../../image/home.png"):require("../../image/home1.png")} />
