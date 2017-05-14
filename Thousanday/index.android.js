@@ -41,6 +41,10 @@ export default class Thousanday extends Component {
             userId: null,
             //store all info for user page
             userData: null,
+            //store which platform user login
+            userPlatform: null,
+            //store user token
+            userToken: null,
             //store visit moment id
             momentId: null,
             //store all moment data
@@ -257,20 +261,26 @@ export default class Thousanday extends Component {
     //get stored user id
     async _loadUserData() {
         let userId = await AsyncStorage.getItem("USER_KEY");
+        let platform = await AsyncStorage.getItem("Platform_KEY");
+        let token = await AsyncStorage.getItem("Token_KEY");
         if (userId != null) {
-            this.setState({userId: parseInt(userId)});
+            this.setState({userId: parseInt(userId), userPlatform: platform, userToken: token});
         }
     }
     //set up user id
-    async _setUserData(key) {
-        await AsyncStorage.setItem("USER_KEY", key);
+    async _setUserData(key, platform) {
+        await AsyncStorage.setItem("USER_KEY", key[0].toString());
+        await AsyncStorage.setItem("Platform_KEY", platform);
+        await AsyncStorage.setItem("Token_KEY", key[1]);
     }
     //remove user data
     async _removeUser() {
         await AsyncStorage.removeItem("USER_KEY");
+        await AsyncStorage.removeItem("Platform_KEY");
+        await AsyncStorage.setItem("Token_KEY");
     }
     //get user data by userId
-    userLogin(result) {
+    userLogin(result, platform) {
         let data = {
             "id": result[0]
         };
@@ -295,8 +305,13 @@ export default class Thousanday extends Component {
                     break;
                 default:
                     if (!this.state.userId) {
-                        this._setUserData(result[0].toString());
-                        this.setState({userData: user, userId: result[0]});
+                        if (platform && platform === "google") {
+                            this._setUserData(result, "google");
+                            this.setState({userData: user, userId: result[0], userPlatform: "google"});
+                        } else {
+                            this._setUserData(result, "facebook");
+                            this.setState({userData: user, userId: result[0], userPlatform: "facebook"});
+                        }
                     } else {
                         this.setState({userData: user});
                     }
@@ -339,15 +354,15 @@ export default class Thousanday extends Component {
                 //user already logged in
                 if (this.state.userId) {
                     if (this.state.userData) {
-                        route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} fbLogout={this.fbLogout.bind(this)} />;
+                        route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} fbLogout={this.fbLogout.bind(this)} platform={this.state.userPlatform} />;
                     } else {
                         //get data for user first
                         this.userLogin([this.state.userId], () => {
-                            route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} fbLogout={this.fbLogout.bind(this)} />;
+                            route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} fbLogout={this.fbLogout.bind(this)} platform={this.state.userPlatform} />;
                         });
                     }
                 } else {
-                    route = <Login facebookLogin={this.userLogin.bind(this)} googleLogin={this.userLogin.bind(this)} />;
+                    route = <Login facebookLogin={this.userLogin.bind(this)} home={false} userLogin={this.userLogin.bind(this)} />;
                 }
                 break;
         }

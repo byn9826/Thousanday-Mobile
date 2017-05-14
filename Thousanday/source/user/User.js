@@ -13,6 +13,7 @@ const {
     LoginButton,
     AccessToken
 } = FBSDK;
+import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import noGetGender from "../../js/noGetGender.js";
 import noGetType from "../../js/noGetType.js";
 import {CachedImage} from "react-native-img-cache";
@@ -27,6 +28,17 @@ class User extends Component {
             //indicate how many time load more image
             loadTimes: 1
         };
+    }
+    componentDidMount() {
+        this._gSetup();
+    }
+    async _gSetup() {
+        await GoogleSignin.hasPlayServices({ autoResolve: true });
+        await GoogleSignin.configure({
+            webClientId: '835652983909-6if3h222alkttk9oas3hr3tl15sq1u7m.apps.googleusercontent.com',
+            offlineAccess: false
+        });
+        let user = await GoogleSignin.currentUserAsync();
     }
     //load more moments
     loadMore() {
@@ -73,6 +85,30 @@ class User extends Component {
             }
         });
     }
+    //logout with google
+    _gLogout() {
+        GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
+            fetch("https://thousanday.com/account/logOut", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                },
+            })
+            .then((response) => response.json())
+            .then((result) => {
+                switch (result) {
+                    case 0:
+                        this.props.fbLogout();
+                        break;
+                    case 1:
+                        alert("Something wrong, please try again");
+                        break;
+                }
+            });
+        })
+        .done();
+    }
     render() {
         //process data to get all images
         let gallery = [], i;
@@ -118,7 +154,7 @@ class User extends Component {
             </TouchableOpacity>
         )
         //show admin panel, show welcome message
-        let panel, welcome;
+        let panel, welcome, logout;
         if (this.props.home) {
             panel = (
                 <View style={styles.mainAction}>
@@ -169,9 +205,19 @@ class User extends Component {
                     Welcome Home! {this.props.data[0].user_name}
                 </Text>
             )
-            logout = (
-                <Facebook fbLogout={this.props.fbLogout.bind(this)}/>
-            )
+            if (this.props.platform === "facebook") {
+                logout = (
+                    <Facebook fbLogout={this.props.fbLogout.bind(this)}/>
+                )
+            } else {
+                logout = (
+                    <TouchableOpacity onPress={this._gLogout.bind(this)}>
+                        <View style={styles.mainGoogle}>
+                            <Text style={styles.googleOut}>Log out</Text>
+                        </View>
+                    </TouchableOpacity>
+                )
+            }
         } else {
             welcome = (
                 <Text style={styles.headerName}>
@@ -291,6 +337,19 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 5
+    },
+    mainGoogle: {
+        width: 186,
+        backgroundColor: "#052456",
+        height: 38,
+        borderRadius: 5,
+        marginTop: 20,
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    googleOut: {
+        color: "white",
+        fontSize: 14
     },
     mainLogout: {
         marginTop: 20,

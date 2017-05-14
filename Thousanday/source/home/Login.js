@@ -39,7 +39,8 @@ class Login extends Component {
                 let info = {
                     "token": token
                 };
-                fetch("https://thousanday.com/account/gMobileLogin", {
+                //https://thousanday.com/account/gMobileLogin
+                fetch("http://192.168.0.13:5000/accounts/gLogin", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -65,7 +66,7 @@ class Login extends Component {
                             alert("Please logout first");
                             break;
                         default:
-                            this.props.googleLogin(result);
+                            this.props.userLogin(result, "google");
                     }
                 });
             })
