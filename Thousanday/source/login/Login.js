@@ -5,7 +5,6 @@ import {
     View,
     Image
 } from "react-native";
-
 const FBSDK = require('react-native-fbsdk');
 const {
     LoginButton,
@@ -14,12 +13,6 @@ const {
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 
 class Login extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-
-        };
-    }
     componentDidMount() {
         this._gSetup();
     }
@@ -34,44 +27,30 @@ class Login extends Component {
     _gSignIn() {
         GoogleSignin.signIn()
             .then((user) => {
-                let token = user.idToken;
-                //find user id from backend
-                let info = {
-                    "token": token
-                };
                 //https://thousanday.com/account/gMobileLogin
                 fetch("http://192.168.0.13:5000/accounts/gLogin", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
-                        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                        "Content-Type": "application/json",
                     },
-                    body: Object.keys(info).map((key) => {
-                        return encodeURIComponent(key) + '=' + encodeURIComponent(info[key]);
-                    }).join('&')
+                    body: JSON.stringify({
+                        "token": user.idToken
+                    })
                 })
                 .then((response) => response.json())
                 .then((result) => {
                     switch(result) {
                         case 0:
-                            alert("Can't get data, try later");
-                            break;
-                        case 1:
-                            alert("Account not exist");
+                            alert("Can't get data, please try later");
                             break;
                         case 2:
-                            alert("Can't validate Google account");
-                            break;
-                        case 3:
-                            alert("Please logout first");
+                            alert("Account not exist");
                             break;
                         default:
-                            this.props.userLogin(result, "google");
+                            this.props.processLogin(result, "google");
                     }
                 });
-            })
-            .catch((err) => {
-                alert(err);
             })
             .done();
     }
@@ -93,7 +72,7 @@ class Login extends Component {
                         onPress={this._gSignIn.bind(this)}
                     />
                 </View>
-                <Facebook getId={this.props.facebookLogin.bind(this)} />
+                <Facebook facebookId={this.props.processLogin.bind(this)} />
             </View>
         )
     }
@@ -107,45 +86,34 @@ let Facebook = React.createClass({
                     onLoginFinished={
                         (error, result) => {
                             if (error) {
-                                alert("login has error: " + result.error);
+                                alert("Login Error: " + result.error);
                             } else if (result.isCancelled) {
-                                alert("login is cancelled.");
+                                //alert("login is cancelled.");
                             } else {
                                 AccessToken.getCurrentAccessToken().then(
                                     (data) => {
-                                        let token = data.accessToken;
-                                        //find user id from backend
-                                        let info = {
-                                            "token": token
-                                        };
-                                        fetch("https://thousanday.com/account/facebookLogin", {
+                                        fetch("http://192.168.0.13:5000/accounts/fLogin", {
                                             method: "POST",
                                             headers: {
                                                 "Accept": "application/json",
-                                                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                                                "Content-Type": "application/json",
                                             },
-                                            body: Object.keys(info).map((key) => {
-                                                return encodeURIComponent(key) + '=' + encodeURIComponent(info[key]);
-                                            }).join('&')
+                                            body: JSON.stringify({
+                                                "token": data.accessToken
+                                            })
                                         })
                                         .then((response) => response.json())
                                         .then((result) => {
                                             switch(result) {
+
                                                 case 0:
-                                                    console.log("Can't connect to database");
-                                                    break;
-                                                case 1:
-                                                    console.log("Account not exist");
+                                                    alert("Can't get data, please try later");
                                                     break;
                                                 case 2:
-                                                    console.log("Can't validate Facebook account");
-                                                    break;
-                                                case 3:
-                                                    console.log("Please logout first");
+                                                    alert("Account not exist");
                                                     break;
                                                 default:
-                                                    this.props.getId(result);
-                                                    //this.setState({loginName: result[1], loginId: result[0], newNum: result[2], showDrop: false});
+                                                    this.props.facebookId(result);
                                             }
                                         });
                                     }

@@ -4,7 +4,8 @@ import {
     Text,
     View,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity,
+    ScrollView
 } from "react-native";
 import {CachedImage} from "react-native-img-cache";
 class Moment extends Component {
@@ -16,7 +17,7 @@ class Moment extends Component {
             }
         }
         return (
-            <View style={styles.root}>
+            <ScrollView contentContainerStyle={styles.root}>
                 <View style={styles.rootTop}>
                     <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[0].pet_id)}>
                         <CachedImage
@@ -43,7 +44,7 @@ class Moment extends Component {
                     </Text>
                     {/*&#128152;*/}
                 </View>
-            </View>
+            </ScrollView>
         )
     }
 }
@@ -60,7 +61,6 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     topAvatar: {
-        flex: 1,
         width: 70,
         height: 70,
         borderRadius: 5,

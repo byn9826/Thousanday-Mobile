@@ -9,7 +9,6 @@ import {CachedImage} from "react-native-img-cache";
 
 class Watch extends Component {
     render() {
-        console.log(this.props.data);
         return (
             <FlatList
                 contentContainerStyle={styles.container}

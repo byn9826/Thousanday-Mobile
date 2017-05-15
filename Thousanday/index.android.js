@@ -9,13 +9,12 @@ import Header from "./source/general/Header";
 import Footer from "./source/general/Footer";
 import Watch from "./source/watch/Watch";
 import Pet from "./source/pet/Pet";
+import AddPet from "./source/pet/Add";
 import User from "./source/user/User";
 import Explore from "./source/explore/Explore";
 import Moment from "./source/moment/Moment";
 import Love from "./source/love/Love";
-
-
-import Login from "./source/home/Login";
+import Login from "./source/login/Login";
 
 export default class Thousanday extends Component {
     constructor(props) {
@@ -53,8 +52,8 @@ export default class Thousanday extends Component {
     }
     //get most recent public images for watch on app open
     componentWillMount() {
-        //load 10 newest moments by default
-        fetch("https://thousanday.com/watch/view", {
+        //load 20 newest moments by default
+        fetch("http://192.168.0.13:5000/lists/readPublic", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -65,16 +64,40 @@ export default class Thousanday extends Component {
         .then((result) => {
             //consist watchdata with all image src
             let watch = [], i;
-            for (i = 0; i < result[0].length; i++) {
+            for (i = 0; i < result.length; i++) {
                 watch.push(
                     {
-                        key: "https://thousanday.com/img/pet/" + result[0][i].pet_id + "/moment/" + result[0][i].image_name,
-                        id: result[0][i].moment_id
+                        key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name,
+                        id: result[i].moment_id
                     }
                 )
             }
             this.setState({watchData: watch});
         });
+    }
+    componentDidMount() {
+        this._loadUserData().done();
+    }
+    //get stored user id
+    async _loadUserData() {
+        let userId = await AsyncStorage.getItem("USER_KEY");
+        let platform = await AsyncStorage.getItem("Platform_KEY");
+        let token = await AsyncStorage.getItem("Token_KEY");
+        if (userId != null) {
+            this.setState({userId: parseInt(userId), userPlatform: platform, userToken: token});
+        }
+    }
+    //set up user id
+    async _setUserData(key, platform) {
+        await AsyncStorage.setItem("USER_KEY", key[0].toString());
+        await AsyncStorage.setItem("Platform_KEY", platform);
+        await AsyncStorage.setItem("Token_KEY", key[1]);
+    }
+    //remove user data
+    async _removeUser() {
+        await AsyncStorage.removeItem("USER_KEY");
+        await AsyncStorage.removeItem("Platform_KEY");
+        await AsyncStorage.removeItem("Token_KEY");
     }
     //change view by route if user click on footer
     changeView(view) {
@@ -86,20 +109,15 @@ export default class Thousanday extends Component {
     loadWatch() {
         //check if watch lock exist
         if (!this.state.watchLocker) {
-            //load another 10 public images
-            let data = {
-                "type": "recent",
-                "time": this.state.watchTimes
-            };
-            fetch("https://thousanday.com/watch/loadMoment", {
+            fetch("http://192.168.0.13:5000/lists/loadPublic", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
-                    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                    "Content-Type": "application/json",
                 },
-                body: Object.keys(data).map((key) => {
-                    return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-                }).join('&')
+                body: JSON.stringify({
+                    "times": this.state.watchTimes
+                })
             })
             .then((response) => response.json())
             .then((result) => {
@@ -121,7 +139,7 @@ export default class Thousanday extends Component {
                                 )
                             }
                             //lock load more watch public image function
-                            if (result.length < 10) {
+                            if (result.length < 20) {
                                 this.setState({
                                     watchData: this.state.watchData.concat(newWatch),
                                     loadTimes: this.state.loadTimes + 1,
@@ -145,18 +163,15 @@ export default class Thousanday extends Component {
     clickPet(id) {
         //pet page didn't be requested before
         if (this.state.petId !== id) {
-            let data = {
-                "id": id
-            };
-            fetch("https://thousanday.com/pet/view", {
+            fetch("http://192.168.0.13:5000/pets/readPet", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
-                    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                    "Content-Type": "application/json",
                 },
-                body: Object.keys(data).map((key) => {
-                    return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-                }).join('&')
+                body: JSON.stringify({
+                    "id": id
+                })
             })
             .then((response) => response.json())
             .then((pet) => {
@@ -164,7 +179,7 @@ export default class Thousanday extends Component {
                     case 0:
         				alert("Can't get data, try later");
         				break;
-        			case 1:
+        			case 2:
         				alert("Pet not exist");
         				break;
         			default:
@@ -185,18 +200,15 @@ export default class Thousanday extends Component {
         } else {
             //user page didn't be requested before
             if (this.state.pageId !== id) {
-                let data = {
-                    "id": id
-                };
-                fetch("https://thousanday.com/user/view", {
+                fetch("http://192.168.0.13:5000/users/read", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
-                        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                        "Content-Type": "application/json",
                     },
-                    body: Object.keys(data).map((key) => {
-                        return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-                    }).join('&')
+                    body: JSON.stringify({
+                        "id": id
+                    })
                 })
                 .then((response) => response.json())
                 .then((user) => {
@@ -204,7 +216,7 @@ export default class Thousanday extends Component {
                         case 0:
                             alert("Can't get data, try later");
                             break;
-                        case 1:
+                        case 2:
                             alert("User not exist");
                             break;
                         default:
@@ -222,18 +234,15 @@ export default class Thousanday extends Component {
     clickMoment(id) {
         //last visit is not same moment, get data
         if (this.state.momentId !== id) {
-            let data = {
-                "id": id
-            };
-            fetch("https://thousanday.com/moment/view", {
+            fetch("http://192.168.0.13:5000/moments/readMoment", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
-                    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                    "Content-Type": "application/json",
                 },
-                body: Object.keys(data).map((key) => {
-                    return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-                }).join('&')
+                body: JSON.stringify({
+                    "id": id
+                })
             })
             .then((response) => response.json())
             .then((moment) => {
@@ -241,7 +250,7 @@ export default class Thousanday extends Component {
                     case 0:
                         alert("Can't get data, try later");
                         break;
-                    case 1:
+                    case 2:
                         alert("Moment not exist");
                         break;
                     default:
@@ -254,45 +263,21 @@ export default class Thousanday extends Component {
             this.setState({route: "moment"});
         }
     }
-    //load logged in user info
-    componentDidMount() {
-        this._loadUserData().done();
+    //if user click on add pet
+    clickAddPet() {
+        this.setState({route: "addPet"});
     }
-    //get stored user id
-    async _loadUserData() {
-        let userId = await AsyncStorage.getItem("USER_KEY");
-        let platform = await AsyncStorage.getItem("Platform_KEY");
-        let token = await AsyncStorage.getItem("Token_KEY");
-        if (userId != null) {
-            this.setState({userId: parseInt(userId), userPlatform: platform, userToken: token});
-        }
-    }
-    //set up user id
-    async _setUserData(key, platform) {
-        await AsyncStorage.setItem("USER_KEY", key[0].toString());
-        await AsyncStorage.setItem("Platform_KEY", platform);
-        await AsyncStorage.setItem("Token_KEY", key[1]);
-    }
-    //remove user data
-    async _removeUser() {
-        await AsyncStorage.removeItem("USER_KEY");
-        await AsyncStorage.removeItem("Platform_KEY");
-        await AsyncStorage.setItem("Token_KEY");
-    }
-    //get user data by userId
-    userLogin(result, platform) {
-        let data = {
-            "id": result[0]
-        };
-        fetch("https://thousanday.com/user/view", {
+    //process user login action
+    processLogin(result, platform) {
+        fetch("http://192.168.0.13:5000/users/read", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
-                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                "Content-Type": "application/json",
             },
-            body: Object.keys(data).map((key) => {
-                return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-            }).join('&')
+            body: JSON.stringify({
+                "id": result[0]
+            })
         })
         .then((response) => response.json())
         .then((user) => {
@@ -300,17 +285,17 @@ export default class Thousanday extends Component {
                 case 0:
                     alert("Can't get data, try later");
                     break;
-                case 1:
+                case 2:
                     alert("User not exist");
                     break;
                 default:
                     if (!this.state.userId) {
                         if (platform && platform === "google") {
                             this._setUserData(result, "google");
-                            this.setState({userData: user, userId: result[0], userPlatform: "google"});
+                            this.setState({userData: user, userId: result[0], userToken: result[1], userPlatform: "google"});
                         } else {
                             this._setUserData(result, "facebook");
-                            this.setState({userData: user, userId: result[0], userPlatform: "facebook"});
+                            this.setState({userData: user, userId: result[0], userToken: result[1], userPlatform: "facebook"});
                         }
                     } else {
                         this.setState({userData: user});
@@ -320,9 +305,60 @@ export default class Thousanday extends Component {
         });
     }
     //facebook user logout
-    fbLogout() {
+    userLogout() {
         this._removeUser();
-        this.setState({userId: null, userData: null, route: "watch"});
+        this.setState({userId: null, userData: null, userPlatform: null, route: "watch"});
+    }
+    //watch or unwatch a pet
+    petWatch() {
+        if (!this.state.userId) {
+            //must login first
+            alert("Please login first");
+        } else  {
+            let action;
+            if (this.state.petData[2].indexOf(this.state.userId) === -1) {
+                action = 0;
+            } else {
+                action = 1;
+            }
+            //watch or unwatch pet
+            fetch("http://192.168.0.13:5000/pets/updateWatch", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "action": action,
+                    "petId": this.state.petId,
+                    "userToken": this.state.userToken
+                })
+            })
+            .then((response) => response.json())
+            .then((result) => {
+                switch (result) {
+                    case 0:
+                        alert("Can't get data, please try later");
+                        break;
+                    case 1:
+                        if (action === 1) {
+                            this.state.petData[2].splice(this.state.petData[2].indexOf(this.state.userId), 1);
+                            this.setState({petData: this.state.petData});
+                        } else {
+                            this.state.petData[2].push(this.state.userId);
+                            this.setState({petData: this.state.petData});
+                        }
+                        break;
+                    case 2:
+                        alert("Please login first");
+                        break;
+                }
+            });
+        }
+    }
+    //refresh user's data
+    refreshUser() {
+        this.setState({userData: null, route: "home"});
     }
     render() {
         //page route system
@@ -338,11 +374,26 @@ export default class Thousanday extends Component {
                 break;
             //go to pet page when user click on pet
             case "pet":
-                route = <Pet key={"pet" + this.state.petId} data={this.state.petData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} />;
+                route = <Pet
+                    key={"pet" + this.state.petId}
+                    data={this.state.petData}
+                    userId={this.state.userId}
+                    petWatch={this.petWatch.bind(this)}
+                    clickUser={this.clickUser.bind(this)}
+                    clickPet={this.clickPet.bind(this)}
+                    clickMoment={this.clickMoment.bind(this)}
+                />;
                 break;
             //go to user page when user click on one user
             case "user":
-                route = <User key={"user" + this.state.pageId} data={this.state.pageData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} />;
+                route = <User
+                    key={"user" + this.state.pageId}
+                    data={this.state.pageData}
+                    userId={this.state.pageId}
+                    clickUser={this.clickUser.bind(this)}
+                    clickPet={this.clickPet.bind(this)}
+                    clickMoment={this.clickMoment.bind(this)}
+                />;
                 break;
             case "moment":
                 route = <Moment data={this.state.momentData} clickPet={this.clickPet.bind(this)} />
@@ -350,19 +401,44 @@ export default class Thousanday extends Component {
             case "love":
                 route = <Love />
                 break;
+            case "addPet":
+                route = <AddPet userId={this.state.userId} userToken={this.state.userToken} refreshUser={this.refreshUser.bind(this)} />
+                break;
             case "home":
                 //user already logged in
                 if (this.state.userId) {
                     if (this.state.userData) {
-                        route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} fbLogout={this.fbLogout.bind(this)} platform={this.state.userPlatform} />;
+                        route = <User
+                            key={"user" + this.state.userId}
+                            home={true}
+                            userId={this.state.userId}
+                            data={this.state.userData}
+                            clickUser={this.clickUser.bind(this)}
+                            clickPet={this.clickPet.bind(this)}
+                            clickMoment={this.clickMoment.bind(this)}
+                            clickAddPet={this.clickAddPet.bind(this)}
+                            userLogout={this.userLogout.bind(this)}
+                            platform={this.state.userPlatform}
+                        />;
                     } else {
                         //get data for user first
-                        this.userLogin([this.state.userId], () => {
-                            route = <User key={"user" + this.state.userId} home={true} data={this.state.userData} clickUser={this.clickUser.bind(this)} clickPet={this.clickPet.bind(this)} clickMoment={this.clickMoment.bind(this)} fbLogout={this.fbLogout.bind(this)} platform={this.state.userPlatform} />;
+                        this.processLogin([this.state.userId], this.state.userPlatform, () => {
+                            route = <User
+                                key={"user" + this.state.userId}
+                                home={true}
+                                userId={this.state.userId}
+                                data={this.state.userData}
+                                clickUser={this.clickUser.bind(this)}
+                                clickPet={this.clickPet.bind(this)}
+                                clickMoment={this.clickMoment.bind(this)}
+                                clickAddPet={this.clickAddPet.bind(this)}
+                                userLogout={this.userLogout.bind(this)}
+                                platform={this.state.userPlatform}
+                            />;
                         });
                     }
                 } else {
-                    route = <Login facebookLogin={this.userLogin.bind(this)} home={false} userLogin={this.userLogin.bind(this)} />;
+                    route = <Login home={false} processLogin={this.processLogin.bind(this)} />;
                 }
                 break;
         }

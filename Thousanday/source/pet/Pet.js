@@ -18,68 +18,22 @@ class Pet extends Component {
         super(props);
         this.state = {
             //indicate lock load more function
-            petLocker: (this.props.data[4].length < 20)? true: false,
+            petLocker: (this.props.data[1].length < 20)? true: false,
             //store images
-            petImages: this.props.data[4] || [],
+            petImages: this.props.data[1] || [],
             //indicate how many time load more image
             loadTimes: 1
         };
     }
-    //load more image
-    loadMore() {
-        let data = {
-            "petId": this.props.data[0].pet_name,
-            "showMore": this.state.loadTimes,
-            "addOne": 0
-        };
-        fetch("https://thousanday.com/pet/loadMoment", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-            },
-            body: Object.keys(data).map((key) => {
-                return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-            }).join('&')
-        })
-        .then((response) => response.json())
-        .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, try later");
-                    break;
-                default:
-                    //update when there's new data
-                    if (result.length !== 0) {
-                        //lock load more image
-                        if (result.length < 20) {
-                            this.setState({
-                                petImages: this.state.petImages.concat(result),
-                                loadTimes: this.state.loadTimes + 1,
-                                petLocker: true
-                            });
-                        } else {
-                            this.setState({
-                                petImages: this.state.petImages.concat(result),
-                                loadTimes: this.state.loadTimes + 1
-                            });
-                        }
-                    } else {
-                        //active lock when no more images
-                        this.setState({petLocker: true});
-                    }
-            }
-        });
-    }
     render() {
         //show second relative if exist
         let parent;
-        if (this.props.data[1][1]) {
+        if (this.props.data[0].relative_id) {
             parent = (
-                <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[1][1].user_id)}>
+                <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[0].relative_id)}>
                     <Image
                         style={styles.boxRound}
-                        source={{uri: "https://thousanday.com/img/user/" + this.props.data[1][1].user_id + ".jpg"}}
+                        source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].relative_id + ".jpg"}}
                         mutable
                     />
                 </TouchableOpacity>
@@ -114,8 +68,8 @@ class Pet extends Component {
         for (i = 0; i < this.state.petImages.length; i++) {
             gallery.push(
                 {
-                    key: "https://thousanday.com/img/pet/" + this.state.petImages[i][3] + "/moment/" + this.state.petImages[i][1],
-                    id: this.state.petImages[i][0]
+                    key: "https://thousanday.com/img/pet/" + this.state.petImages[i].pet_id + "/moment/" + this.state.petImages[i].image_name,
+                    id: this.state.petImages[i].moment_id
                 }
             )
         }
@@ -146,10 +100,10 @@ class Pet extends Component {
                             {this.props.data[0].pet_gender === 0 ? "His ": "Her "}Family
                         </Text>
                         <View style={styles.parentBox}>
-                            <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[1][0].user_id)}>
+                            <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[0].owner_id)}>
                                 <Image
                                     style={styles.boxRound}
-                                    source={{uri: "https://thousanday.com/img/user/" + this.props.data[1][0].user_id + ".jpg"}}
+                                    source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].owner_id + ".jpg"}}
                                     mutable
                                 />
                             </TouchableOpacity>
@@ -166,6 +120,11 @@ class Pet extends Component {
                         </View>
                     </View>
                 </View>
+                <TouchableOpacity onPress={this.props.petWatch.bind(null)}>
+                    <Text style={styles.rootWatch}>
+                        {this.props.data[2].indexOf(this.props.userId) === -1?"+ watch":"Watched"} | by {this.props.data[2].length}
+                    </Text>
+                </TouchableOpacity>
                 <View style={styles.rootHolder}>
                     <Image style={styles.holderIcon} source={require("../../image/moment.png")} />
                     <Text style={styles.holderTitle}>
@@ -183,12 +142,6 @@ class Pet extends Component {
                             />
                         </TouchableOpacity>
                     }
-                    onEndReached={()=>{
-                        //Scroll to end, Call load more images function
-                        if (!this.state.petLocker) {
-                            this.loadMore();
-                        }
-                    }}
                 />
             </ScrollView>
         )
@@ -229,8 +182,7 @@ const styles = StyleSheet.create({
         marginRight: 15
     },
     rootTeam: {
-        flexDirection: "row",
-        marginBottom: 30
+        flexDirection: "row"
     },
     teamParent: {
         paddingLeft: 20,
@@ -280,6 +232,17 @@ const styles = StyleSheet.create({
         marginHorizontal: 6,
         borderRadius: 5,
         resizeMode: "contain"
+    },
+    rootWatch: {
+        backgroundColor: "#052456",
+        alignItems: "center",
+        color: "white",
+        paddingVertical: 6,
+        paddingHorizontal: 50,
+        borderRadius: 5,
+        marginTop: 20,
+        marginBottom: 30,
+        fontSize: 16
     },
     rootHolder: {
         flexDirection: "row",

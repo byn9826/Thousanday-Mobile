@@ -24,7 +24,7 @@ class User extends Component {
             //store images
             userImages: this.props.data[4] || [],
             //indicate lock load more function
-            userLocker: (this.props.data[4].length < 20)? true: false,
+            userLocker: false,
             //indicate how many time load more image
             loadTimes: 1
         };
@@ -41,41 +41,36 @@ class User extends Component {
         let user = await GoogleSignin.currentUserAsync();
     }
     //load more moments
+    /*
     loadMore() {
-        let data = {
-            "petId": this.props.data[0].pet_name,
-            "showMore": this.state.loadTimes,
-            "addOne": 0
-        };
-        fetch("https://thousanday.com/user/loadMoment", {
+        alert(123);
+        fetch("http://192.168.0.13:5000/users/loadMoments", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                "petsList": this.props.data[7],
-                "showMore": this.state.loadTimes
+                "petsList": this.props.data[3],
+                "loadTimes": this.state.loadTimes
             })
         })
         .then((response) => response.json())
         .then((result) => {
             switch (result) {
                 case 0:
-                    alert("Can't get data, try later");
-                    break;
-                case 1:
-                    //active lock when no more images
-                    this.setState({userLocker: true});
+                    alert("Can't get data, please try later");
                     break;
                 default:
                     //lock load more image
-                    if (result.length < 20) {
+                    if (result.length < 20 && result.length > 0) {
                         this.setState({
                             userImages: this.state.userImages.concat(result),
                             loadTimes: this.state.loadTimes + 1,
                             userLocker: true
                         });
+                    } else if (result.length === 0) {
+                        this.setState({userLocker: true});
                     } else {
                         this.setState({
                             userImages: this.state.userImages.concat(result),
@@ -85,24 +80,28 @@ class User extends Component {
             }
         });
     }
+    */
     //logout with google
     _gLogout() {
         GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
-            fetch("https://thousanday.com/account/logOut", {
+            fetch("http://192.168.0.13:5000/accounts/logOut", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
                 },
+                body: JSON.stringify({
+                    "id": this.props.userId
+                })
             })
             .then((response) => response.json())
             .then((result) => {
                 switch (result) {
                     case 0:
-                        this.props.fbLogout();
+                        alert("Something wrong, please try again");
                         break;
                     case 1:
-                        alert("Something wrong, please try again");
+                        this.props.userLogout();
                         break;
                 }
             });
@@ -121,7 +120,7 @@ class User extends Component {
             )
         }
         //show all pets
-        let pets = this.props.data[3].map((pet, index) =>
+        let pets = this.props.data[2].map((pet, index) =>
             <TouchableOpacity key={"petsthousn" + index} onPress={this.props.clickPet.bind(null, pet.pet_id)}>
                 <View style={styles.petHub}>
                     <CachedImage
@@ -158,14 +157,16 @@ class User extends Component {
         if (this.props.home) {
             panel = (
                 <View style={styles.mainAction}>
-                    <View style={styles.actionCircle}>
-                        <Text style={styles.circleContent}>
-                            Add
-                        </Text>
-                        <Text style={styles.circleContent}>
-                            Pet
-                        </Text>
-                    </View>
+                    <TouchableOpacity onPress={this.props.clickAddPet.bind(this)}>
+                        <View style={styles.actionCircle}>
+                            <Text style={styles.circleContent}>
+                                Add
+                            </Text>
+                            <Text style={styles.circleContent}>
+                                Pet
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                     <View style={styles.actionCircle}>
                         <Text style={styles.circleContent}>
                             Edit
@@ -202,12 +203,12 @@ class User extends Component {
             );
             welcome = (
                 <Text style={styles.headerHome}>
-                    Welcome Home! {this.props.data[0].user_name}
+                    Welcome Home! {this.props.data[0][0]}
                 </Text>
             )
             if (this.props.platform === "facebook") {
                 logout = (
-                    <Facebook fbLogout={this.props.fbLogout.bind(this)}/>
+                    <Facebook userId={this.props.userId} userLogout={this.props.userLogout.bind(this)}/>
                 )
             } else {
                 logout = (
@@ -221,7 +222,7 @@ class User extends Component {
         } else {
             welcome = (
                 <Text style={styles.headerName}>
-                    Welcome to {this.props.data[0].user_name + "'s"} Home
+                    Welcome to {this.props.data[0][0] + "'s"} Home
                 </Text>
             );
         }
@@ -229,7 +230,7 @@ class User extends Component {
             <ScrollView contentContainerStyle={styles.main}>
                 <View style={styles.mainHeader}>
                     <CachedImage
-                        source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].user_id + ".jpg"}}
+                        source={{uri: "https://thousanday.com/img/user/" + this.props.userId + ".jpg"}}
                         style={styles.headerAvatar}
                         mutable
                     />
@@ -263,12 +264,6 @@ class User extends Component {
                             />
                         </TouchableOpacity>
                     }
-                    onEndReached={()=>{
-                        //Scroll to end, Call load more images function
-                        if (!this.state.userLocker) {
-                            this.loadMore();
-                        }
-                    }}
                 />
             </ScrollView>
         )
@@ -282,21 +277,24 @@ let Facebook = React.createClass({
                 <LoginButton
                     onLogoutFinished={
                         () => {
-                            fetch("https://thousanday.com/account/logOut", {
+                            fetch("http://192.168.0.13:5000/accounts/logOut", {
                                 method: "POST",
                                 headers: {
                                     "Accept": "application/json",
                                     "Content-Type": "application/json",
                                 },
+                                body: JSON.stringify({
+                                    "id": this.props.userId
+                                })
                             })
                             .then((response) => response.json())
                             .then((result) => {
                                 switch (result) {
                                     case 0:
-                                        this.props.fbLogout();
+                                        alert("Something wrong, please try again");
                                         break;
                                     case 1:
-                                        alert("Something wrong, please try again");
+                                        this.props.userLogout();
                                         break;
                                 }
                             });

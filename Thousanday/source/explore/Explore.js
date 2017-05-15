@@ -36,20 +36,17 @@ class Explore extends Component {
             this.setState({type: type});
             //require info
             if (this.state.nature) {
-                let data = {
-                    "type": type,
-                    "nature": this.state.nature,
-                    "load": 0
-                };
-                fetch("https://thousanday.com/explore/getMoment", {
+                fetch("http://192.168.0.13:5000/explores/searchMoments", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
-                        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                        "Content-Type": "application/json",
                     },
-                    body: Object.keys(data).map((key) => {
-                        return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-                    }).join('&')
+                    body: JSON.stringify({
+                        "type": type,
+                        "nature": this.state.nature,
+                        "load": 0
+                    })
                 })
                 .then((response) => response.json())
                 .then((result) => {
@@ -84,20 +81,17 @@ class Explore extends Component {
             this.setState({nature: nature});
             //if chosed nature and type do search
             if (this.state.type) {
-                let data = {
-                    "type": this.state.type,
-                    "nature": nature,
-                    "load": 0
-                };
-                fetch("https://thousanday.com/explore/getMoment", {
+                fetch("http://192.168.0.13:5000/explores/searchMoments", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
-                        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                        "Content-Type": "application/json",
                     },
-                    body: Object.keys(data).map((key) => {
-                        return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-                    }).join('&')
+                    body: JSON.stringify({
+                        "type": this.state.type,
+                        "nature": nature,
+                        "load": 0
+                    })
                 })
                 .then((response) => response.json())
                 .then((result) => {
@@ -122,60 +116,6 @@ class Explore extends Component {
                 });
 			}
         }
-    }
-    loadMore() {
-        let data = {
-            "type": this.state.type,
-            "nature": this.state.nature,
-            "load": this.state.loadTimes
-        };
-        fetch("https://thousanday.com/explore/getMoment", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-            },
-            body: Object.keys(data).map((key) => {
-                return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-            }).join('&')
-        })
-        .then((response) => response.json())
-        .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, try later");
-                    break;
-                default:
-                    //update when there's new data
-                    if (result.length !== 0) {
-                        //consist watch data with all image src
-                        let newImages = [], i;
-                        for (i = 0; i < result.length; i++) {
-                            newImages.push(
-                                {
-                                    key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name
-                                }
-                            )
-                        }
-                        //lock load more watch public image function
-                        if (result.length < 20) {
-                            this.setState({
-                                initImages: this.state.initImages.concat(newImages),
-                                loadTimes: this.state.loadTimes + 1,
-                                moreLocker: true
-                            });
-                        } else {
-                            this.setState({
-                                initImages: this.state.initImages.concat(newImages),
-                                loadTimes: this.state.loadTimes + 1
-                            });
-                        }
-                    } else {
-                        //active lock when no more images
-                        this.setState({moreLocker: true});
-                    }
-            }
-        });
     }
     render() {
         return (
@@ -232,12 +172,6 @@ class Explore extends Component {
                             />
                         </TouchableOpacity>
                     }
-                    onEndReached={()=>{
-                        //Scroll to end, Call load more images function
-                        if (!this.state.moreLocker) {
-                            this.loadMore();
-                        }
-                    }}
                 />
             </ScrollView>
         )
