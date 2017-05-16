@@ -101,7 +101,7 @@ class AddPet extends Component {
                         this.props.refreshUser();
                         break;
                     case 2:
-                        alert("Please retry the process");
+                        alert("Please try to login again");
                         break;
                 }
             });
@@ -176,6 +176,9 @@ class AddPet extends Component {
                         <Picker.Item label="beauty" value={3} />
                     </Picker>
                 </View>
+                <Text style={styles.rootNotice}>
+                    {"You can't modify gender, type, and nature after creation"}
+                </Text>
                 <Button
                     onPress={this.pickImg.bind(this)}
                     title="Upload Avatar"
@@ -241,11 +244,15 @@ const styles = StyleSheet.create({
     rowPicker: {
         width: 220,
     },
+    rootNotice:{
+        fontSize: 14,
+        marginBottom: 20
+    },
     rootAvatar: {
         width: 250,
         height: 250,
         alignSelf: "center",
-        marginTop: 20
+        marginTop: 40
     },
     rowError: {
         color: "red",

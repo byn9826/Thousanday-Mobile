@@ -40,48 +40,6 @@ class User extends Component {
         });
         let user = await GoogleSignin.currentUserAsync();
     }
-    //load more moments
-    /*
-    loadMore() {
-        alert(123);
-        fetch("http://192.168.0.13:5000/users/loadMoments", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "petsList": this.props.data[3],
-                "loadTimes": this.state.loadTimes
-            })
-        })
-        .then((response) => response.json())
-        .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, please try later");
-                    break;
-                default:
-                    //lock load more image
-                    if (result.length < 20 && result.length > 0) {
-                        this.setState({
-                            userImages: this.state.userImages.concat(result),
-                            loadTimes: this.state.loadTimes + 1,
-                            userLocker: true
-                        });
-                    } else if (result.length === 0) {
-                        this.setState({userLocker: true});
-                    } else {
-                        this.setState({
-                            userImages: this.state.userImages.concat(result),
-                            loadTimes: this.state.loadTimes + 1
-                        });
-                    }
-            }
-        });
-    }
-    */
-    //logout with google
     _gLogout() {
         GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
             fetch("http://192.168.0.13:5000/accounts/logOut", {
@@ -183,14 +141,16 @@ class User extends Component {
                             Profile
                         </Text>
                     </View>
-                    <View style={styles.actionCircle}>
-                        <Text style={styles.circleContent}>
-                            Post
-                        </Text>
-                        <Text style={styles.circleContent}>
-                            Moment
-                        </Text>
-                    </View>
+                    <TouchableOpacity onPress={this.props.clickPostMoment.bind(this)}>
+                        <View style={styles.actionCircle}>
+                            <Text style={styles.circleContent}>
+                                Post
+                            </Text>
+                            <Text style={styles.circleContent}>
+                                Moment
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                     <View style={styles.actionCircle}>
                         <Text style={styles.circleContent}>
                             Friend

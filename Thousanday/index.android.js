@@ -13,6 +13,7 @@ import AddPet from "./source/pet/Add";
 import User from "./source/user/User";
 import Explore from "./source/explore/Explore";
 import Moment from "./source/moment/Moment";
+import PostMoment from "./source/moment/Post";
 import Love from "./source/love/Love";
 import Login from "./source/login/Login";
 
@@ -102,7 +103,11 @@ export default class Thousanday extends Component {
     //change view by route if user click on footer
     changeView(view) {
         if (this.state.route != view) {
-            this.setState({route: view});
+            if (view === "postMoment" && !this.state.userId) {
+                this.setState({route: "home"});
+            } else {
+                this.setState({route: view});
+            }
         }
     }
     //load more images for watch page
@@ -267,6 +272,10 @@ export default class Thousanday extends Component {
     clickAddPet() {
         this.setState({route: "addPet"});
     }
+    //if user click on post moment
+    clickPostMoment() {
+        this.setState({route: "postMoment"});
+    }
     //process user login action
     processLogin(result, platform) {
         fetch("http://192.168.0.13:5000/users/read", {
@@ -360,6 +369,33 @@ export default class Thousanday extends Component {
     refreshUser() {
         this.setState({userData: null, route: "home"});
     }
+    //refresh user,moment, pet data, and go to new moment
+    refreshMoment(id) {
+        fetch("http://192.168.0.13:5000/moments/readMoment", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "id": id
+            })
+        })
+        .then((response) => response.json())
+        .then((moment) => {
+            switch (moment) {
+                case 0:
+                    alert("Can't get data, try later");
+                    break;
+                case 2:
+                    alert("Moment not exist");
+                    break;
+                default:
+                    this.setState({route: "moment", userData: null, petId: null, momentData: moment, momentId: id});
+                    break;
+            }
+        });
+    }
     render() {
         //page route system
         let route;
@@ -396,13 +432,28 @@ export default class Thousanday extends Component {
                 />;
                 break;
             case "moment":
-                route = <Moment data={this.state.momentData} clickPet={this.clickPet.bind(this)} />
+                route = <Moment
+                    data={this.state.momentData}
+                    clickPet={this.clickPet.bind(this)}
+                />
                 break;
             case "love":
                 route = <Love />
                 break;
             case "addPet":
-                route = <AddPet userId={this.state.userId} userToken={this.state.userToken} refreshUser={this.refreshUser.bind(this)} />
+                route = <AddPet
+                    userId={this.state.userId}
+                    userToken={this.state.userToken}
+                    refreshUser={this.refreshUser.bind(this)}
+                />
+                break;
+            case "postMoment":
+                route = <PostMoment
+                    petList={this.state.userData[2]}
+                    userId={this.state.userId}
+                    userToken={this.state.userToken}
+                    refreshMoment={this.refreshMoment.bind(this)}
+                />
                 break;
             case "home":
                 //user already logged in
@@ -417,6 +468,7 @@ export default class Thousanday extends Component {
                             clickPet={this.clickPet.bind(this)}
                             clickMoment={this.clickMoment.bind(this)}
                             clickAddPet={this.clickAddPet.bind(this)}
+                            clickPostMoment={this.clickPostMoment.bind(this)}
                             userLogout={this.userLogout.bind(this)}
                             platform={this.state.userPlatform}
                         />;
@@ -432,6 +484,7 @@ export default class Thousanday extends Component {
                                 clickPet={this.clickPet.bind(this)}
                                 clickMoment={this.clickMoment.bind(this)}
                                 clickAddPet={this.clickAddPet.bind(this)}
+                                clickPostMoment={this.clickPostMoment.bind(this)}
                                 userLogout={this.userLogout.bind(this)}
                                 platform={this.state.userPlatform}
                             />;
