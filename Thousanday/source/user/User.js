@@ -214,7 +214,7 @@ class User extends Component {
                     {pets}
                 </View>
                 <Text style={styles.mainTitle}>
-                    Relatives
+                    Relatives (Your user id is {this.props.userId})
                 </Text>
                 <View style={styles.mainUser}>
                     {relatives}

@@ -26,7 +26,9 @@ class EditPet extends Component {
             relative: this.props.data.relative_id || null,
             getName: null,
             search: null,
-            addResult: false
+            addResult: false,
+            remove: false,
+            transfer: false
         };
     }
     //save name
@@ -179,6 +181,72 @@ class EditPet extends Component {
             }
         });
     }
+    //click transfer owner ship
+    clickTransfer() {
+        this.setState({transfer: true, remove: false});
+    }
+    //confirmTransfer Ownership
+    confirmTransfer() {
+        fetch("http://192.168.0.13:5000/panels/transferOwnership", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "id": this.props.userId,
+                "token": this.props.userToken,
+                "pet": this.props.data.pet_id
+            })
+        })
+        .then((response) => response.json())
+        .then((result) => {
+            switch (result) {
+                case 0:
+                    alert("Can't get data, try later!");
+                    break;
+                case 1:
+                    this.setState({relative: this.props.userId, role: false});
+                    break;
+                case 2:
+                    alert("Please try to login again");
+                    break;
+            }
+        });
+    }
+    //click remove pet
+    clickRemove() {
+        this.setState({remove: true, transfer: false});
+    }
+    //confirm remove pet
+    confirmRemove() {
+        fetch("http://192.168.0.13:5000/panels/removeRelative", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "id": this.props.userId,
+                "token": this.props.userToken,
+                "pet": this.props.data.pet_id
+            })
+        })
+        .then((response) => response.json())
+        .then((result) => {
+            switch (result) {
+                case 0:
+                    alert("Can't get data, try later!");
+                    break;
+                case 1:
+                    this.setState({relative: null, remove: false, input: ""});
+                    break;
+                case 2:
+                    alert("Please try to login again");
+                    break;
+            }
+        });
+    }
     render() {
         let role, action;
         if (this.state.role) {
@@ -187,7 +255,72 @@ class EditPet extends Component {
                 action = null;
             } else {
                 if (this.state.relative) {
-                    action = null;
+                    if (!this.state.remove && !this.state.transfer) {
+                        action = (
+                            <View style={styles.ownerAction}>
+                                <View style={styles.actionButton}>
+                                    <Button
+                                        onPress={this.clickTransfer.bind(this)}
+                                        title="Transfer Ownership?"
+                                        color="red"
+                                    />
+                                </View>
+                                <Button
+                                    onPress={this.clickRemove.bind(this)}
+                                    title="Remove Relative?"
+                                    color="red"
+                                />
+                            </View>
+                        )
+                    } else if (this.state.transfer) {
+                        action = (
+                            <View style={styles.ownerConfirm}>
+                                <Text style={styles.confirmHint}>
+                                    Type in "Confirm Transfer" to transfer your ownership to {this.props.data.pet_name} {"'s relative"}
+                                </Text>
+                                <TextInput
+                                    style={styles.confirmInput}
+                                    onChangeText={(text) =>
+                                        this.setState({input: text})
+                                    }
+                                    value={this.state.input}
+                                />
+                                {
+                                    this.state.input.trim() === "Confirm Transfer"?(
+                                        <Button
+                                            onPress={this.confirmTransfer.bind(this)}
+                                            title="Confirm"
+                                            color="black"
+                                        />
+                                    ): null
+                                }
+                            </View>
+                        )
+                    } else if (this.state.remove) {
+                        action = (
+                            <View style={styles.ownerConfirm}>
+                                <Text style={styles.confirmHint}>
+                                    Type in "Confirm Remove" to remove {this.props.data.pet_name} {"'s relative"}
+                                </Text>
+                                <TextInput
+                                    style={styles.confirmInput}
+                                    onChangeText={(text) =>
+                                        this.setState({input: text})
+                                    }
+                                    value={this.state.input}
+                                />
+                                {
+                                    this.state.input.trim() === "Confirm Remove"?(
+                                        <Button
+                                            onPress={this.confirmRemove.bind(this)}
+                                            title="Confirm"
+                                            color="black"
+                                        />
+                                    ): null
+                                }
+                            </View>
+                        )
+                    }
                 } else {
                     if (this.state.add && !this.state.addResult) {
                         action = (
@@ -500,6 +633,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         alignSelf: "center",
         color: "red"
+    },
+    actionButton: {
+        marginBottom: 15
     }
 });
 
