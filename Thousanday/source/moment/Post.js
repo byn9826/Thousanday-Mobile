@@ -27,7 +27,7 @@ class PostMoment extends Component {
             mediaType: "photo",
             compressImageMaxWidth: 600,
             compressImageMaxHeight: 600,
-            compressImageQuality: 0.7
+            compressImageQuality: 0.8
         }).then(image => {
             this.setState({
                 image: {uri: image.path, width: image.width, height: image.height, mime: image.mime}
@@ -40,7 +40,7 @@ class PostMoment extends Component {
             mediaType: "photo",
             compressImageMaxWidth: 600,
             compressImageMaxHeight: 600,
-            compressImageQuality: 0.7
+            compressImageQuality: 0.8
         }).then(image => {
             this.setState({
                 image: {uri: image.path, width: image.width, height: image.height, mime: image.mime}
@@ -70,7 +70,7 @@ class PostMoment extends Component {
             data.append("token", this.props.userToken);
             data.append("id", this.props.userId);
             data.append("pet", pet);
-            fetch("http://192.168.0.13:5000/panels/createMoment", {
+            fetch("https://thousanday.com/panels/createMoment", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",

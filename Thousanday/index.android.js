@@ -14,6 +14,8 @@ import User from "./source/user/User";
 import Explore from "./source/explore/Explore";
 import Moment from "./source/moment/Moment";
 import PostMoment from "./source/moment/Post";
+import EditProfile from "./source/user/Change";
+import EditPet from "./source/pet/Edit";
 import Love from "./source/love/Love";
 import Login from "./source/login/Login";
 
@@ -54,7 +56,7 @@ export default class Thousanday extends Component {
     //get most recent public images for watch on app open
     componentWillMount() {
         //load 20 newest moments by default
-        fetch("http://192.168.0.13:5000/lists/readPublic", {
+        fetch("https:thousanday.com/lists/readPublic", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -114,7 +116,7 @@ export default class Thousanday extends Component {
     loadWatch() {
         //check if watch lock exist
         if (!this.state.watchLocker) {
-            fetch("http://192.168.0.13:5000/lists/loadPublic", {
+            fetch("https://thousanday.com/lists/loadPublic", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -168,7 +170,7 @@ export default class Thousanday extends Component {
     clickPet(id) {
         //pet page didn't be requested before
         if (this.state.petId !== id) {
-            fetch("http://192.168.0.13:5000/pets/readPet", {
+            fetch("https://thousanday.com/pets/readPet", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -205,7 +207,7 @@ export default class Thousanday extends Component {
         } else {
             //user page didn't be requested before
             if (this.state.pageId !== id) {
-                fetch("http://192.168.0.13:5000/users/read", {
+                fetch("https://thousanday.com/users/read", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -239,7 +241,7 @@ export default class Thousanday extends Component {
     clickMoment(id) {
         //last visit is not same moment, get data
         if (this.state.momentId !== id) {
-            fetch("http://192.168.0.13:5000/moments/readMoment", {
+            fetch("https://thousanday.com/moments/readMoment", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -278,7 +280,7 @@ export default class Thousanday extends Component {
     }
     //process user login action
     processLogin(result, platform) {
-        fetch("http://192.168.0.13:5000/users/read", {
+        fetch("https://thousanday.com/users/read", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -331,7 +333,7 @@ export default class Thousanday extends Component {
                 action = 1;
             }
             //watch or unwatch pet
-            fetch("http://192.168.0.13:5000/pets/updateWatch", {
+            fetch("https://thousanday.com/pets/updateWatch", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -371,7 +373,7 @@ export default class Thousanday extends Component {
     }
     //refresh user,moment, pet data, and go to new moment
     refreshMoment(id) {
-        fetch("http://192.168.0.13:5000/moments/readMoment", {
+        fetch("https://thousanday.com/moments/readMoment", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -395,6 +397,14 @@ export default class Thousanday extends Component {
                     break;
             }
         });
+    }
+    //click edit profile page
+    clickEditProfile() {
+        this.setState({route: "editProfile"});
+    }
+    //click edit pet
+    clickEditPet(id) {
+        alert(id);
     }
     render() {
         //page route system
@@ -455,6 +465,19 @@ export default class Thousanday extends Component {
                     refreshMoment={this.refreshMoment.bind(this)}
                 />
                 break;
+            case "editProfile":
+                route = <EditProfile
+                    userId={this.state.userId}
+                    userName={this.state.userData[0][0]}
+                    userToken={this.state.userToken}
+                    refreshUser={this.refreshUser.bind(this)}
+                />
+                break;
+            case "editPet":
+                route = <EditPet
+
+                />
+                break;
             case "home":
                 //user already logged in
                 if (this.state.userId) {
@@ -469,6 +492,8 @@ export default class Thousanday extends Component {
                             clickMoment={this.clickMoment.bind(this)}
                             clickAddPet={this.clickAddPet.bind(this)}
                             clickPostMoment={this.clickPostMoment.bind(this)}
+                            clickEditProfile={this.clickEditProfile.bind(this)}
+                            clickEditPet={this.clickEditPet.bind(this)}
                             userLogout={this.userLogout.bind(this)}
                             platform={this.state.userPlatform}
                         />;
@@ -485,6 +510,8 @@ export default class Thousanday extends Component {
                                 clickMoment={this.clickMoment.bind(this)}
                                 clickAddPet={this.clickAddPet.bind(this)}
                                 clickPostMoment={this.clickPostMoment.bind(this)}
+                                clickEditProfile={this.clickEditProfile.bind(this)}
+                                clickEditPet={this.clickEditPet.bind(this)}
                                 userLogout={this.userLogout.bind(this)}
                                 platform={this.state.userPlatform}
                             />;

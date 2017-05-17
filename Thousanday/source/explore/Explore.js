@@ -36,7 +36,7 @@ class Explore extends Component {
             this.setState({type: type});
             //require info
             if (this.state.nature) {
-                fetch("http://192.168.0.13:5000/explores/searchMoments", {
+                fetch("https://thousanday.com/explores/searchMoments", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -81,7 +81,7 @@ class Explore extends Component {
             this.setState({nature: nature});
             //if chosed nature and type do search
             if (this.state.type) {
-                fetch("http://192.168.0.13:5000/explores/searchMoments", {
+                fetch("https://thousanday.com/explores/searchMoments", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",

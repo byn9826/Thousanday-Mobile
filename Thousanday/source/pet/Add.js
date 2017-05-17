@@ -83,7 +83,7 @@ class AddPet extends Component {
             data.append("file", file);
             data.append("token", this.props.userToken);
             data.append("id", this.props.userId);
-            fetch("http://192.168.0.13:5000/panels/createPet", {
+            fetch("https://thousanday.com/panels/createPet", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",

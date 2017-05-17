@@ -27,8 +27,7 @@ class Login extends Component {
     _gSignIn() {
         GoogleSignin.signIn()
             .then((user) => {
-                //https://thousanday.com/account/gMobileLogin
-                fetch("http://192.168.0.13:5000/accounts/gLogin", {
+                fetch("https://thousanday.com/accounts/gLogin", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -92,7 +91,7 @@ let Facebook = React.createClass({
                             } else {
                                 AccessToken.getCurrentAccessToken().then(
                                     (data) => {
-                                        fetch("http://192.168.0.13:5000/accounts/fLogin", {
+                                        fetch("https://thousanday.com/accounts/fLogin", {
                                             method: "POST",
                                             headers: {
                                                 "Accept": "application/json",

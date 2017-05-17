@@ -33,7 +33,13 @@ class Header extends Component {
                 title = "Add new pet";
                 break;
             case "postMoment":
-                title = "Share your moment"
+                title = "Share your moment";
+                break;
+            case "editProfile":
+                title = "Tell the world about you";
+                break;
+            case "editPet":
+                title = "Edit your pet";
                 break;
         }
         return (

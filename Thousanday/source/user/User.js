@@ -42,7 +42,7 @@ class User extends Component {
     }
     _gLogout() {
         GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
-            fetch("http://192.168.0.13:5000/accounts/logOut", {
+            fetch("https://thousanday.com/accounts/logOut", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -79,26 +79,39 @@ class User extends Component {
         }
         //show all pets
         let pets = this.props.data[2].map((pet, index) =>
-            <TouchableOpacity key={"petsthousn" + index} onPress={this.props.clickPet.bind(null, pet.pet_id)}>
-                <View style={styles.petHub}>
+            <View key={"petsthousn" + index} style={styles.petHub}>
+                <TouchableOpacity onPress={this.props.clickPet.bind(null, pet.pet_id)}>
                     <CachedImage
                         source={{uri: "https://thousanday.com/img/pet/" + pet.pet_id + "/cover/0.png"}}
                         style={styles.hubPet}
                         mutable
                     />
-                    <View style={styles.hubDesc} >
+                </TouchableOpacity>
+                {
+                    !this.props.home?
+                    (<View style={styles.hubDesc} >
                         <Text style={styles.descType}>
                             {noGetType(pet.pet_type)}
                         </Text>
                         <Text style={styles.descGender}>
                             {noGetGender(pet.pet_gender)}
                         </Text>
-                    </View>
-                    <Text style={styles.hubName}>
-                        {pet.pet_name}
-                    </Text>
-                </View>
-            </TouchableOpacity>
+                    </View>):null
+                }
+                <Text style={styles.hubName}>
+                    {pet.pet_name}
+                </Text>
+                {
+                    this.props.home?
+                    (
+                        <TouchableOpacity onPress={this.props.clickEditPet.bind(null, pet.pet_id)}>
+                            <Text style={styles.hubEdit}>
+                                Edit
+                            </Text>
+                        </TouchableOpacity>
+                    ):null
+                }
+            </View>
         )
         //show all relatives
         let relatives = this.props.data[1].map((relative, index) =>
@@ -125,22 +138,16 @@ class User extends Component {
                             </Text>
                         </View>
                     </TouchableOpacity>
-                    <View style={styles.actionCircle}>
-                        <Text style={styles.circleContent}>
-                            Edit
-                        </Text>
-                        <Text style={styles.circleContent}>
-                            Pet
-                        </Text>
-                    </View>
-                    <View style={styles.actionCircle}>
-                        <Text style={styles.circleContent}>
-                            Edit
-                        </Text>
-                        <Text style={styles.circleContent}>
-                            Profile
-                        </Text>
-                    </View>
+                    <TouchableOpacity onPress={this.props.clickEditProfile.bind(this)}>
+                        <View style={styles.actionCircle}>
+                            <Text style={styles.circleContent}>
+                                Edit
+                            </Text>
+                            <Text style={styles.circleContent}>
+                                Profile
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={this.props.clickPostMoment.bind(this)}>
                         <View style={styles.actionCircle}>
                             <Text style={styles.circleContent}>
@@ -153,7 +160,7 @@ class User extends Component {
                     </TouchableOpacity>
                     <View style={styles.actionCircle}>
                         <Text style={styles.circleContent}>
-                            Friend
+                            Watch
                         </Text>
                         <Text style={styles.circleContent}>
                             List
@@ -161,11 +168,6 @@ class User extends Component {
                     </View>
                 </View>
             );
-            welcome = (
-                <Text style={styles.headerHome}>
-                    Welcome Home! {this.props.data[0][0]}
-                </Text>
-            )
             if (this.props.platform === "facebook") {
                 logout = (
                     <Facebook userId={this.props.userId} userLogout={this.props.userLogout.bind(this)}/>
@@ -179,6 +181,14 @@ class User extends Component {
                     </TouchableOpacity>
                 )
             }
+            welcome = (
+                <View style={styles.headerContainer}>
+                    <Text style={styles.headerHome}>
+                        Welcome Home! {this.props.data[0][0]}
+                    </Text>
+                    {logout}
+                </View>
+            )
         } else {
             welcome = (
                 <Text style={styles.headerName}>
@@ -197,7 +207,6 @@ class User extends Component {
                     {welcome}
                 </View>
                 {panel}
-                {logout}
                 <Text style={styles.mainTitle}>
                     Pets List
                 </Text>
@@ -237,7 +246,7 @@ let Facebook = React.createClass({
                 <LoginButton
                     onLogoutFinished={
                         () => {
-                            fetch("http://192.168.0.13:5000/accounts/logOut", {
+                            fetch("https://thousanday.com/accounts/logOut", {
                                 method: "POST",
                                 headers: {
                                     "Accept": "application/json",
@@ -270,6 +279,9 @@ const styles = StyleSheet.create({
     main: {
         marginHorizontal: 10
     },
+    headerContainer: {
+        alignItems: "center"
+    },
     mainHeader: {
         flexDirection: "row",
         alignItems: "center",
@@ -279,29 +291,23 @@ const styles = StyleSheet.create({
         marginTop: 10,
         width: 100,
         height: 100,
-        borderRadius: 50
+        borderRadius: 50,
+        marginRight: 20
     },
     headerName: {
-        marginLeft: 20,
         fontWeight: "bold",
         fontSize: 16
     },
     headerHome: {
-        marginLeft: 20,
         fontWeight: "bold",
-        fontSize: 16,
-        backgroundColor: "#052456",
-        color: "white",
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        borderRadius: 5
+        fontSize: 20,
     },
     mainGoogle: {
         width: 186,
         backgroundColor: "#052456",
-        height: 38,
+        height: 30,
         borderRadius: 5,
-        marginTop: 20,
+        marginTop: 5,
         alignItems: "center",
         justifyContent: "center"
     },
@@ -310,7 +316,7 @@ const styles = StyleSheet.create({
         fontSize: 14
     },
     mainLogout: {
-        marginTop: 20,
+        marginTop: 10,
     },
     mainAction: {
         flexDirection: "row",
@@ -348,7 +354,8 @@ const styles = StyleSheet.create({
     mainPet: {
         flexDirection: "row",
         flexWrap: "wrap",
-        paddingLeft: 10
+        paddingLeft: 10,
+        marginBottom: 15
     },
     petHub: {
         backgroundColor: "#f7f9fc",
@@ -363,9 +370,19 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 5,
         borderTopRightRadius: 5
     },
+    hubEdit: {
+        fontSize: 12,
+        backgroundColor: "#ef8513",
+        width: 90,
+        paddingVertical: 5,
+        color: "white",
+        borderBottomLeftRadius: 5,
+        borderBottomRightRadius: 5,
+        textAlign: "center"
+    },
     hubDesc: {
         flexDirection: "row",
-        alignItems: "center"
+        alignItems: "center",
     },
     descType: {
         fontSize: 12,
