@@ -22,13 +22,10 @@ class EditProfile extends Component {
     }
     pickImg() {
         ImagePicker.openPicker({
-            width: 200,
-            height: 200,
+            width: 300,
+            height: 300,
             mediaType: "photo",
             cropping: true,
-            compressImageMaxWidth: 600,
-            compressImageMaxHeight: 600,
-            compressImageQuality: 0.8
         }).then(image => {
             this.setState({
                 avatar: {uri: image.path, width: image.width, height: image.height, mime: this.props.userId + ".jpg"},

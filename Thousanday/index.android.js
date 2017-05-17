@@ -50,7 +50,9 @@ export default class Thousanday extends Component {
             //store visit moment id
             momentId: null,
             //store all moment data
-            momentData: []
+            momentData: [],
+            //store edit pet data
+            editData: []
         };
     }
     //get most recent public images for watch on app open
@@ -369,7 +371,11 @@ export default class Thousanday extends Component {
     }
     //refresh user's data
     refreshUser() {
-        this.setState({userData: null, route: "home"});
+        this.setState({userData: null, route: "home", petId: null});
+    }
+    //empty pet data
+    refreshPet() {
+        this.setState({petId: null});
     }
     //refresh user,moment, pet data, and go to new moment
     refreshMoment(id) {
@@ -402,9 +408,22 @@ export default class Thousanday extends Component {
     clickEditProfile() {
         this.setState({route: "editProfile"});
     }
-    //click edit pet
+    //click edit pet, get info for one pet
     clickEditPet(id) {
-        alert(id);
+        fetch("http://192.168.0.13:5000/panels/initEdit", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "id": id
+            })
+        })
+        .then((response) => response.json())
+        .then((pet) => {
+            this.setState({editData: pet, route: "editPet"});
+        });
     }
     render() {
         //page route system
@@ -475,7 +494,11 @@ export default class Thousanday extends Component {
                 break;
             case "editPet":
                 route = <EditPet
-
+                    data={this.state.editData}
+                    userId={this.state.userId}
+                    userToken={this.state.userToken}
+                    refreshPet={this.refreshPet.bind(this)}
+                    refreshUser={this.refreshUser.bind(this)}
                 />
                 break;
             case "home":
