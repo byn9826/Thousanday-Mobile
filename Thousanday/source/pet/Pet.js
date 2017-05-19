@@ -31,7 +31,7 @@ class Pet extends Component {
         if (this.props.data[0].relative_id) {
             parent = (
                 <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[0].relative_id)}>
-                    <Image
+                    <CachedImage
                         style={styles.boxRound}
                         source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].relative_id + ".jpg"}}
                         mutable
@@ -44,7 +44,7 @@ class Pet extends Component {
         if (this.props.data[0].companion_first) {
             friend1 = (
                 <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[0].companion_first)}>
-                    <Image
+                    <CachedImage
                         style={styles.boxImage}
                         source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].companion_first + "/cover/0.png"}}
                         mutable
@@ -55,7 +55,7 @@ class Pet extends Component {
         if (this.props.data[0].companion_second) {
             friend2 = (
                 <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[0].companion_second)}>
-                    <Image
+                    <CachedImage
                         style={styles.boxImage}
                         source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].companion_second + "/cover/0.png"}}
                         mutable
@@ -101,7 +101,7 @@ class Pet extends Component {
                         </Text>
                         <View style={styles.parentBox}>
                             <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[0].owner_id)}>
-                                <Image
+                                <CachedImage
                                     style={styles.boxRound}
                                     source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].owner_id + ".jpg"}}
                                     mutable

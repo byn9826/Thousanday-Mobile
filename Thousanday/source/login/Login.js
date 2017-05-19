@@ -44,7 +44,9 @@ class Login extends Component {
                             alert("Can't get data, please try later");
                             break;
                         case 2:
-                            alert("Account not exist");
+                            //alert("Account not exist");
+                            //go to register page
+                            this.props.goSignup(user, "google");
                             break;
                         default:
                             this.props.processLogin(result, "google");
@@ -60,9 +62,6 @@ class Login extends Component {
                 <Text style={styles.title}>
                     Welcome! Please login ..
                 </Text>
-                <Text style={styles.notice}>
-                    or Create a new account by Google or Facebook blow
-                </Text>
                 <View style={styles.google}>
                     <GoogleSigninButton
                         style={{width: 186, height: 38}}
@@ -71,7 +70,19 @@ class Login extends Component {
                         onPress={this._gSignIn.bind(this)}
                     />
                 </View>
-                <Facebook facebookId={this.props.processLogin.bind(this)} />
+                <Facebook facebookId={this.props.processLogin.bind(this)} goSignup={this.props.goSignup.bind(this)} />
+                <Text style={styles.notice}>
+                    {"Don't have an account?"}
+                </Text>
+                <Text style={styles.notice}>
+                    {"Simply click the"}
+                </Text>
+                <Text style={styles.notice}>
+                    {"Google or Facebook button above"}
+                </Text>
+                <Text style={styles.notice}>
+                    {"to create one"}
+                </Text>
             </View>
         )
     }
@@ -104,12 +115,11 @@ let Facebook = React.createClass({
                                         .then((response) => response.json())
                                         .then((result) => {
                                             switch(result) {
-
                                                 case 0:
                                                     alert("Can't get data, please try later");
                                                     break;
                                                 case 2:
-                                                    alert("Account not exist");
+                                                    this.props.goSignup(data, "facebook");
                                                     break;
                                                 default:
                                                     this.props.facebookId(result);
@@ -143,7 +153,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     notice: {
-        fontSize: 14
+        fontSize: 14,
+        paddingHorizontal: 50,
+        marginTop: 20,
+        textAlign: "center"
     },
     google: {
         marginTop: 20

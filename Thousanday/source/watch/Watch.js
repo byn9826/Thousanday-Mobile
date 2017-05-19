@@ -14,7 +14,7 @@ class Watch extends Component {
                 contentContainerStyle={styles.container}
                 data = {this.props.data}
                 renderItem={({item}) =>
-                    <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.id)}>
+                    <TouchableOpacity key={"publicwatch" + item.key} onPress={this.props.clickMoment.bind(null, item.id)}>
                         <CachedImage
                             source={{uri: item.key}}
                             style={styles.containerImage}

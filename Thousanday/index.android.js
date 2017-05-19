@@ -16,8 +16,11 @@ import Moment from "./source/moment/Moment";
 import PostMoment from "./source/moment/Post";
 import EditProfile from "./source/user/Change";
 import EditPet from "./source/pet/Edit";
+import WatchList from "./source/watch/Private";
 import Love from "./source/love/Love";
 import Login from "./source/login/Login";
+import Signup from "./source/login/Signup";
+import Request from "./source/request/Request";
 
 export default class Thousanday extends Component {
     constructor(props) {
@@ -52,13 +55,21 @@ export default class Thousanday extends Component {
             //store all moment data
             momentData: [],
             //store edit pet data
-            editData: []
+            editData: [],
+            //store watch list data
+            watchData: [],
+            //store token for signup
+            signupData: null,
+            //store signup platform
+            signupPlatform: null,
+            //store friend request data
+            requestData: []
         };
     }
     //get most recent public images for watch on app open
     componentWillMount() {
         //load 20 newest moments by default
-        fetch("https:thousanday.com/lists/readPublic", {
+        fetch("https://thousanday.com/lists/readPublic", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -299,7 +310,8 @@ export default class Thousanday extends Component {
                     alert("Can't get data, try later");
                     break;
                 case 2:
-                    alert("User not exist");
+                    //go to sign up date if not exist
+                    this.setState({userId: null, userToken: null, userData: null, route: "login"});
                     break;
                 default:
                     if (!this.state.userId) {
@@ -343,6 +355,7 @@ export default class Thousanday extends Component {
                 },
                 body: JSON.stringify({
                     "action": action,
+                    "userId": this.state.userId,
                     "petId": this.state.petId,
                     "userToken": this.state.userToken
                 })
@@ -410,7 +423,7 @@ export default class Thousanday extends Component {
     }
     //click edit pet, get info for one pet
     clickEditPet(id) {
-        fetch("http://192.168.0.13:5000/panels/initEdit", {
+        fetch("https://thousanday.com/panels/initEdit", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -423,6 +436,56 @@ export default class Thousanday extends Component {
         .then((response) => response.json())
         .then((pet) => {
             this.setState({editData: pet, route: "editPet"});
+        });
+    }
+    //click watch lists,get watch list info
+    clickWatchList() {
+        fetch("https://thousanday.com/panels/watchList", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "id": this.state.userId,
+                "pin": 0
+            })
+        })
+        .then((response) => response.json())
+        .then((list) => {
+            this.setState({watchData: list, route: "watchList"});
+        });
+    }
+    //signup feature
+    goSignup(data, platform) {
+        this.setState({signupData: data, signupPlatform: platform, route: "signup"});
+    }
+    //new user login
+    newUser(result, platform) {
+        if (platform === "google") {
+            this._setUserData(result, "google");
+            this.setState({userId: result[0], userToken: result[1], userData: null, userPlatform: "google", route: "home"});
+        } else {
+            this._setUserData(result, "facebook");
+            this.setState({userId: result[0], userToken: result[1], userData: null, userPlatform: "facebook", route: "home"});
+        }
+    }
+    //click friend request button
+    clickRequestMessage() {
+        fetch("http://192.168.0.13:5000/panels/requestMessage", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "id": this.state.userId,
+                "pin": 0
+            })
+        })
+        .then((response) => response.json())
+        .then((list) => {
+            this.setState({requestData: list, route: "requestMessage"});
         });
     }
     render() {
@@ -501,6 +564,29 @@ export default class Thousanday extends Component {
                     refreshUser={this.refreshUser.bind(this)}
                 />
                 break;
+            case "watchList":
+                route = <WatchList
+                    data={this.state.watchData}
+                    userId={this.state.userId}
+                    userToken={this.state.userToken}
+                    clickPet={this.clickPet.bind(this)}
+                    refreshPet={this.refreshPet.bind(this)}
+                />
+                break;
+            case "requestMessage":
+                route = <Request
+                    data={this.state.requestData}
+                    userId={this.state.userId}
+                    userToken={this.state.userToken}
+                />
+                break;
+            case "signup":
+                route = <Signup
+                    data={this.state.signupData}
+                    platform={this.state.signupPlatform}
+                    newUser={this.newUser.bind(this)}
+                />
+                break;
             case "home":
                 //user already logged in
                 if (this.state.userId) {
@@ -517,6 +603,8 @@ export default class Thousanday extends Component {
                             clickPostMoment={this.clickPostMoment.bind(this)}
                             clickEditProfile={this.clickEditProfile.bind(this)}
                             clickEditPet={this.clickEditPet.bind(this)}
+                            clickWatchList={this.clickWatchList.bind(this)}
+                            clickRequestMessage={this.clickRequestMessage.bind(this)}
                             userLogout={this.userLogout.bind(this)}
                             platform={this.state.userPlatform}
                         />;
@@ -535,13 +623,18 @@ export default class Thousanday extends Component {
                                 clickPostMoment={this.clickPostMoment.bind(this)}
                                 clickEditProfile={this.clickEditProfile.bind(this)}
                                 clickEditPet={this.clickEditPet.bind(this)}
+                                clickWatchList={this.clickWatchList.bind(this)}
+                                clickRequestMessage={this.clickRequestMessage.bind(this)}
                                 userLogout={this.userLogout.bind(this)}
                                 platform={this.state.userPlatform}
                             />;
                         });
                     }
                 } else {
-                    route = <Login home={false} processLogin={this.processLogin.bind(this)} />;
+                    route = <Login home={false}
+                        processLogin={this.processLogin.bind(this)}
+                        goSignup={this.goSignup.bind(this)}
+                    />;
                 }
                 break;
         }

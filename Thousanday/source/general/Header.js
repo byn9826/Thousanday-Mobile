@@ -21,7 +21,7 @@ class Header extends Component {
                 title = "Pets Mommy or Daddy";
                 break;
             case "home":
-                title = "A space for your pets";
+                title = "A hive for your pets";
                 break;
             case "moment":
                 title = "Love Moments with pets";
@@ -40,6 +40,9 @@ class Header extends Component {
                 break;
             case "editPet":
                 title = "Edit your pet";
+                break;
+            case "signup":
+                title = "Register for your digital home";
                 break;
         }
         return (

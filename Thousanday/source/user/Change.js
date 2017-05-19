@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import ImagePicker from 'react-native-image-crop-picker';
-import {ImageCache} from "react-native-img-cache";
+import {ImageCache, CachedImage} from "react-native-img-cache";
 class EditProfile extends Component {
     constructor(props) {
         super(props);
@@ -41,7 +41,7 @@ class EditProfile extends Component {
         data.append("file", file);
         data.append("token", this.props.userToken);
         data.append("id", this.props.userId);
-        fetch("http://192.168.0.13:5000/panels/profileImage", {
+        fetch("https://thousanday.com/panels/profileImage", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -68,7 +68,7 @@ class EditProfile extends Component {
     //save name
     saveName() {
         if (this.state.name !== this.props.userName) {
-            fetch("http://192.168.0.13:5000/panels/profileName", {
+            fetch("https://thousanday.com/panels/profileName", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -122,10 +122,20 @@ class EditProfile extends Component {
                     </Text>
                 </View>
                 <View style={styles.rootPicture}>
-                    <Image
-                        style={styles.pictureProfile}
-                        source={this.state.avatar?this.state.avatar:{uri: "https://thousanday.com/img/user/" + this.props.userId + ".jpg"}}
-                    />
+                    {
+                        (this.state.avatar)? (
+                            <Image
+                                style={styles.pictureProfile}
+                                source={this.state.avatar}
+                            />
+                        ): (
+                            <CachedImage
+                                style={styles.pictureProfile}
+                                source={{uri: "https://thousanday.com/img/user/" + this.props.userId + ".jpg"}}
+                                mutable
+                            />
+                        )
+                    }
                     <View style={styles.pictureUpload}>
                         <Button
                             onPress={this.pickImg.bind(this)}

@@ -158,14 +158,26 @@ class User extends Component {
                             </Text>
                         </View>
                     </TouchableOpacity>
-                    <View style={styles.actionCircle}>
-                        <Text style={styles.circleContent}>
-                            Watch
-                        </Text>
-                        <Text style={styles.circleContent}>
-                            List
-                        </Text>
-                    </View>
+                    <TouchableOpacity onPress={this.props.clickWatchList.bind(this)}>
+                        <View style={styles.actionCircle}>
+                            <Text style={styles.circleContent}>
+                                Watch
+                            </Text>
+                            <Text style={styles.circleContent}>
+                                List
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.props.clickRequestMessage.bind(this)}>
+                        <View style={styles.actionCircle}>
+                            <Text style={styles.circleContent}>
+                                Message
+                            </Text>
+                            <Text style={styles.circleContent}>
+                                Box
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
             );
             if (this.props.platform === "facebook") {
@@ -207,21 +219,30 @@ class User extends Component {
                     {welcome}
                 </View>
                 {panel}
-                <Text style={styles.mainTitle}>
-                    Pets List
-                </Text>
+                {
+                    this.props.data[2].length > 0?(
+                        <Text style={styles.mainTitle}>
+                            Pets List
+                        </Text>
+                    ): null
+
+                }
                 <View style={styles.mainPet}>
                     {pets}
                 </View>
                 <Text style={styles.mainTitle}>
-                    Relatives (Your user id is {this.props.userId})
+                    Relatives {this.props.home?"(Your user id is " + this.props.userId + ")":null}
                 </Text>
                 <View style={styles.mainUser}>
                     {relatives}
                 </View>
-                <Text style={styles.mainTitle}>
-                    Moments with pets
-                </Text>
+                {
+                    this.props.data[2].length > 0?(
+                        <Text style={styles.mainTitle}>
+                            Moments with pets
+                        </Text>
+                    ):null
+                }
                 <FlatList
                     contentContainerStyle={styles.mainContainer}
                     data = {gallery}

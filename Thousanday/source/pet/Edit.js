@@ -10,7 +10,7 @@ import {
     ScrollView
 } from "react-native";
 import ImagePicker from 'react-native-image-crop-picker';
-import {ImageCache} from "react-native-img-cache";
+import {ImageCache, CachedImage} from "react-native-img-cache";
 class EditPet extends Component {
     constructor(props) {
         super(props);
@@ -34,7 +34,7 @@ class EditPet extends Component {
     //save name
     saveName() {
         if (this.state.name !== this.props.data.pet_name) {
-            fetch("http://192.168.0.13:5000/panels/petName", {
+            fetch("https://thousanday.com/panels/petName", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -86,7 +86,7 @@ class EditPet extends Component {
         data.append("token", this.props.userToken);
         data.append("id", this.props.userId);
         data.append("pet", this.props.data.pet_id);
-        fetch("http://192.168.0.13:5000/panels/petImage", {
+        fetch("https://thousanday.com/panels/petImage", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -101,7 +101,7 @@ class EditPet extends Component {
                     alert("Can't get data, try later!");
                     break;
                 case 1:
-                    ImageCache.get().bust("https://thousanday.com/img/pet/" + this.props.userId + "/cover/0.png");
+                    ImageCache.get().bust("https://thousanday.com/img/pet/" + this.props.data.pet_id + "/cover/0.png");
                     this.setState({button: "Update Success!"})
                     this.props.refreshPet();
                     break;
@@ -117,7 +117,7 @@ class EditPet extends Component {
     }
     //confirm end relationship
     confirmEnd() {
-        fetch("http://192.168.0.13:5000/panels/endRelation", {
+        fetch("https://thousanday.com/panels/endRelation", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -150,7 +150,7 @@ class EditPet extends Component {
     }
     //confirm send request
     confirmSend() {
-        fetch("http://192.168.0.13:5000/panels/petRequest", {
+        fetch("https://thousanday.com/panels/petRequest", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -187,7 +187,7 @@ class EditPet extends Component {
     }
     //confirmTransfer Ownership
     confirmTransfer() {
-        fetch("http://192.168.0.13:5000/panels/transferOwnership", {
+        fetch("https://thousanday.com/panels/transferOwnership", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -220,7 +220,7 @@ class EditPet extends Component {
     }
     //confirm remove pet
     confirmRemove() {
-        fetch("http://192.168.0.13:5000/panels/removeRelative", {
+        fetch("https://thousanday.com/panels/removeRelative", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -335,7 +335,7 @@ class EditPet extends Component {
                                         if (id >= 0 || text === "") {
                                             this.setState({search: text})
                                             if (text !== "") {
-                                                fetch("http://192.168.0.13:5000/panels/searchUser", {
+                                                fetch("https://thousanday.com/panels/searchUser", {
                                                     method: "POST",
                                                     headers: {
                                                         "Accept": "application/json",
@@ -469,10 +469,20 @@ class EditPet extends Component {
                     </Text>
                 </View>
                 <View style={styles.rootPicture}>
-                    <Image
-                        style={styles.pictureProfile}
-                        source={this.state.avatar?this.state.avatar:{uri: "https://thousanday.com/img/pet/" + this.props.data.pet_id + "/cover/0.png"}}
-                    />
+                    {
+                        (this.state.avatar)? (
+                            <Image
+                                style={styles.pictureProfile}
+                                source={this.state.avatar}
+                            />
+                        ): (
+                            <CachedImage
+                                style={styles.pictureProfile}
+                                source={{uri: "https://thousanday.com/img/pet/" + this.props.data.pet_id + "/cover/0.png"}}
+                                mutable
+                            />
+                        )
+                    }
                     <View style={styles.pictureUpload}>
                         <Button
                             onPress={this.pickImg.bind(this)}
