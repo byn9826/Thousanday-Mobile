@@ -44,6 +44,9 @@ class Header extends Component {
             case "signup":
                 title = "Register for your digital home";
                 break;
+            case "requestMessage":
+                title = "Message Box";
+                break;
         }
         return (
             <View style={styles.header}>

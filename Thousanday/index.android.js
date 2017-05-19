@@ -120,6 +120,8 @@ export default class Thousanday extends Component {
         if (this.state.route != view) {
             if (view === "postMoment" && !this.state.userId) {
                 this.setState({route: "home"});
+            } else if (view === "love" && !this.state.userId) {
+                this.setState({route: "home"});
             } else {
                 this.setState({route: view});
             }
@@ -386,6 +388,10 @@ export default class Thousanday extends Component {
     refreshUser() {
         this.setState({userData: null, route: "home", petId: null});
     }
+    //empty user data
+    emptyUser() {
+        this.setState({userData: null, petId: null});
+    }
     //empty pet data
     refreshPet() {
         this.setState({petId: null});
@@ -540,12 +546,23 @@ export default class Thousanday extends Component {
                 />
                 break;
             case "postMoment":
-                route = <PostMoment
-                    petList={this.state.userData[2]}
-                    userId={this.state.userId}
-                    userToken={this.state.userToken}
-                    refreshMoment={this.refreshMoment.bind(this)}
-                />
+                if (this.state.userData) {
+                    route = <PostMoment
+                        petList={this.state.userData[2]}
+                        userId={this.state.userId}
+                        userToken={this.state.userToken}
+                        refreshMoment={this.refreshMoment.bind(this)}
+                    />
+                } else {
+                    this.processLogin([this.state.userId], this.state.userPlatform, () => {
+                        route = <PostMoment
+                            petList={this.state.userData[2]}
+                            userId={this.state.userId}
+                            userToken={this.state.userToken}
+                            refreshMoment={this.refreshMoment.bind(this)}
+                        />
+                    });
+                }
                 break;
             case "editProfile":
                 route = <EditProfile
@@ -578,6 +595,7 @@ export default class Thousanday extends Component {
                     data={this.state.requestData}
                     userId={this.state.userId}
                     userToken={this.state.userToken}
+                    emptyUser={this.emptyUser.bind(this)}
                 />
                 break;
             case "signup":

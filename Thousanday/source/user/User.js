@@ -218,6 +218,13 @@ class User extends Component {
                     />
                     {welcome}
                 </View>
+                {
+                    this.props.home?(
+                        <Text style={styles.mainId}>
+                            Your user id is {this.props.userId}
+                        </Text>
+                    ):null
+                }
                 {panel}
                 {
                     this.props.data[2].length > 0?(
@@ -231,7 +238,7 @@ class User extends Component {
                     {pets}
                 </View>
                 <Text style={styles.mainTitle}>
-                    Relatives {this.props.home?"(Your user id is " + this.props.userId + ")":null}
+                    Relatives
                 </Text>
                 <View style={styles.mainUser}>
                     {relatives}
@@ -303,6 +310,11 @@ const styles = StyleSheet.create({
     headerContainer: {
         alignItems: "center"
     },
+    mainId: {
+        fontSize: 12,
+        marginLeft: 10,
+        marginTop: 10,
+    },
     mainHeader: {
         flexDirection: "row",
         alignItems: "center",
@@ -342,7 +354,7 @@ const styles = StyleSheet.create({
     mainAction: {
         flexDirection: "row",
         flexWrap: "wrap",
-        marginTop: 20,
+        marginTop: 10,
         backgroundColor: "#e5e5e5",
         paddingVertical: 5,
         paddingHorizontal: 10,

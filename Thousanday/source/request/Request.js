@@ -8,13 +8,79 @@ import {
     TouchableOpacity
 } from "react-native";
 class Request extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: this.props.data,
+            //store unwatch lists
+            add: []
+        };
+    }
     acceptRequest(pet) {
-        alert(pet);
+        fetch("http://192.168.0.13:5000/panels/acceptRequest", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "petId": pet,
+                "userToken": this.props.userToken,
+                "userId": this.props.userId
+            })
+        })
+        .then((response) => response.json())
+        .then((result) => {
+            switch (result) {
+                case 0:
+                    alert("Can't get data, please try later");
+                    break;
+                case 1:
+                    this.state.add.push(pet)
+                    this.setState({add: this.state.add});
+                    this.props.emptyUser();
+                    break;
+                case 2:
+                    alert("Please login again");
+                    break;
+                case 3:
+                    alert("The pet already got a relative");
+                    break;
+            }
+        });
+    }
+    deleteRequest(pet, index) {
+        fetch("http://192.168.0.13:5000/panels/deleteRequest", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "petId": pet,
+                "userToken": this.props.userToken,
+                "userId": this.props.userId
+            })
+        })
+        .then((response) => response.json())
+        .then((result) => {
+            switch (result) {
+                case 0:
+                    alert("Can't get data, please try later");
+                    break;
+                case 1:
+                    this.state.data.splice(index, 1);
+                    this.setState({data: this.state.data});
+                    break;
+                case 2:
+                    alert("Please login again");
+                    break;
+            }
+        });
     }
     render() {
-        console.log(this.props.data);
-        let requests = this.props.data.map((request, index) =>
-            <View style={styles.rootContainer}>
+        let requests = this.state.data.map((request, index) =>
+            <View key={"request" + index} style={(this.state.add.indexOf(request.pet_id) === -1)?styles.rootContainer:styles.rootHolder}>
                 <View style={styles.rootRow}>
                     <Image
                         style={styles.rowImage}
@@ -31,20 +97,39 @@ class Request extends Component {
                         {"'s relative"}
                     </Text>
                 </View>
-                <View style={styles.rootAction}>
-                    <TouchableOpacity onPress={this.acceptRequest.bind(this, request.pet_id)}>
-                        <Text style={styles.actionAccept}>
-                            Accept
-                        </Text>
-                    </TouchableOpacity>
-                    <Text style={styles.actionDelete}>
-                        Delete
-                    </Text>
-                </View>
+                {
+                    (this.state.add.indexOf(request.pet_id) === -1)?(
+                        <View style={styles.rootAction}>
+                            <TouchableOpacity onPress={this.acceptRequest.bind(this, request.pet_id)}>
+                                <Text style={styles.actionAccept}>
+                                    Accept
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={this.deleteRequest.bind(this, request.pet_id, index)}>
+                                <Text style={styles.actionDelete}>
+                                    Delete
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    ):(
+                        <View style={styles.rootAction}>
+                            <Text style={styles.actionAccept}>
+                                Accepted
+                            </Text>
+                        </View>
+                    )
+                }
             </View>
         )
         return (
             <ScrollView contentContainerStyle={styles.root}>
+                {
+                    (this.state.data.length === 0)? (
+                        <Text>
+                            You have no message now.
+                        </Text>
+                    ):null
+                }
                 {requests}
             </ScrollView>
         )
@@ -61,6 +146,14 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         paddingVertical: 10,
         paddingHorizontal: 10,
+        borderRadius: 5
+    },
+    rootHolder: {
+        backgroundColor: "#abaeb2",
+        marginBottom: 30,
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        borderRadius: 5
     },
     rootRow: {
         borderRadius: 5,
