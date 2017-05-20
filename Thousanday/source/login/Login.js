@@ -3,7 +3,9 @@ import {
     StyleSheet,
     Text,
     View,
-    Image
+    ScrollView,
+    Image,
+    RefreshControl
 } from "react-native";
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -13,6 +15,13 @@ const {
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 
 class Login extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            //show refresh
+            refresh: false
+        };
+    }
     componentDidMount() {
         this._gSetup();
     }
@@ -27,6 +36,7 @@ class Login extends Component {
     _gSignIn() {
         GoogleSignin.signIn()
             .then((user) => {
+                this.setState({refresh: true});
                 fetch("https://thousanday.com/accounts/gLogin", {
                     method: "POST",
                     headers: {
@@ -39,6 +49,7 @@ class Login extends Component {
                 })
                 .then((response) => response.json())
                 .then((result) => {
+                    this.setState({refresh: false});
                     switch(result) {
                         case 0:
                             alert("Can't get data, please try later");
@@ -57,7 +68,13 @@ class Login extends Component {
     }
     render() {
         return (
-            <View style={styles.container}>
+            <ScrollView
+                contentContainerStyle={styles.container}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.refresh}
+                    />
+                }>
                 <Image style={styles.logo} source={require("../../image/logo.png")} />
                 <Text style={styles.title}>
                     Welcome! Please login ..
@@ -83,7 +100,7 @@ class Login extends Component {
                 <Text style={styles.notice}>
                     {"to create one"}
                 </Text>
-            </View>
+            </ScrollView>
         )
     }
 }
@@ -102,6 +119,7 @@ let Facebook = React.createClass({
                             } else {
                                 AccessToken.getCurrentAccessToken().then(
                                     (data) => {
+                                        this.setState({refresh: true});
                                         fetch("https://thousanday.com/accounts/fLogin", {
                                             method: "POST",
                                             headers: {
@@ -114,6 +132,7 @@ let Facebook = React.createClass({
                                         })
                                         .then((response) => response.json())
                                         .then((result) => {
+                                            this.setState({refresh: false});
                                             switch(result) {
                                                 case 0:
                                                     alert("Can't get data, please try later");

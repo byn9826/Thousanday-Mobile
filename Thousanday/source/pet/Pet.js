@@ -22,8 +22,40 @@ class Pet extends Component {
             //store images
             petImages: this.props.data[1] || [],
             //indicate how many time load more image
-            loadTimes: 1
+            loadTimes: 1,
+            refresh: false
         };
+    }
+    loadMore() {
+        if (!this.state.petLocker) {
+            fetch("https://thousanday.com/pets/loadMoments", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "id": this.props.data[0].pet_id,
+                    "load": this.state.loadTimes
+                })
+            })
+            .then((response) => response.json())
+            .then((pet) => {
+                switch (pet) {
+                    case 0:
+                        alert("Can't get data, try later");
+                        break;
+                    default:
+                        let newImage = this.state.petImages.concat(pet);
+                        if (pet.length === 20) {
+                            this.setState({petImages: newImage, loadTimes: this.state.loadTimes + 1});
+                        } else {
+                            this.setState({petImages: newImage, loadTimes: this.state.loadTimes + 1, petLocker: true});
+                        }
+                        break;
+                }
+            });
+        }
     }
     render() {
         //show second relative if exist
@@ -74,97 +106,111 @@ class Pet extends Component {
             )
         }
         return (
-            <ScrollView contentContainerStyle={styles.root}>
-                <CachedImage
-                    source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].pet_id + "/cover/0.png"}}
-                    style={styles.rootAvatar}
-                    mutable
-                />
-                <Text style={styles.rootName}>
-                    {this.props.data[0].pet_name}
-                </Text>
-                <View style={styles.rootRow}>
-                    <Text style={styles.rowGender}>
-                        {noGetGender(this.props.data[0].pet_gender)}
-                    </Text>
-                    <Text style={styles.rowType}>
-                        {noGetType(this.props.data[0].pet_type)}
-                    </Text>
-                    <Text style={styles.rowType}>
-                        {noGetNature(this.props.data[0].pet_nature)}
-                    </Text>
-                </View>
-                <View style={styles.rootTeam}>
-                    <View style={styles.teamParent}>
-                        <Text style={styles.parentTitle}>
-                            {this.props.data[0].pet_gender === 0 ? "His ": "Her "}Family
-                        </Text>
-                        <View style={styles.parentBox}>
-                            <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[0].owner_id)}>
-                                <CachedImage
-                                    style={styles.boxRound}
-                                    source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].owner_id + ".jpg"}}
-                                    mutable
-                                />
-                            </TouchableOpacity>
-                            {parent}
-                        </View>
-                    </View>
-                    <View style={styles.teamFriend}>
-                        <Text style={styles.parentTitle}>
-                            Best Friends
-                        </Text>
-                        <View style={styles.parentBox}>
-                            {friend1}
-                            {friend2}
-                        </View>
-                    </View>
-                </View>
-                <TouchableOpacity onPress={this.props.petWatch.bind(null)}>
-                    <Text style={styles.rootWatch}>
-                        {this.props.data[2].indexOf(this.props.userId) === -1?"+ watch":"Watched"} | by {this.props.data[2].length}
-                    </Text>
-                </TouchableOpacity>
-                <View style={styles.rootHolder}>
-                    <Image style={styles.holderIcon} source={require("../../image/moment.png")} />
-                    <Text style={styles.holderTitle}>
-                        {this.props.data[0].pet_name + "'s"} Moments
-                    </Text>
-                </View>
-                <FlatList
-                    contentContainerStyle={styles.rootContainer}
-                    data = {gallery}
-                    renderItem={({item}) =>
-                        <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.id)} >
+            <FlatList
+                contentContainerStyle={styles.container}
+                ListHeaderComponent={()=>{
+                    return (
+                        <View style={styles.containerHeader}>
                             <CachedImage
-                                source={{uri: item.key}}
-                                style={styles.containerImage}
+                                source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].pet_id + "/cover/0.png"}}
+                                style={styles.headerAvatar}
+                                mutable
                             />
-                        </TouchableOpacity>
-                    }
-                />
-            </ScrollView>
+                            <Text style={styles.headerName}>
+                                {this.props.data[0].pet_name}
+                            </Text>
+                            <View style={styles.headerRow}>
+                                <Text style={styles.rowGender}>
+                                    {noGetGender(this.props.data[0].pet_gender)}
+                                </Text>
+                                <Text style={styles.rowType}>
+                                    {noGetType(this.props.data[0].pet_type)}
+                                </Text>
+                                <Text style={styles.rowType}>
+                                    {noGetNature(this.props.data[0].pet_nature)}
+                                </Text>
+                            </View>
+                            <View style={styles.headerTeam}>
+                                <View style={styles.teamParent}>
+                                    <Text style={styles.parentTitle}>
+                                        {this.props.data[0].pet_gender === 0 ? "His ": "Her "}Family
+                                    </Text>
+                                    <View style={styles.parentBox}>
+                                        <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[0].owner_id)}>
+                                            <CachedImage
+                                                style={styles.boxRound}
+                                                source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].owner_id + ".jpg"}}
+                                                mutable
+                                            />
+                                        </TouchableOpacity>
+                                        {parent}
+                                    </View>
+                                </View>
+                                <View style={styles.teamFriend}>
+                                    <Text style={styles.parentTitle}>
+                                        Best Friends
+                                    </Text>
+                                    <View style={styles.parentBox}>
+                                        {friend1}
+                                        {friend2}
+                                    </View>
+                                </View>
+                            </View>
+                            <TouchableOpacity onPress={this.props.petWatch.bind(null)}>
+                                <Text style={styles.headerWatch}>
+                                    {this.props.data[2].indexOf(this.props.userId) === -1?"+ watch":"Watched"} | by {this.props.data[2].length}
+                                </Text>
+                            </TouchableOpacity>
+                            <View style={styles.headerHolder}>
+                                <Image style={styles.holderIcon} source={require("../../image/moment.png")} />
+                                <Text style={styles.holderTitle}>
+                                    {this.props.data[0].pet_name + "'s"} Moments
+                                </Text>
+                            </View>
+                        </View>
+                    )
+                }}
+                data = {gallery}
+                numColumns={2}
+                columnWrapperStyle={{
+                    justifyContent: "space-between",
+                }}
+                onRefresh={()=>{}}
+                refreshing={this.state.refresh}
+                onEndReached={this.loadMore.bind(this)}
+                renderItem={({item}) =>
+                    <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.id)} >
+                        <CachedImage
+                            source={{uri: item.key}}
+                            style={styles.containerImage}
+                        />
+                    </TouchableOpacity>
+                }
+            />
         )
     }
 }
 
+
 const styles = StyleSheet.create({
-    root: {
-        marginHorizontal: 20,
-        paddingTop: 20,
+    container: {
+        marginHorizontal: 10,
+        marginTop: 20,
+    },
+    containerHeader: {
         alignItems: "center"
     },
-    rootAvatar: {
+    headerAvatar: {
         width: 100,
         height: 100,
         borderRadius: 5
     },
-    rootName: {
+    headerName: {
         fontSize: 24,
         marginTop: 5,
         fontWeight: "bold"
     },
-    rootRow: {
+    headerRow: {
         flexDirection: "row",
         alignItems: "center",
     },
@@ -181,7 +227,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginRight: 15
     },
-    rootTeam: {
+    headerTeam: {
         flexDirection: "row"
     },
     teamParent: {
@@ -233,7 +279,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         resizeMode: "contain"
     },
-    rootWatch: {
+    headerWatch: {
         backgroundColor: "#052456",
         alignItems: "center",
         color: "white",
@@ -244,7 +290,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         fontSize: 16
     },
-    rootHolder: {
+    headerHolder: {
         flexDirection: "row",
         alignSelf: "flex-start",
         marginBottom: 15,
@@ -261,13 +307,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold"
     },
-    rootContainer: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-    },
     containerImage: {
-        width: (Dimensions.get("window").width - 40 )/2.02,
+        width: (Dimensions.get("window").width - 20 )/2.02,
         height: 180,
         resizeMode: "cover",
         marginBottom: 3,

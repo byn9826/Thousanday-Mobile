@@ -5,7 +5,6 @@ import {
     View,
     FlatList,
     Dimensions,
-    ScrollView,
     TouchableOpacity
 } from "react-native";
 const FBSDK = require('react-native-fbsdk');
@@ -24,9 +23,11 @@ class User extends Component {
             //store images
             userImages: this.props.data[4] || [],
             //indicate lock load more function
-            userLocker: false,
+            userLocker: this.props.data[4].length === 20?false:true,
             //indicate how many time load more image
-            loadTimes: 1
+            loadTimes: 1,
+            //refresh icon
+            refresh: false
         };
     }
     componentDidMount() {
@@ -42,6 +43,7 @@ class User extends Component {
     }
     _gLogout() {
         GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
+            this.setState({refresh: true});
             fetch("https://thousanday.com/accounts/logOut", {
                 method: "POST",
                 headers: {
@@ -54,6 +56,7 @@ class User extends Component {
             })
             .then((response) => response.json())
             .then((result) => {
+                this.setState({refresh: false});
                 switch (result) {
                     case 0:
                         alert("Something wrong, please try again");
@@ -65,6 +68,42 @@ class User extends Component {
             });
         })
         .done();
+    }
+    //load more moments
+    loadMore() {
+        if (!this.state.userLocker) {
+            let i, lists = [];
+            for (i = 0; i < this.props.data[2].length; i++) {
+                lists.push(this.props.data[2][i].pet_id);
+            }
+            fetch("https://thousanday.com/users/loadMoments", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "petsList": lists,
+                    "loadTimes": 1
+                })
+            })
+            .then((response) => response.json())
+            .then((result) => {
+                switch(result) {
+                    case 0:
+                        alert("Can't get data, try later");
+                        break;
+                    default:
+                        let newResult = this.state.userImages.concat(result);
+                        if (result.length === 20) {
+                            this.setState({userImages: newResult, loadTimes: this.state.loadTimes + 1});
+                        } else {
+                            this.setState({userImages: newResult, loadTimes: this.state.loadTimes + 1, userLocker: true});
+                        }
+                        break;
+                }
+            });
+        }
     }
     render() {
         //process data to get all images
@@ -127,7 +166,7 @@ class User extends Component {
         let panel, welcome, logout;
         if (this.props.home) {
             panel = (
-                <View style={styles.mainAction}>
+                <View style={styles.headerAction}>
                     <TouchableOpacity onPress={this.props.clickAddPet.bind(this)}>
                         <View style={styles.actionCircle}>
                             <Text style={styles.circleContent}>
@@ -187,7 +226,7 @@ class User extends Component {
             } else {
                 logout = (
                     <TouchableOpacity onPress={this._gLogout.bind(this)}>
-                        <View style={styles.mainGoogle}>
+                        <View style={styles.containerGoogle}>
                             <Text style={styles.googleOut}>Log out</Text>
                         </View>
                     </TouchableOpacity>
@@ -195,7 +234,7 @@ class User extends Component {
             }
             welcome = (
                 <View style={styles.headerContainer}>
-                    <Text style={styles.headerHome}>
+                    <Text style={styles.containerHome}>
                         Welcome Home! {this.props.data[0][0]}
                     </Text>
                     {logout}
@@ -208,61 +247,80 @@ class User extends Component {
                 </Text>
             );
         }
-        return (
-            <ScrollView contentContainerStyle={styles.main}>
-                <View style={styles.mainHeader}>
-                    <CachedImage
-                        source={{uri: "https://thousanday.com/img/user/" + this.props.userId + ".jpg"}}
-                        style={styles.headerAvatar}
-                        mutable
-                    />
-                    {welcome}
-                </View>
-                {
-                    this.props.home?(
-                        <Text style={styles.mainId}>
-                            Your user id is {this.props.userId}
-                        </Text>
-                    ):null
-                }
-                {panel}
-                {
-                    this.props.data[2].length > 0?(
-                        <Text style={styles.mainTitle}>
-                            Pets List
-                        </Text>
-                    ): null
-
-                }
-                <View style={styles.mainPet}>
-                    {pets}
-                </View>
-                <Text style={styles.mainTitle}>
-                    Relatives
+        let user;
+        if (this.props.home) {
+            user = (
+                <Text style={styles.headerId}>
+                    Your user id is {this.props.userId}
                 </Text>
-                <View style={styles.mainUser}>
-                    {relatives}
-                </View>
-                {
-                    this.props.data[2].length > 0?(
-                        <Text style={styles.mainTitle}>
-                            Moments with pets
-                        </Text>
-                    ):null
+            )
+        }
+        return (
+            <FlatList
+                style={styles.main}
+                ListHeaderComponent={()=> {
+                    return (
+                        <View style={styles.mainHeader}>
+                            <View style={styles.headerRow}>
+                                <CachedImage
+                                    source={{uri: "https://thousanday.com/img/user/" + this.props.userId + ".jpg"}}
+                                    style={styles.headerAvatar}
+                                    mutable
+                                />
+                                {welcome}
+                            </View>
+                            {user}
+                            {panel}
+                            {
+                                this.props.data[2].length > 0?(
+                                    <Text style={styles.headerTitle}>
+                                        Pets List
+                                    </Text>
+                                ): null
+                            }
+                            <View style={styles.headerPet}>
+                                {pets}
+                            </View>
+                            {
+                                this.props.data[1].length > 0?(
+                                    <Text style={styles.headerTitle}>
+                                        Relatives
+                                    </Text>
+                                ): null
+                            }
+                            <View style={styles.headerUser}>
+                                {relatives}
+                            </View>
+                            {
+                                this.props.data[2].length > 0?(
+                                    <Text style={styles.headerTitle}>
+                                        Moments with pets
+                                    </Text>
+                                ):null
+                            }
+                        </View>
+                    )
+                }}
+                contentContainerStyle={styles.mainContainer}
+                data = {gallery}
+                numColumns={2}
+                columnWrapperStyle={{
+                    justifyContent: "space-between"
+                }}
+                renderItem={({item}) =>
+                    <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.id)}>
+                        <CachedImage
+                            source={{uri: item.key}}
+                            style={styles.containerImage}
+                        />
+                    </TouchableOpacity>
                 }
-                <FlatList
-                    contentContainerStyle={styles.mainContainer}
-                    data = {gallery}
-                    renderItem={({item}) =>
-                        <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.id)}>
-                            <CachedImage
-                                source={{uri: item.key}}
-                                style={styles.containerImage}
-                            />
-                        </TouchableOpacity>
-                    }
-                />
-            </ScrollView>
+                onRefresh={()=>{}}
+                refreshing={this.state.refresh}
+                onEndReached={
+                    this.loadMore.bind(this)
+                }
+            />
         )
     }
 }
@@ -270,55 +328,51 @@ class User extends Component {
 let Facebook = React.createClass({
     render: function() {
         return (
-            <View style={styles.mainLogout}>
-                <LoginButton
-                    onLogoutFinished={
-                        () => {
-                            fetch("https://thousanday.com/accounts/logOut", {
-                                method: "POST",
-                                headers: {
-                                    "Accept": "application/json",
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    "id": this.props.userId
-                                })
+            <LoginButton
+                onLogoutFinished={
+                    () => {
+                        this.setState({refresh: true});
+                        fetch("https://thousanday.com/accounts/logOut", {
+                            method: "POST",
+                            headers: {
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                "id": this.props.userId
                             })
-                            .then((response) => response.json())
-                            .then((result) => {
-                                switch (result) {
-                                    case 0:
-                                        alert("Something wrong, please try again");
-                                        break;
-                                    case 1:
-                                        this.props.userLogout();
-                                        break;
-                                }
-                            });
-                        }
+                        })
+                        .then((response) => response.json())
+                        .then((result) => {
+                            this.setState({refresh: false});
+                            switch (result) {
+                                case 0:
+                                    alert("Something wrong, please try again");
+                                    break;
+                                case 1:
+                                    this.props.userLogout();
+                                    break;
+                            }
+                        });
                     }
-                />
-            </View>
+                }
+            />
         );
     }
 });
 
 const styles = StyleSheet.create({
     main: {
-        marginHorizontal: 10
-    },
-    headerContainer: {
-        alignItems: "center"
-    },
-    mainId: {
-        fontSize: 12,
-        marginLeft: 10,
         marginTop: 10,
+        marginHorizontal: 10,
+        paddingBottom: 20
     },
     mainHeader: {
+        alignItems: "flex-start",
+    },
+    headerRow: {
         flexDirection: "row",
-        alignItems: "center",
-        flexWrap: "wrap"
+        alignItems: "center"
     },
     headerAvatar: {
         marginTop: 10,
@@ -327,15 +381,15 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginRight: 20
     },
-    headerName: {
-        fontWeight: "bold",
-        fontSize: 16
+    headerContainer: {
+        alignItems: "center"
     },
-    headerHome: {
+    containerHome: {
         fontWeight: "bold",
-        fontSize: 20,
+        fontSize: 18,
+        marginBottom: 10
     },
-    mainGoogle: {
+    containerGoogle: {
         width: 186,
         backgroundColor: "#052456",
         height: 30,
@@ -348,10 +402,12 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 14
     },
-    mainLogout: {
+    headerId: {
+        fontSize: 12,
+        marginLeft: 10,
         marginTop: 10,
     },
-    mainAction: {
+    headerAction: {
         flexDirection: "row",
         flexWrap: "wrap",
         marginTop: 10,
@@ -370,10 +426,10 @@ const styles = StyleSheet.create({
         marginRight: 15
     },
     circleContent: {
-        fontSize: 12,
+        fontSize: 11,
         color: "white",
     },
-    mainTitle: {
+    headerTitle: {
         marginLeft: 10,
         fontWeight: "bold",
         fontSize: 16,
@@ -384,7 +440,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 20
     },
-    mainPet: {
+    headerPet: {
         flexDirection: "row",
         flexWrap: "wrap",
         paddingLeft: 10,
@@ -434,7 +490,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 5
     },
-    mainUser: {
+    headerUser: {
         flexDirection: "row",
         flexWrap: "wrap",
         paddingLeft: 10
@@ -445,18 +501,16 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         marginRight: 15
     },
-    mainContainer: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-        marginHorizontal: 10
-    },
     containerImage: {
-        width: (Dimensions.get("window").width - 40 )/2.02,
+        width: (Dimensions.get("window").width - 20 )/2.02,
         height: 180,
         resizeMode: "cover",
         marginBottom: 3,
         borderRadius: 5
+    },
+    headerName: {
+        fontSize: 14,
+        fontWeight: "bold"
     }
 });
 

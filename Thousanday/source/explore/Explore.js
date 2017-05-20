@@ -125,7 +125,6 @@ class Explore extends Component {
     //load more momentCursor
     loadMore() {
         if (this.state.type && this.state.nature && !this.state.moreLocker) {
-            this.setState({refresh: true});
             fetch("https://thousanday.com/explores/searchMoments", {
                 method: "POST",
                 headers: {
@@ -140,7 +139,6 @@ class Explore extends Component {
             })
             .then((response) => response.json())
             .then((result) => {
-                this.setState({refresh: false});
                 switch(result) {
                     case 0:
                         alert("Can't get data, try later");

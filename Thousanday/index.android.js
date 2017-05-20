@@ -134,7 +134,6 @@ export default class Thousanday extends Component {
     loadWatch() {
         //check if watch lock exist
         if (!this.state.watchLocker) {
-            this.setState({refresh: true});
             fetch("https://thousanday.com/lists/loadPublic", {
                 method: "POST",
                 headers: {
@@ -147,7 +146,6 @@ export default class Thousanday extends Component {
             })
             .then((response) => response.json())
             .then((result) => {
-                this.setState({refresh: false});
                 switch (result) {
                     case 0:
                         alert("Can't get data, try later");
@@ -620,6 +618,7 @@ export default class Thousanday extends Component {
                 if (this.state.userId) {
                     if (this.state.userData) {
                         route = <User
+                            ref="user"
                             key={"user" + this.state.userId}
                             home={true}
                             userId={this.state.userId}
@@ -640,6 +639,7 @@ export default class Thousanday extends Component {
                         //get data for user first
                         this.processLogin([this.state.userId], this.state.userPlatform, () => {
                             route = <User
+                                ref="user"
                                 key={"user" + this.state.userId}
                                 home={true}
                                 userId={this.state.userId}
