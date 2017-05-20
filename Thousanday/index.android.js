@@ -63,7 +63,9 @@ export default class Thousanday extends Component {
             //store signup platform
             signupPlatform: null,
             //store friend request data
-            requestData: []
+            requestData: [],
+            //refresh public list
+            refresh: true
         };
     }
     //get most recent public images for watch on app open
@@ -78,6 +80,7 @@ export default class Thousanday extends Component {
         })
         .then((response) => response.json())
         .then((result) => {
+            this.setState({refresh: false});
             //consist watchdata with all image src
             let watch = [], i;
             for (i = 0; i < result.length; i++) {
@@ -131,6 +134,7 @@ export default class Thousanday extends Component {
     loadWatch() {
         //check if watch lock exist
         if (!this.state.watchLocker) {
+            this.setState({refresh: true});
             fetch("https://thousanday.com/lists/loadPublic", {
                 method: "POST",
                 headers: {
@@ -143,6 +147,7 @@ export default class Thousanday extends Component {
             })
             .then((response) => response.json())
             .then((result) => {
+                this.setState({refresh: false});
                 switch (result) {
                     case 0:
                         alert("Can't get data, try later");
@@ -500,7 +505,12 @@ export default class Thousanday extends Component {
         switch (this.state.route) {
             //default page, watch public images
             case "watch":
-                route = <Watch data={this.state.watchData} loadWatch={this.loadWatch.bind(this)} clickMoment={this.clickMoment.bind(this)} />;
+                route = <Watch
+                    data={this.state.watchData}
+                    loadWatch={this.loadWatch.bind(this)}
+                    clickMoment={this.clickMoment.bind(this)}
+                    refresh={this.state.refresh}
+                />;
                 break;
             //explore page could be seen by public
             case "explore":

@@ -3,7 +3,7 @@ import {
     StyleSheet,
     Text,
     View,
-    ScrollView,
+    FlatList,
     Image,
     TouchableOpacity
 } from "react-native";
@@ -15,7 +15,11 @@ class WatchList extends Component {
             //store watch list
             lists: this.props.data || [],
             //store unwatch lists
-            unwatch: []
+            unwatch: [],
+            //store load how many times
+            load: 1,
+            //lock load more
+            locker: (this.props.data.length === 20)?false:true
         };
     }
     watchPet(id, action) {
@@ -56,62 +60,99 @@ class WatchList extends Component {
             }
         });
     }
+    //load more watch
+    loadMore() {
+        if (!this.state.locker) {
+            fetch("https://thousanday.com/panels/watchList", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "id": this.props.userId,
+                    "pin": this.state.load
+                })
+            })
+            .then((response) => response.json())
+            .then((list) => {
+                let newList = this.state.lists.concat(list);
+                this.setState({lists: newList, load: this.state.load + 1});
+            });
+        }
+    }
     render() {
-        let lists = this.state.lists.map((list, index) => {
-            return (this.state.unwatch.indexOf(list.pet_id) === -1)? (
-                <View key={"privatewatch" + index} style={styles.rootRow}>
-                    <TouchableOpacity onPress={this.props.clickPet.bind(null, list.pet_id)}>
-                        <CachedImage
-                            source={{uri: "https://thousanday.com/img/pet/" + list.pet_id + "/cover/0.png"}}
-                            style={styles.rowAvatar}
-                            mutable
-                        />
-                    </TouchableOpacity>
-                    <Text style={styles.rowName}>
-                        {list.pet_name}
-                    </Text>
-                    <TouchableOpacity onPress={this.watchPet.bind(this, list.pet_id, 1)}>
-                        <Text style={styles.rowWatch}>
-                            unwatch
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            ): (
-                <View key={"privatewatch" + index} style={styles.rootRow}>
-                    <TouchableOpacity onPress={this.props.clickPet.bind(null, list.pet_id)}>
-                        <CachedImage
-                            source={{uri: "https://thousanday.com/img/pet/" + list.pet_id + "/cover/0.png"}}
-                            style={styles.rowAvatar}
-                            mutable
-                        />
-                    </TouchableOpacity>
-                    <Text style={styles.rowName}>
-                        {list.pet_name}
-                    </Text>
-                    <TouchableOpacity onPress={this.watchPet.bind(this, list.pet_id, 0)}>
-                        <Text style={styles.rowBack}>
-                            watch
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+        console.log(this.state.lists);
+        let lists = [], i;
+        for (i = 0; i < this.state.lists.length; i++) {
+            lists.push(
+                {
+                    key: i,
+                    id: this.state.lists[i].pet_id,
+                    name: this.state.lists[i].pet_name
+                }
             )
-        })
+        }
         return (
-            <ScrollView contentContainerStyle={styles.root}>
-                <View style={styles.rootHeader}>
-                    <Image
-                        source={require("../../image/watch.png")}
-                        style={styles.headerIcon}
-                    />
-                    <Text style={styles.headerList}>
-                        Pets on your watch list
-                    </Text>
-                </View>
-                {lists}
-            </ScrollView>
+            <FlatList
+                contentContainerStyle={styles.root}
+                data = {lists}
+                ListHeaderComponent={()=>
+                    <View style={styles.rootHeader}>
+                        <Image
+                            source={require("../../image/follow.png")}
+                            style={styles.headerIcon}
+                        />
+                        <Text style={styles.headerList}>
+                            Pets on your watch list
+                        </Text>
+                    </View>
+                }
+                renderItem={({item}) =>
+                    (this.state.unwatch.indexOf(item.id) === -1)? (
+                        <View key={"privatewatch" + item.key} style={styles.rootRow}>
+                            <TouchableOpacity onPress={this.props.clickPet.bind(null, item.id)}>
+                                <CachedImage
+                                    source={{uri: "https://thousanday.com/img/pet/" + item.id + "/cover/0.png"}}
+                                    style={styles.rowAvatar}
+                                    mutable
+                                />
+                            </TouchableOpacity>
+                            <Text style={styles.rowName}>
+                                {item.name}
+                            </Text>
+                            <TouchableOpacity onPress={this.watchPet.bind(this, item.id, 1)}>
+                                <Text style={styles.rowWatch}>
+                                    unwatch
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    ):(
+                        <View key={"privatewatch" + item.key} style={styles.rootRow}>
+                            <TouchableOpacity onPress={this.props.clickPet.bind(null, item.id)}>
+                                <CachedImage
+                                    source={{uri: "https://thousanday.com/img/pet/" + item.id + "/cover/0.png"}}
+                                    style={styles.rowAvatar}
+                                    mutable
+                                />
+                            </TouchableOpacity>
+                            <Text style={styles.rowName}>
+                                {item.name}
+                            </Text>
+                            <TouchableOpacity onPress={this.watchPet.bind(this, item.id, 0)}>
+                                <Text style={styles.rowBack}>
+                                    watch
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }
+                onEndReached={this.loadMore.bind(this)}
+            />
         )
     }
 }
+
 
 const styles = StyleSheet.create({
     root: {

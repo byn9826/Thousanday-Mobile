@@ -21,10 +21,16 @@ class Watch extends Component {
                         />
                     </TouchableOpacity>
                 }
+                numColumns={2}
+                columnWrapperStyle={{
+                    justifyContent: "space-between",
+                }}
                 onEndReached={()=>{
                     //Scroll to end, Call load more images function
                     this.props.loadWatch();
                 }}
+                onRefresh={()=>{}}
+                refreshing={this.props.refresh}
             />
         )
     }
@@ -32,9 +38,6 @@ class Watch extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
         marginTop: 2
     },
     containerImage: {
