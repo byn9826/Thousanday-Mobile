@@ -82,7 +82,6 @@ class WatchList extends Component {
         }
     }
     render() {
-        console.log(this.state.lists);
         let lists = [], i;
         for (i = 0; i < this.state.lists.length; i++) {
             lists.push(

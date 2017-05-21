@@ -57,7 +57,7 @@ export default class Thousanday extends Component {
             //store edit pet data
             editData: [],
             //store watch list data
-            watchData: [],
+            privateData: [],
             //store token for signup
             signupData: null,
             //store signup platform
@@ -257,36 +257,30 @@ export default class Thousanday extends Component {
     }
     //if user click on one moment, read moment data
     clickMoment(id) {
-        //last visit is not same moment, get data
-        if (this.state.momentId !== id) {
-            fetch("https://thousanday.com/moments/readMoment", {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    "id": id
-                })
+        fetch("http://192.168.0.13:5000/moments/readMoment", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "id": id
             })
-            .then((response) => response.json())
-            .then((moment) => {
-                switch (moment) {
-                    case 0:
-                        alert("Can't get data, try later");
-                        break;
-                    case 2:
-                        alert("Moment not exist");
-                        break;
-                    default:
-                        this.setState({route: "moment", momentData: moment, momentId: id});
-                        break;
-                }
-            });
-        } else {
-            //go to user page directlly
-            this.setState({route: "moment"});
-        }
+        })
+        .then((response) => response.json())
+        .then((moment) => {
+            switch (moment) {
+                case 0:
+                    alert("Can't get data, try later");
+                    break;
+                case 2:
+                    alert("Moment not exist");
+                    break;
+                default:
+                    this.setState({route: "moment", momentData: moment, momentId: id});
+                    break;
+            }
+        });
     }
     //if user click on add pet
     clickAddPet() {
@@ -462,7 +456,7 @@ export default class Thousanday extends Component {
         })
         .then((response) => response.json())
         .then((list) => {
-            this.setState({watchData: list, route: "watchList"});
+            this.setState({privateData: list, route: "watchList"});
         });
     }
     //signup feature
@@ -481,7 +475,7 @@ export default class Thousanday extends Component {
     }
     //click friend request button
     clickRequestMessage() {
-        fetch("http://192.168.0.13:5000/panels/requestMessage", {
+        fetch("https://thousanday.com/panels/requestMessage", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -538,8 +532,17 @@ export default class Thousanday extends Component {
                 />;
                 break;
             case "moment":
+                let likeUsers = [], i;
+                if (this.state.momentData[1].length !== 0) {
+                    for (i = 0; i < this.state.momentData[1].length; i++) {
+                        likeUsers.push(this.state.momentData[1][i][0]);
+                    }
+                }
                 route = <Moment
                     data={this.state.momentData}
+                    like={likeUsers}
+                    userId={this.state.userId}
+                    userToken={this.state.userToken}
                     clickPet={this.clickPet.bind(this)}
                 />
                 break;
@@ -591,7 +594,7 @@ export default class Thousanday extends Component {
                 break;
             case "watchList":
                 route = <WatchList
-                    data={this.state.watchData}
+                    data={this.state.privateData}
                     userId={this.state.userId}
                     userToken={this.state.userToken}
                     clickPet={this.clickPet.bind(this)}

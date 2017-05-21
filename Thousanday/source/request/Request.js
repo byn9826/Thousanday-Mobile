@@ -11,13 +11,13 @@ class Request extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: this.props.data,
+            data: this.props.data || [],
             //store unwatch lists
             add: []
         };
     }
     acceptRequest(pet) {
-        fetch("http://192.168.0.13:5000/panels/acceptRequest", {
+        fetch("https://thousanday.com/panels/acceptRequest", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -50,7 +50,7 @@ class Request extends Component {
         });
     }
     deleteRequest(pet, index) {
-        fetch("http://192.168.0.13:5000/panels/deleteRequest", {
+        fetch("https://thousanday.com/panels/deleteRequest", {
             method: "POST",
             headers: {
                 "Accept": "application/json",

@@ -47,6 +47,9 @@ class Header extends Component {
             case "requestMessage":
                 title = "Message Box";
                 break;
+            case "watchList":
+                title = "Cutes you are watching";
+                break;
         }
         return (
             <View style={styles.header}>
