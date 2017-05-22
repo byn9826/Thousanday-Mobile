@@ -547,7 +547,10 @@ export default class Thousanday extends Component {
                 />
                 break;
             case "love":
-                route = <Love />
+                route = <Love
+                    userId={this.state.userId}
+                    clickMoment={this.clickMoment.bind(this)}
+                />
                 break;
             case "addPet":
                 route = <AddPet
