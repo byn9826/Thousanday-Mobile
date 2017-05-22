@@ -257,7 +257,7 @@ export default class Thousanday extends Component {
     }
     //if user click on one moment, read moment data
     clickMoment(id) {
-        fetch("http://192.168.0.13:5000/moments/readMoment", {
+        fetch("https://thousanday.com/moments/readMoment", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
