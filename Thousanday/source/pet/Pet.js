@@ -308,10 +308,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     containerImage: {
-        width: (Dimensions.get("window").width - 20 )/2.02,
-        height: 180,
+        width: Dimensions.get("window").width/2 - 12,
+        height: Dimensions.get("window").width/2 - 12,
         resizeMode: "cover",
-        marginBottom: 3,
+        marginBottom: 4,
         borderRadius: 5
     }
 });

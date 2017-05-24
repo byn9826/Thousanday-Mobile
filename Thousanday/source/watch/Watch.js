@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
         marginTop: 2
     },
     containerImage: {
-        width: Dimensions.get("window").width/2.01,
-        height: 180,
+        width: Dimensions.get("window").width/2 - 1,
+        height: Dimensions.get("window").width/2 - 1,
         resizeMode: "cover",
         marginBottom: 2,
         borderRadius: 5
