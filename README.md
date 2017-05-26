@@ -1,5 +1,5 @@
 # Thousanday-Mobile
-An image sharing social app for pets. <br/>
+An image sharing social mobile app for your pets and you. <br/>
 
 [Google Play](https://play.google.com/store/apps/details?id=com.thousanday)<br/>
 
@@ -9,6 +9,16 @@ Stack
 --
 React Native
 
-Repo for website
+Pack
 --
 [Image sharing social website for pets by React & Flask](https://github.com/byn9826/Thousand-Day)<br/>
+[A list of reusable React UI components](https://github.com/byn9826/Thousanday-React)
+
+Author
+--
+Baozier
+
+License
+--
+BSD-3 <br /><br />
+Icons from glyphicons.com
