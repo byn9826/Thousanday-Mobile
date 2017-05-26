@@ -3,3 +3,5 @@ Thousanday/*
 !Thousanday/package.json
 !Thousanday/source
 !Thousanday/image
+.gitignore
+npm-debug.log
