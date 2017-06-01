@@ -1,5 +1,5 @@
 # Thousanday-Mobile
-An image sharing social mobile app for your pets and you. <br/>
+Photo sharing social mobile app for your pets and you. <br/>
 
 [Google Play](https://play.google.com/store/apps/details?id=com.thousanday)<br/>
 
@@ -7,11 +7,28 @@ An image sharing social mobile app for your pets and you. <br/>
 
 Stack
 --
-React Native
+React Native<br/>
+[Web App by React & Phalcon](https://github.com/byn9826/Thousanday-web)<br/>
 
-Pack
+Features
 --
-[Image sharing social website for pets by React & Flask](https://github.com/byn9826/Thousand-Day)<br/>
+1. Create Account, show all your pets<br/>
+2. Add pets, every pet has their own page showing all their photos<br/>
+3. Watch pet, follow any pet you love<br/>
+4. Post moments, record your lovely moments with your pets<br/>
+5. Leave comments, comment on any photo makes you laugh<br/>
+6. Love moments, save moments in your personal list<br/>
+
+Test on your localhost
+--
+1. react-native init thousanday<br/>
+2. git clone this repo and replace related files in your project folder<br/>
+2. npm install<br/>
+3. react-native link<br/>
+4. react-native run-andrpod
+
+Other
+--
 [A list of reusable React UI components](https://github.com/byn9826/Thousanday-React)
 
 Author
