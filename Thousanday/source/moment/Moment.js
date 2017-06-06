@@ -112,7 +112,6 @@ class Moment extends Component {
             }
         })
         .then((result) => {
-            console.log(result);
             let add = this.state.list.concat(result);
             if (result.length === 10) {
                 this.setState({list: add, load: this.state.load + 1});

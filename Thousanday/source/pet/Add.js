@@ -84,7 +84,6 @@ class AddPet extends Component {
             data.append("file", file, ".png");
             data.append("token", this.props.userToken);
             data.append("user", this.props.userId);
-            console.log(data);
             fetch("http://192.168.0.13:7999/upload/add", {
                 method: "POST",
                 headers: {

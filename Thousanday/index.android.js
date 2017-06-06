@@ -147,13 +147,13 @@ export default class Thousanday extends Component {
                     if (result.length < 20) {
                         this.setState({
                             watchData: this.state.watchData.concat(newWatch),
-                            loadTimes: this.state.loadTimes + 1,
+                            watchTimes: this.state.watchTimes + 1,
                             watchLocker: true
                         });
                     } else {
                         this.setState({
                             watchData: this.state.watchData.concat(newWatch),
-                            loadTimes: this.state.loadTimes + 1
+                            watchTimes: this.state.watchTimes + 1
                         });
                     }
                 } else {
@@ -167,29 +167,18 @@ export default class Thousanday extends Component {
     clickPet(id) {
         //pet page didn't be requested before
         if (this.state.petId !== id) {
-            fetch("https://thousanday.com/pets/readPet", {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    "id": id
-                })
+            fetch("http:/192.168.0.13:7999/pet/read?id=" + id, {
+                method: "GET"
             })
-            .then((response) => response.json())
-            .then((pet) => {
-                switch (pet) {
-                    case 0:
-        				alert("Can't get data, try later");
-        				break;
-        			case 2:
-        				alert("Pet not exist");
-        				break;
-        			default:
-                        this.setState({route: "pet", petData: pet, petId: id});
-        				break;
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
                 }
+            })
+            .then((pet) => {
+                this.setState({route: "pet", petData: pet, petId: id});
             });
         } else {
             //go to user page directlly
@@ -204,29 +193,18 @@ export default class Thousanday extends Component {
         } else {
             //user page didn't be requested before
             if (this.state.pageId !== id) {
-                fetch("https://thousanday.com/users/read", {
-                    method: "POST",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        "id": id
-                    })
+                fetch("http://192.168.0.13:7999/user/read?id=" + id, {
+                    method: "GET",
                 })
-                .then((response) => response.json())
-                .then((user) => {
-                    switch (user) {
-                        case 0:
-                            alert("Can't get data, try later");
-                            break;
-                        case 2:
-                            alert("User not exist");
-                            break;
-                        default:
-                            this.setState({route: "user", pageData: user, pageId: id});
-                            break;
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        processError(response);
                     }
+                })
+                .then((user) => {
+                    this.setState({route: "user", pageData: user, pageId: id});
                 });
             } else {
                 //go to user page directlly
@@ -247,7 +225,6 @@ export default class Thousanday extends Component {
             }
         })
         .then((moment) => {
-            console.log(moment);
             this.setState({route: "moment", momentData: moment, momentId: id});
         });
     }
@@ -289,54 +266,6 @@ export default class Thousanday extends Component {
     userLogout() {
         this._removeUser();
         this.setState({userId: null, userData: null, userToken: null, userPlatform: null, route: "watch"});
-    }
-    //watch or unwatch a pet
-    petWatch() {
-        if (!this.state.userId) {
-            //must login first
-            alert("Please login first");
-        } else  {
-            let action;
-            if (this.state.petData[2].indexOf(this.state.userId) === -1) {
-                action = 0;
-            } else {
-                action = 1;
-            }
-            //watch or unwatch pet
-            fetch("https://thousanday.com/pets/updateWatch", {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    "action": action,
-                    "userId": this.state.userId,
-                    "petId": this.state.petId,
-                    "userToken": this.state.userToken
-                })
-            })
-            .then((response) => response.json())
-            .then((result) => {
-                switch (result) {
-                    case 0:
-                        alert("Can't get data, please try later");
-                        break;
-                    case 1:
-                        if (action === 1) {
-                            this.state.petData[2].splice(this.state.petData[2].indexOf(this.state.userId), 1);
-                            this.setState({petData: this.state.petData});
-                        } else {
-                            this.state.petData[2].push(this.state.userId);
-                            this.setState({petData: this.state.petData});
-                        }
-                        break;
-                    case 2:
-                        alert("Please login first");
-                        break;
-                }
-            });
-        }
     }
     //refresh user's data
     refreshUser() {
@@ -455,7 +384,7 @@ export default class Thousanday extends Component {
                     key={"pet" + this.state.petId}
                     data={this.state.petData}
                     userId={this.state.userId}
-                    petWatch={this.petWatch.bind(this)}
+                    userToken={this.state.userToken}
                     clickUser={this.clickUser.bind(this)}
                     clickPet={this.clickPet.bind(this)}
                     clickMoment={this.clickMoment.bind(this)}
@@ -476,7 +405,7 @@ export default class Thousanday extends Component {
                 let likeUsers = [], i;
                 if (this.state.momentData[2].length !== 0) {
                     for (i = 0; i < this.state.momentData[2].length; i++) {
-                        likeUsers.push(this.state.momentData[2][i].user_id);
+                        likeUsers.push(parseInt(this.state.momentData[2][i].user_id));
                     }
                 }
                 route = <Moment

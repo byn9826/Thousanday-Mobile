@@ -142,17 +142,28 @@ class User extends Component {
             </View>
         )
         //show all relatives
-        let relatives;
-        /*
-        let relatives = this.props.data[1].map((relative, index) =>
-            <TouchableOpacity key={"relativesthousn" + index} onPress={this.props.clickUser.bind(null, relative)}>
+        let reldata = [], i;
+		if (this.props.data[1].length !== 0) {
+			for (i = 0; i < this.props.data[1].length; i++) {
+				if (this.props.data[1][i].relative_id) {
+					if (this.props.data[1][i].relative_id == this.props.userId) {
+						reldata.push(this.props.data[1][i].owner_id);
+					} else {
+						reldata.push(this.props.data[1][i].relative_id);
+					}
+				}
+			}
+		}
+		reldata = [...new Set(reldata)];
+        let relatives = reldata.map((relative, index) =>
+            <TouchableOpacity key={"relativesthousn" + index} onPress={this.props.clickUser.bind(null, parseInt(relative))}>
                 <CachedImage
-                    source={{uri: "https://thousanday.com/img/user/" + relative + ".jpg"}}
+                    source={{uri: "http://192.168.0.13:7999/img/user/" + relative + ".jpg"}}
                     style={styles.userImg}
                     mutable
                 />
             </TouchableOpacity>
-        )*/
+        )
         //show admin panel, show welcome message
         let panel, welcome, logout;
         if (this.props.home) {
@@ -444,6 +455,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 5,
         borderBottomRightRadius: 5,
         marginBottom: 15,
+        marginTop: 10,
         borderRadius: 5
     },
     hubPet: {

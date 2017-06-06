@@ -54,7 +54,7 @@ class Explore extends Component {
                     //build data with all images
                     let gallery= processGallery(result);
                     let moreLocker = (result.length < 20)? true: false;
-                    this.setState({initImages: gallery, moreLocker: moreLocker});
+                    this.setState({initImages: gallery, moreLocker: moreLocker, loadTimes: 1});
                 });
 			}
         }
@@ -83,7 +83,7 @@ class Explore extends Component {
                     //build data with all images
                     let gallery= processGallery(result);
                     let moreLocker = (result.length < 20)? true: false;
-                    this.setState({initImages: gallery, moreLocker: moreLocker});
+                    this.setState({initImages: gallery, moreLocker: moreLocker, loadTimes: 1});
                 });
 			}
         }
@@ -107,7 +107,7 @@ class Explore extends Component {
                 let gallery= processGallery(result);
                 let allImages = this.state.initImages.concat(gallery);
                 let moreLocker = (result.length < 20)? true: false;
-                this.setState({initImages: allImages, moreLocker: moreLocker});
+                this.setState({initImages: allImages, moreLocker: moreLocker, loadTimes: this.state.loadTimes + 1});
             });
         }
     }

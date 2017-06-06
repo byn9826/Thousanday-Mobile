@@ -10,6 +10,7 @@ import {
     TouchableOpacity
 } from "react-native";
 import processError from "../../js/processError.js";
+import processGallery from "../../js/processGallery.js";
 import {CachedImage} from "react-native-img-cache";
 import noGetGender from "../../js/noGetGender.js";
 import noGetType from "../../js/noGetType.js";
@@ -19,41 +20,86 @@ class Pet extends Component {
         super(props);
         this.state = {
             //indicate lock load more function
-            petLocker: (this.props.data[1].length < 20)? true: false,
+            petLocker: (this.props.data[3].length < 20)? true: false,
             //store images
-            petImages: this.props.data[1] || [],
+            petImages: this.props.data[3] || [],
             //indicate how many time load more image
             loadTimes: 1,
-            refresh: false
+            refresh: false,
+            //store watch id list
+            watchData: []
         };
+    }
+    componentWillMount() {
+        //get all watcher id
+        let watch = [], i;
+        for (i = 0; i < this.props.data[4].length; i++) {
+            watch[i] = parseInt(this.props.data[4][i].user_id);
+        }
+        this.setState({watchData: watch});
     }
     loadMore() {
         if (!this.state.petLocker) {
-            fetch("https://thousanday.com/pets/loadMoments", {
+            fetch("http://192.168.0.13:7999/pet/load?add=0&load=" + this.state.loadTimes + "&pet=" + this.props.data[0].pet_id, {
+                method: "GET"
+            })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
+                }
+            })
+            .then((pet) => {
+                let newImage = this.state.petImages.concat(pet);
+                if (pet.length === 20) {
+                    this.setState({petImages: newImage, loadTimes: this.state.loadTimes + 1});
+                } else {
+                    this.setState({petImages: newImage, loadTimes: this.state.loadTimes + 1, petLocker: true});
+                }
+            });
+        }
+    }
+    //watch a pet
+    petWatch() {
+        if (!this.props.userId) {
+            //must login first
+            alert("Please login first");
+        } else  {
+            let action;
+            if (this.state.watchData.indexOf(this.props.userId) !== -1) {
+                action = 0;
+            } else {
+                action = 1;
+            }
+            //watch or unwatch pet
+            fetch("http://192.168.0.13:7999/pet/watch", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    "id": this.props.data[0].pet_id,
-                    "load": this.state.loadTimes
+                    "action": action,
+                    "user": this.props.userId,
+                    "pet": this.props.data[0].pet_id,
+                    "token": this.props.userToken
                 })
             })
-            .then((response) => response.json())
-            .then((pet) => {
-                switch (pet) {
-                    case 0:
-                        alert("Can't get data, try later");
-                        break;
-                    default:
-                        let newImage = this.state.petImages.concat(pet);
-                        if (pet.length === 20) {
-                            this.setState({petImages: newImage, loadTimes: this.state.loadTimes + 1});
-                        } else {
-                            this.setState({petImages: newImage, loadTimes: this.state.loadTimes + 1, petLocker: true});
-                        }
-                        break;
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
+                }
+            })
+            .then((result) => {
+                if (action === 1) {
+                    this.state.watchData.push(this.props.userId);
+                    this.setState({watchData: this.state.watchData});
+                } else {
+                    this.state.watchData.splice(this.state.watchData.indexOf(this.props.userId), 1);
+                    this.setState({watchData: this.state.watchData});
                 }
             });
         }
@@ -63,10 +109,10 @@ class Pet extends Component {
         let parent;
         if (this.props.data[0].relative_id) {
             parent = (
-                <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[0].relative_id)}>
+                <TouchableOpacity onPress={this.props.clickUser.bind(null, parseInt(this.props.data[0].relative_id))}>
                     <CachedImage
                         style={styles.boxRound}
-                        source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].relative_id + ".jpg"}}
+                        source={{uri: "http://192.168.0.13:7999/img/user/" + this.props.data[0].relative_id + ".jpg"}}
                         mutable
                     />
                 </TouchableOpacity>
@@ -74,38 +120,30 @@ class Pet extends Component {
         }
         //show friends if exist
         let friend1, friend2;
-        if (this.props.data[0].companion_first) {
+        if (this.props.data[2][0]) {
             friend1 = (
-                <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[0].companion_first)}>
+                <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[2][0].pet_id)}>
                     <CachedImage
                         style={styles.boxImage}
-                        source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].companion_first + "/cover/0.png"}}
+                        source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data[2][0].pet_id + "/0.png"}}
                         mutable
                     />
                 </TouchableOpacity>
             )
         }
-        if (this.props.data[0].companion_second) {
+        if (this.props.data[2][1]) {
             friend2 = (
-                <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[0].companion_second)}>
+                <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[2][1].pet_id)}>
                     <CachedImage
                         style={styles.boxImage}
-                        source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].companion_second + "/cover/0.png"}}
+                        source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data[2][1].pet_id + "/0.png"}}
                         mutable
                     />
                 </TouchableOpacity>
             )
         }
         //process data to get all images
-        let gallery = [], i;
-        for (i = 0; i < this.state.petImages.length; i++) {
-            gallery.push(
-                {
-                    key: "https://thousanday.com/img/pet/" + this.state.petImages[i].pet_id + "/moment/" + this.state.petImages[i].image_name,
-                    id: this.state.petImages[i].moment_id
-                }
-            )
-        }
+        let gallery = processGallery(this.state.petImages);
         return (
             <FlatList
                 contentContainerStyle={styles.container}
@@ -113,7 +151,7 @@ class Pet extends Component {
                     return (
                         <View style={styles.containerHeader}>
                             <CachedImage
-                                source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].pet_id + "/cover/0.png"}}
+                                source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
                                 style={styles.headerAvatar}
                                 mutable
                             />
@@ -137,10 +175,10 @@ class Pet extends Component {
                                         {this.props.data[0].pet_gender === 0 ? "His ": "Her "}Family
                                     </Text>
                                     <View style={styles.parentBox}>
-                                        <TouchableOpacity onPress={this.props.clickUser.bind(null, this.props.data[0].owner_id)}>
+                                        <TouchableOpacity onPress={this.props.clickUser.bind(null, parseInt(this.props.data[0].owner_id))}>
                                             <CachedImage
                                                 style={styles.boxRound}
-                                                source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].owner_id + ".jpg"}}
+                                                source={{uri: "http://192.168.0.13:7999/img/user/" + this.props.data[0].owner_id + ".jpg"}}
                                                 mutable
                                             />
                                         </TouchableOpacity>
@@ -157,9 +195,9 @@ class Pet extends Component {
                                     </View>
                                 </View>
                             </View>
-                            <TouchableOpacity onPress={this.props.petWatch.bind(null)}>
+                            <TouchableOpacity onPress={this.petWatch.bind(this)}>
                                 <Text style={styles.headerWatch}>
-                                    {this.props.data[2].indexOf(this.props.userId) === -1?"+ watch":"Watched"} | by {this.props.data[2].length}
+                                    {this.state.watchData.indexOf(this.props.userId) === -1?"+ Watch":"Watched"} | by {this.state.watchData.length}
                                 </Text>
                             </TouchableOpacity>
                             <View style={styles.headerHolder}>

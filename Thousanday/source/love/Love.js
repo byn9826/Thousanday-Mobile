@@ -293,7 +293,7 @@ class Love extends Component {
                 }}
                 data = {data}
                 renderItem={({item}) =>
-                    <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.key)}>]
+                    <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.key)}>
                         <CachedImage
                             source={{uri: item.image}}
                             style={styles.rootImage}
