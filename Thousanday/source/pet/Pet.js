@@ -40,7 +40,7 @@ class Pet extends Component {
     }
     loadMore() {
         if (!this.state.petLocker) {
-            fetch("http://192.168.0.13:7999/pet/load?add=0&load=" + this.state.loadTimes + "&pet=" + this.props.data[0].pet_id, {
+            fetch("https://thousanday.com/pet/load?add=0&load=" + this.state.loadTimes + "&pet=" + this.props.data[0].pet_id, {
                 method: "GET"
             })
             .then((response) => {
@@ -73,7 +73,7 @@ class Pet extends Component {
                 action = 1;
             }
             //watch or unwatch pet
-            fetch("http://192.168.0.13:7999/pet/watch", {
+            fetch("https://thousanday.com/pet/watch", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -112,7 +112,7 @@ class Pet extends Component {
                 <TouchableOpacity onPress={this.props.clickUser.bind(null, parseInt(this.props.data[0].relative_id))}>
                     <CachedImage
                         style={styles.boxRound}
-                        source={{uri: "http://192.168.0.13:7999/img/user/" + this.props.data[0].relative_id + ".jpg"}}
+                        source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].relative_id + ".jpg"}}
                         mutable
                     />
                 </TouchableOpacity>
@@ -125,7 +125,7 @@ class Pet extends Component {
                 <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[2][0].pet_id)}>
                     <CachedImage
                         style={styles.boxImage}
-                        source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data[2][0].pet_id + "/0.png"}}
+                        source={{uri: "https://thousanday.com/img/pet/" + this.props.data[2][0].pet_id + "/0.png"}}
                         mutable
                     />
                 </TouchableOpacity>
@@ -136,7 +136,7 @@ class Pet extends Component {
                 <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[2][1].pet_id)}>
                     <CachedImage
                         style={styles.boxImage}
-                        source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data[2][1].pet_id + "/0.png"}}
+                        source={{uri: "https://thousanday.com/img/pet/" + this.props.data[2][1].pet_id + "/0.png"}}
                         mutable
                     />
                 </TouchableOpacity>
@@ -151,7 +151,7 @@ class Pet extends Component {
                     return (
                         <View style={styles.containerHeader}>
                             <CachedImage
-                                source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
+                                source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
                                 style={styles.headerAvatar}
                                 mutable
                             />
@@ -178,7 +178,7 @@ class Pet extends Component {
                                         <TouchableOpacity onPress={this.props.clickUser.bind(null, parseInt(this.props.data[0].owner_id))}>
                                             <CachedImage
                                                 style={styles.boxRound}
-                                                source={{uri: "http://192.168.0.13:7999/img/user/" + this.props.data[0].owner_id + ".jpg"}}
+                                                source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].owner_id + ".jpg"}}
                                                 mutable
                                             />
                                         </TouchableOpacity>

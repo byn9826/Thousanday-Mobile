@@ -72,7 +72,7 @@ export default class Thousanday extends Component {
     //get most recent public images for watch on app open
     componentWillMount() {
         //load 20 newest moments by default
-        fetch("http://192.168.0.13:7999/index/read?load=0", {
+        fetch("https://thousanday.com/index/read?load=0", {
             method: "GET",
         })
         .then((response) => {
@@ -129,7 +129,7 @@ export default class Thousanday extends Component {
     loadWatch() {
         //check if watch lock exist
         if (!this.state.watchLocker) {
-            fetch("http://192.168.0.13:7999/index/read?load=" + this.state.watchTimes, {
+            fetch("https://thousanday.com/index/read?load=" + this.state.watchTimes, {
                 method: "GET",
             })
             .then((response) => {
@@ -167,7 +167,7 @@ export default class Thousanday extends Component {
     clickPet(id) {
         //pet page didn't be requested before
         if (this.state.petId !== id) {
-            fetch("http:/192.168.0.13:7999/pet/read?id=" + id, {
+            fetch("https://thousanday.com/pet/read?id=" + id, {
                 method: "GET"
             })
             .then((response) => {
@@ -193,7 +193,7 @@ export default class Thousanday extends Component {
         } else {
             //user page didn't be requested before
             if (this.state.pageId !== id) {
-                fetch("http://192.168.0.13:7999/user/read?id=" + id, {
+                fetch("https://thousanday.com/user/read?id=" + id, {
                     method: "GET",
                 })
                 .then((response) => {
@@ -214,7 +214,7 @@ export default class Thousanday extends Component {
     }
     //if user click on one moment, read moment data
     clickMoment(id) {
-        fetch("http://192.168.0.13:7999/moment/read?id=" + id, {
+        fetch("https://thousanday.com/moment/read?id=" + id, {
             method: "GET",
         })
         .then((response) => {
@@ -238,7 +238,7 @@ export default class Thousanday extends Component {
     }
     //process user login action
     processLogin(result, platform) {
-        fetch("http://192.168.0.13:7999/user/read?id=" + result[0], {
+        fetch("https://thousanday.com/user/read?id=" + result[0], {
             method: "GET",
         })
         .then((response) => {
@@ -281,7 +281,7 @@ export default class Thousanday extends Component {
     }
     //refresh user,moment, pet data, and go to new moment
     refreshMoment(id) {
-        fetch("http://192.168.0.13:7999/moment/read?id=" + id, {
+        fetch("https://thousanday.com/moment/read?id=" + id, {
             method: "GET",
         })
         .then((response) => {
@@ -301,7 +301,7 @@ export default class Thousanday extends Component {
     }
     //click edit pet, get info for one pet
     clickEditPet(id) {
-        fetch("http://192.168.0.13:7999/edit/read?pet=" + id + "&user=" + this.state.userId, {
+        fetch("https://thousanday.com/edit/read?pet=" + id + "&user=" + this.state.userId, {
             method: "GET",
         })
         .then((response) => {
@@ -317,7 +317,7 @@ export default class Thousanday extends Component {
     }
     //click watch lists,get watch list info
     clickWatchList() {
-        fetch("http://192.168.0.13:7999/watch/read?id=" + this.state.userId, {
+        fetch("https://thousanday.com/watch/read?id=" + this.state.userId, {
             method: "GET",
         })
         .then((response) => {
@@ -347,7 +347,7 @@ export default class Thousanday extends Component {
     }
     //click friend request button
     clickRequestMessage() {
-        fetch("http://192.168.0.13:7999/request/read?id=" + this.state.userId, {
+        fetch("https://thousanday.com/request/read?id=" + this.state.userId, {
             method: "GET",
         })
         .then((response) => {

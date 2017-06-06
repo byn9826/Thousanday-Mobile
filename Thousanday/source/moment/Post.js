@@ -71,7 +71,7 @@ class PostMoment extends Component {
             data.append("token", this.props.userToken);
             data.append("user", this.props.userId);
             data.append("pet", pet);
-            fetch("http://192.168.0.13:7999/upload/moment", {
+            fetch("https://thousanday.com/upload/moment", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -107,7 +107,7 @@ class PostMoment extends Component {
         let pets = this.props.petList.map((pet, index) =>
             <TouchableOpacity key={"choosepet" + index} style={(this.state.pet === pet.pet_id)?styles.petChoose: null} onPress={this.choosePet.bind(this, pet.pet_id)}>
                 <CachedImage
-                    source={{uri: "http://192.168.0.13:7999/img/pet/" + pet.pet_id + "/0.png"}}
+                    source={{uri: "https://thousanday.com/img/pet/" + pet.pet_id + "/0.png"}}
                     style={styles.petOption}
                     mutable
                 />

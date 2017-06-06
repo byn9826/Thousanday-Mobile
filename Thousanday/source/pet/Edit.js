@@ -35,7 +35,7 @@ class EditPet extends Component {
     //save name
     saveName() {
         if (this.state.name !== this.props.data.pet_name) {
-            fetch("http://192.168.0.13:7999/edit/name", {
+            fetch("https://thousanday.com/edit/name", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -84,7 +84,7 @@ class EditPet extends Component {
         data.append("token", this.props.userToken);
         data.append("user", this.props.userId);
         data.append("pet", this.props.data.pet_id);
-        fetch("http://192.168.0.13:7999/upload/pet", {
+        fetch("https://thousanday.com/upload/pet", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -100,7 +100,7 @@ class EditPet extends Component {
             }
         })
         .then((result) => {
-            ImageCache.get().bust("http://192.168.0.13:7999/img/pet/" + this.props.data.pet_id + "/0.png");
+            ImageCache.get().bust("https://thousanday.com/img/pet/" + this.props.data.pet_id + "/0.png");
             this.setState({button: "Update Success!"})
             this.props.refreshPet();
         });
@@ -111,7 +111,7 @@ class EditPet extends Component {
     }
     //confirm end relationship
     confirmEnd() {
-        fetch("http://192.168.0.13:7999/edit/end", {
+        fetch("https://thousanday.com/edit/end", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -140,7 +140,7 @@ class EditPet extends Component {
     }
     //confirm send request
     confirmSend() {
-        fetch("http://192.168.0.13:7999/edit/add", {
+        fetch("https://thousanday.com/edit/add", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -170,7 +170,7 @@ class EditPet extends Component {
     }
     //confirmTransfer Ownership
     confirmTransfer() {
-        fetch("http://192.168.0.13:7999/edit/transfer", {
+        fetch("https://thousanday.com/edit/transfer", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -194,7 +194,7 @@ class EditPet extends Component {
     }
     //confirm remove pet
     confirmRemove() {
-        fetch("http://192.168.0.13:7999/edit/remove", {
+        fetch("https://thousanday.com/edit/remove", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -299,7 +299,7 @@ class EditPet extends Component {
                                         if (id >= 0 || text === "") {
                                             this.setState({search: text})
                                             if (text !== "") {
-                                                fetch("http://192.168.0.13:7999/edit/search?id=" + id, {
+                                                fetch("https://thousanday.com/edit/search?id=" + id, {
                                                     method: "GET",
                                                 })
                                                 .then((response) => {
@@ -325,7 +325,7 @@ class EditPet extends Component {
                                     (this.state.getName && this.state.search)? (
                                         <View style={styles.confirmInfo}>
                                             <Image
-                                                source={{uri: "http://192.168.0.13:7999/img/user/" + this.state.search + ".jpg"}}
+                                                source={{uri: "https://thousanday.com/img/user/" + this.state.search + ".jpg"}}
                                                 style={styles.infoImage}
                                             />
                                             <Text style={styles.infoName}>
@@ -433,7 +433,7 @@ class EditPet extends Component {
                         ): (
                             <CachedImage
                                 style={styles.pictureProfile}
-                                source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data.pet_id + "/0.png"}}
+                                source={{uri: "https://thousanday.com/img/pet/" + this.props.data.pet_id + "/0.png"}}
                                 mutable
                             />
                         )

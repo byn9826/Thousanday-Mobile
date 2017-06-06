@@ -39,7 +39,7 @@ class Explore extends Component {
             //require info
             if (this.state.nature) {
                 this.setState({refresh: true});
-                fetch("http://192.168.0.13:7999/explore/read?load=0&nature=" + this.state.nature + "&type=" + type, {
+                fetch("https://thousanday.com/explore/read?load=0&nature=" + this.state.nature + "&type=" + type, {
                     method: "GET",
                 })
                 .then((response) => {
@@ -68,7 +68,7 @@ class Explore extends Component {
             this.setState({nature: nature});
             //if chosed nature and type do search
             if (this.state.type) {
-                fetch("http://192.168.0.13:7999/explore/read?load=0&nature=" + nature + "&type=" + this.state.type, {
+                fetch("https://thousanday.com/explore/read?load=0&nature=" + nature + "&type=" + this.state.type, {
                     method: "GET",
                 })
                 .then((response) => {
@@ -91,7 +91,7 @@ class Explore extends Component {
     //load more momentCursor
     loadMore() {
         if (this.state.type && this.state.nature && !this.state.moreLocker) {
-            fetch("http://192.168.0.13:7999/explore/read?load=" + this.state.loadTimes + "&nature=" + this.state.nature + "&type=" + this.state.type, {
+            fetch("https://thousanday.com/explore/read?load=" + this.state.loadTimes + "&nature=" + this.state.nature + "&type=" + this.state.type, {
                 method: "GET",
             })
             .then((response) => {

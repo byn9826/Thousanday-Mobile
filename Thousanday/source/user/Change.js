@@ -42,7 +42,7 @@ class EditProfile extends Component {
         data.append("file", file, this.props.userId + ".jpg");
         data.append("token", this.props.userToken);
         data.append("user", this.props.userId);
-        fetch("http://192.168.0.13:7999/upload/user", {
+        fetch("https://thousanday.com/upload/user", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -58,14 +58,14 @@ class EditProfile extends Component {
             }
         })
         .then((result) => {
-            ImageCache.get().bust("http://192.168.0.13:7999/img/user/" + this.props.userId + ".jpg");
+            ImageCache.get().bust("https://thousanday.com/img/user/" + this.props.userId + ".jpg");
             this.props.refreshUser();
         });
     }
     //save name
     saveName() {
         if (this.state.name !== this.props.userName) {
-            fetch("http://192.168.0.13:7999/setting/name", {
+            fetch("https://thousanday.com/setting/name", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -124,7 +124,7 @@ class EditProfile extends Component {
                         ): (
                             <CachedImage
                                 style={styles.pictureProfile}
-                                source={{uri: "http://192.168.0.13:7999/img/user/" + this.props.userId + ".jpg"}}
+                                source={{uri: "https://thousanday.com/img/user/" + this.props.userId + ".jpg"}}
                                 mutable
                             />
                         )

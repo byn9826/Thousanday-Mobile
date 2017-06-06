@@ -64,7 +64,7 @@ class Signup extends Component {
             }
             data.append("platform", this.props.platform);
             data.append("method", "mobile");
-            fetch("http://192.168.0.13:7999/upload/create", {
+            fetch("https://thousanday.com/upload/create", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",

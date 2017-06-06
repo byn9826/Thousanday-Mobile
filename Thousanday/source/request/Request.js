@@ -18,7 +18,7 @@ class Request extends Component {
         };
     }
     acceptRequest(pet) {
-        fetch("http://192.168.0.13:7999/request/accept", {
+        fetch("https://thousanday.com/request/accept", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -44,7 +44,7 @@ class Request extends Component {
         });
     }
     deleteRequest(pet, index) {
-        fetch("http://192.168.0.13:7999/request/delete", {
+        fetch("https://thousanday.com/request/delete", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -68,14 +68,14 @@ class Request extends Component {
                 <View style={styles.rootRow}>
                     <Image
                         style={styles.rowImage}
-                        source={{uri: "http://192.168.0.13:7999/img/user/" + request.sender_id + ".jpg"}}
+                        source={{uri: "https://thousanday.com/img/user/" + request.sender_id + ".jpg"}}
                     />
                     <Text style ={styles.rowWant}>
                         wants to add you as
                     </Text>
                     <Image
                         style={styles.rowPet}
-                        source={{uri: "http://192.168.0.13:7999/img/pet/" + request.pet_id + "/cover/0.png"}}
+                        source={{uri: "https://thousanday.com/img/pet/" + request.pet_id + "/cover/0.png"}}
                     />
                     <Text style ={styles.rowWant}>
                         {"'s relative"}

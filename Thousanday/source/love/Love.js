@@ -31,7 +31,7 @@ class Love extends Component {
     componentWillMount() {
         this.setState({refresh: true});
         //load 20 newest moments by default
-        fetch("http://192.168.0.13:7999/watch/read?id=" + this.props.userId, {
+        fetch("https://thousanday.com/watch/read?id=" + this.props.userId, {
             method: "GET",
         })
         .then((response) => {
@@ -53,7 +53,7 @@ class Love extends Component {
     loadMore() {
         if (this.state.list === "watch") {
             if (!this.state.locker) {
-                fetch("http://192.168.0.13:7999/watch/load", {
+                fetch("https://thousanday.com/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -84,7 +84,7 @@ class Love extends Component {
             }
         } else if (this.state.list === "love") {
             if (!this.state.loveLocker) {
-                fetch("http://192.168.0.13:7999/watch/load", {
+                fetch("https://thousanday.com/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -115,7 +115,7 @@ class Love extends Component {
             }
         } else if (this.state.list === "comment") {
             if (!this.state.commentLocker) {
-                fetch("http://192.168.0.13:7999/watch/load", {
+                fetch("https://thousanday.com/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -152,7 +152,7 @@ class Love extends Component {
             if (list === "love") {
                 if (!this.state.loveData) {
                     this.setState({refresh: true});
-                    fetch("http://192.168.0.13:7999/watch/load", {
+                    fetch("https://thousanday.com/watch/load", {
                         method: "POST",
                         headers: {
                             "Accept": "application/json",
@@ -186,7 +186,7 @@ class Love extends Component {
             } else if (list === "comment") {
                 if (!this.state.commentData) {
                     this.setState({refresh: true});
-                    fetch("http://192.168.0.13:7999/watch/load", {
+                    fetch("https://thousanday.com/watch/load", {
                         method: "POST",
                         headers: {
                             "Accept": "application/json",
@@ -229,7 +229,7 @@ class Love extends Component {
                 data.push(
                     {
                         key: this.state.watchData[i].moment_id,
-                        image: "http://192.168.0.13:7999/img/pet/" + this.state.watchData[i].pet_id + "/moment/" + this.state.watchData[i].image_name
+                        image: "https://thousanday.com/img/pet/" + this.state.watchData[i].pet_id + "/moment/" + this.state.watchData[i].image_name
                     }
                 )
             }
@@ -238,7 +238,7 @@ class Love extends Component {
                 data.push(
                     {
                         key: this.state.loveData[i].moment_id,
-                        image: "http://192.168.0.13:7999/img/pet/" + this.state.loveData[i].pet_id + "/moment/" + this.state.loveData[i].image_name
+                        image: "https://thousanday.com/img/pet/" + this.state.loveData[i].pet_id + "/moment/" + this.state.loveData[i].image_name
                     }
                 )
             }
@@ -247,7 +247,7 @@ class Love extends Component {
                 data.push(
                     {
                         key: this.state.commentData[i].moment_id,
-                        image: "http://192.168.0.13:7999/img/pet/" + this.state.commentData[i].pet_id + "/moment/" + this.state.commentData[i].image_name
+                        image: "https://thousanday.com/img/pet/" + this.state.commentData[i].pet_id + "/moment/" + this.state.commentData[i].image_name
                     }
                 )
             }

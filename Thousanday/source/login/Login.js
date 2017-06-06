@@ -37,7 +37,7 @@ class Login extends Component {
         GoogleSignin.signIn()
             .then((user) => {
                 this.setState({refresh: true});
-                fetch("http://192.168.0.13:7999/account/google", {
+                fetch("https://thousanday.com/account/google", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -120,7 +120,7 @@ let Facebook = React.createClass({
                                 AccessToken.getCurrentAccessToken().then(
                                     (data) => {
                                         this.setState({refresh: true});
-                                        fetch("http://192.168.0.13:7999/account/facebook", {
+                                        fetch("https://thousanday.com/account/facebook", {
                                             method: "POST",
                                             headers: {
                                                 "Accept": "application/json",

@@ -37,7 +37,7 @@ class Moment extends Component {
             } else {
                 action = 0;
             }
-            fetch("http://192.168.0.13:7999/moment/like", {
+            fetch("https://thousanday.com/moment/like", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -70,7 +70,7 @@ class Moment extends Component {
     }
     //send new comment
     sendMessage() {
-        fetch("http://192.168.0.13:7999/moment/comment", {
+        fetch("https://thousanday.com/moment/comment", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -101,7 +101,7 @@ class Moment extends Component {
     }
     //load more comment
     loadMore() {
-        fetch("http://192.168.0.13:7999/moment/load?id=" + this.props.data[0].moment_id + "&load=" + (parseInt(this.state.load) - 1) + "&add=" + this.state.send , {
+        fetch("https://thousanday.com/moment/load?id=" + this.props.data[0].moment_id + "&load=" + (parseInt(this.state.load) - 1) + "&add=" + this.state.send , {
             method: "GET",
         })
         .then((response) => {
@@ -135,7 +135,7 @@ class Moment extends Component {
         let comments = this.state.list.map((comment, index)=>
             <View key={"comments"+ index} style={styles.commentLine}>
                 <CachedImage
-                    source={{uri: "http://192.168.0.13:7999/img/user/" + comment.user_id + ".jpg"}}
+                    source={{uri: "https://thousanday.com/img/user/" + comment.user_id + ".jpg"}}
                     style={styles.lineAvatar}
                 />
                 <Text style={styles.lineContent}>
@@ -148,7 +148,7 @@ class Moment extends Component {
                 <View style={styles.rootTop}>
                     <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[0].pet_id)}>
                         <CachedImage
-                            source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
+                            source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
                             style={styles.topAvatar}
                         />
                     </TouchableOpacity>
@@ -162,7 +162,7 @@ class Moment extends Component {
                     </View>
                 </View>
                 <CachedImage
-                    source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data[0].pet_id + "/moment/" + this.props.data[0].image_name}}
+                    source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].pet_id + "/moment/" + this.props.data[0].image_name}}
                     style={styles.rootImg}
                 />
                 <View style={styles.rootSocial}>

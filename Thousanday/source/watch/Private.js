@@ -25,7 +25,7 @@ class WatchList extends Component {
     }
     watchPet(id, action) {
         if (action === 1) {
-            fetch("http://192.168.0.13:7999/watch/remove", {
+            fetch("https://thousanday.com/watch/remove", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -50,7 +50,7 @@ class WatchList extends Component {
                 this.props.refreshPet();
             });
         } else {
-            fetch("http://192.168.0.13:7999/watch/add", {
+            fetch("https://thousanday.com/watch/add", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -130,7 +130,7 @@ class WatchList extends Component {
                         <View key={"privatewatch" + item.key} style={styles.rootRow}>
                             <TouchableOpacity onPress={this.props.clickPet.bind(null, item.id)}>
                                 <CachedImage
-                                    source={{uri: "http://192.168.0.13:7999/img/pet/" + item.id + "/0.png"}}
+                                    source={{uri: "https://thousanday.com/img/pet/" + item.id + "/0.png"}}
                                     style={styles.rowAvatar}
                                     mutable
                                 />
@@ -148,7 +148,7 @@ class WatchList extends Component {
                         <View key={"privatewatch" + item.key} style={styles.rootRow}>
                             <TouchableOpacity onPress={this.props.clickPet.bind(null, item.id)}>
                                 <CachedImage
-                                    source={{uri: "http://192.168.0.13/img/pet/" + item.id + "/0.png"}}
+                                    source={{uri: "https://thousanday.com/img/pet/" + item.id + "/0.png"}}
                                     style={styles.rowAvatar}
                                     mutable
                                 />
