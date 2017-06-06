@@ -12,6 +12,8 @@ const {
     LoginButton,
     AccessToken
 } = FBSDK;
+import processError from "../../js/processError.js";
+import processGallery from "../../js/processGallery.js";
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import noGetGender from "../../js/noGetGender.js";
 import noGetType from "../../js/noGetType.js";
@@ -21,13 +23,15 @@ class User extends Component {
         super(props);
         this.state = {
             //store images
-            userImages: this.props.data[4] || [],
+            userImages: processGallery(this.props.data[2]) || [],
             //indicate lock load more function
-            userLocker: this.props.data[4].length === 20?false:true,
+            userLocker: this.props.data[2].length === 20?false:true,
             //indicate how many time load more image
             loadTimes: 1,
             //refresh icon
-            refresh: false
+            refresh: false,
+            //store pet list belong to user
+            belong: this.props.data[3]
         };
     }
     componentDidMount() {
@@ -44,84 +48,69 @@ class User extends Component {
     _gLogout() {
         GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
             this.setState({refresh: true});
-            fetch("https://thousanday.com/accounts/logOut", {
+            fetch("http://192.168.0.13:7999/account/logout", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    "id": this.props.userId
+                    "id": this.props.userId,
+                    "token": this.props.userToken
                 })
             })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
+                }
+            })
             .then((result) => {
                 this.setState({refresh: false});
-                switch (result) {
-                    case 0:
-                        alert("Something wrong, please try again");
-                        break;
-                    case 1:
-                        this.props.userLogout();
-                        break;
-                }
+                this.props.userLogout();
             });
-        })
-        .done();
+        });
     }
     //load more moments
     loadMore() {
         if (!this.state.userLocker) {
-            let i, lists = [];
-            for (i = 0; i < this.props.data[2].length; i++) {
-                lists.push(this.props.data[2][i].pet_id);
-            }
-            fetch("https://thousanday.com/users/loadMoments", {
+            fetch("http://192.168.0.13:7999/user/load", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    "petsList": lists,
-                    "loadTimes": 1
+                    "load": this.state.loadTimes,
+                    "belong": this.state.belong
                 })
             })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
+                }
+            })
             .then((result) => {
-                switch(result) {
-                    case 0:
-                        alert("Can't get data, try later");
-                        break;
-                    default:
-                        let newResult = this.state.userImages.concat(result);
-                        if (result.length === 20) {
-                            this.setState({userImages: newResult, loadTimes: this.state.loadTimes + 1});
-                        } else {
-                            this.setState({userImages: newResult, loadTimes: this.state.loadTimes + 1, userLocker: true});
-                        }
-                        break;
+                result = processGallery(result);
+                let newResult = this.state.userImages.concat(result);
+                if (result.length === 20) {
+                    this.setState({userImages: newResult, loadTimes: this.state.loadTimes + 1});
+                } else {
+                    this.setState({userImages: newResult, loadTimes: this.state.loadTimes + 1, userLocker: true});
                 }
             });
         }
     }
     render() {
-        //process data to get all images
-        let gallery = [], i;
-        for (i = 0; i < this.state.userImages.length; i++) {
-            gallery.push(
-                {
-                    key: "https://thousanday.com/img/pet/" + this.state.userImages[i].pet_id + "/moment/" + this.state.userImages[i].image_name,
-                    id: this.state.userImages[i].moment_id
-                }
-            )
-        }
         //show all pets
-        let pets = this.props.data[2].map((pet, index) =>
+        let pets = this.props.data[1].map((pet, index) =>
             <View key={"petsthousn" + index} style={styles.petHub}>
                 <TouchableOpacity onPress={this.props.clickPet.bind(null, pet.pet_id)}>
                     <CachedImage
-                        source={{uri: "https://thousanday.com/img/pet/" + pet.pet_id + "/cover/0.png"}}
+                        source={{uri: "http://192.168.0.13:7999/img/pet/" + pet.pet_id + "/0.png"}}
                         style={styles.hubPet}
                         mutable
                     />
@@ -153,6 +142,8 @@ class User extends Component {
             </View>
         )
         //show all relatives
+        let relatives;
+        /*
         let relatives = this.props.data[1].map((relative, index) =>
             <TouchableOpacity key={"relativesthousn" + index} onPress={this.props.clickUser.bind(null, relative)}>
                 <CachedImage
@@ -161,7 +152,7 @@ class User extends Component {
                     mutable
                 />
             </TouchableOpacity>
-        )
+        )*/
         //show admin panel, show welcome message
         let panel, welcome, logout;
         if (this.props.home) {
@@ -221,7 +212,7 @@ class User extends Component {
             );
             if (this.props.platform === "facebook") {
                 logout = (
-                    <Facebook userId={this.props.userId} userLogout={this.props.userLogout.bind(this)}/>
+                    <Facebook userId={this.props.userId} userToken={this.props.userToken} userLogout={this.props.userLogout.bind(this)}/>
                 )
             } else {
                 logout = (
@@ -235,7 +226,7 @@ class User extends Component {
             welcome = (
                 <View style={styles.headerContainer}>
                     <Text style={styles.containerHome}>
-                        Welcome Home! {this.props.data[0][0]}
+                        Welcome Home! {this.props.data[0].user_name}
                     </Text>
                     {logout}
                 </View>
@@ -243,7 +234,7 @@ class User extends Component {
         } else {
             welcome = (
                 <Text style={styles.headerName}>
-                    Welcome to {this.props.data[0][0] + "'s"} Home
+                    Welcome to {this.props.data[0].user_name + "'s"} Home
                 </Text>
             );
         }
@@ -263,7 +254,7 @@ class User extends Component {
                         <View style={styles.mainHeader}>
                             <View style={styles.headerRow}>
                                 <CachedImage
-                                    source={{uri: "https://thousanday.com/img/user/" + this.props.userId + ".jpg"}}
+                                    source={{uri: "http://192.168.0.13:7999/img/user/" + this.props.userId + ".jpg"}}
                                     style={styles.headerAvatar}
                                     mutable
                                 />
@@ -302,7 +293,7 @@ class User extends Component {
                     )
                 }}
                 contentContainerStyle={styles.mainContainer}
-                data = {gallery}
+                data = {this.state.userImages}
                 numColumns={2}
                 columnWrapperStyle={{
                     justifyContent: "space-between"
@@ -332,27 +323,27 @@ let Facebook = React.createClass({
                 onLogoutFinished={
                     () => {
                         this.setState({refresh: true});
-                        fetch("https://thousanday.com/accounts/logOut", {
+                        fetch("http://192.168.0.13:7999/account/logout", {
                             method: "POST",
                             headers: {
                                 "Accept": "application/json",
                                 "Content-Type": "application/json",
                             },
                             body: JSON.stringify({
-                                "id": this.props.userId
+                                "id": this.props.userId,
+                                "token": this.props.userToken
                             })
                         })
-                        .then((response) => response.json())
+                        .then((response) => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                processError(response);
+                            }
+                        })
                         .then((result) => {
                             this.setState({refresh: false});
-                            switch (result) {
-                                case 0:
-                                    alert("Something wrong, please try again");
-                                    break;
-                                case 1:
-                                    this.props.userLogout();
-                                    break;
-                            }
+                            this.props.userLogout();
                         });
                     }
                 }
@@ -451,7 +442,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginRight: 20,
         borderBottomLeftRadius: 5,
-        borderBottomRightRadius: 5
+        borderBottomRightRadius: 5,
+        marginBottom: 15,
+        borderRadius: 5
     },
     hubPet: {
         width: 90,

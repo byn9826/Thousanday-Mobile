@@ -9,7 +9,8 @@ import {
     TouchableOpacity
 } from "react-native";
 import {CachedImage} from "react-native-img-cache";
-
+import processError from "../../js/processError.js";
+import processGallery from "../../js/processGallery.js";
 class Explore extends Component {
     constructor(props) {
         super(props);
@@ -38,39 +39,22 @@ class Explore extends Component {
             //require info
             if (this.state.nature) {
                 this.setState({refresh: true});
-                fetch("https://thousanday.com/explores/searchMoments", {
-                    method: "POST",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        "type": type,
-                        "nature": this.state.nature,
-                        "load": 0
-                    })
+                fetch("http://192.168.0.13:7999/explore/read?load=0&nature=" + this.state.nature + "&type=" + type, {
+                    method: "GET",
                 })
-                .then((response) => response.json())
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json()
+                    } else {
+                        processError(response);
+                    }
+                })
                 .then((result) => {
                     this.setState({refresh: false});
-                    switch(result) {
-                        case 0:
-                            alert("Can't get data, try later");
-                            break;
-                        default:
-                            //build data with all images
-                            let gallery = [], i;
-                            for (i = 0; i < result.length; i++) {
-                                gallery.push(
-                                    {
-                                        key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name,
-                                        id: result[i].moment_id
-                                    }
-                                )
-                            }
-                            let moreLocker = (result.length < 20)? true: false;
-                            this.setState({initImages: gallery, moreLocker: moreLocker});
-                    }
+                    //build data with all images
+                    let gallery= processGallery(result);
+                    let moreLocker = (result.length < 20)? true: false;
+                    this.setState({initImages: gallery, moreLocker: moreLocker});
                 });
 			}
         }
@@ -84,40 +68,22 @@ class Explore extends Component {
             this.setState({nature: nature});
             //if chosed nature and type do search
             if (this.state.type) {
-                this.setState({refresh: true});
-                fetch("https://thousanday.com/explores/searchMoments", {
-                    method: "POST",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        "type": this.state.type,
-                        "nature": nature,
-                        "load": 0
-                    })
+                fetch("http://192.168.0.13:7999/explore/read?load=0&nature=" + nature + "&type=" + this.state.type, {
+                    method: "GET",
                 })
-                .then((response) => response.json())
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json()
+                    } else {
+                        processError(response);
+                    }
+                })
                 .then((result) => {
                     this.setState({refresh: false});
-                    switch(result) {
-                        case 0:
-                            alert("Can't get data, try later");
-                            break;
-                        default:
-                            //build data with all images
-                            let gallery = [], i;
-                            for (i = 0; i < result.length; i++) {
-                                gallery.push(
-                                    {
-                                        key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name,
-                                        id: result[i].moment_id
-                                    }
-                                )
-                            }
-                            let moreLocker = (result.length < 20)? true: false;
-                            this.setState({initImages: gallery, moreLocker: moreLocker});
-                    }
+                    //build data with all images
+                    let gallery= processGallery(result);
+                    let moreLocker = (result.length < 20)? true: false;
+                    this.setState({initImages: gallery, moreLocker: moreLocker});
                 });
 			}
         }
@@ -125,38 +91,23 @@ class Explore extends Component {
     //load more momentCursor
     loadMore() {
         if (this.state.type && this.state.nature && !this.state.moreLocker) {
-            fetch("https://thousanday.com/explores/searchMoments", {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    "type": this.state.type,
-                    "nature": this.state.nature,
-                    "load": this.state.loadTimes
-                })
+            fetch("http://192.168.0.13:7999/explore/read?load=" + this.state.loadTimes + "&nature=" + this.state.nature + "&type=" + this.state.type, {
+                method: "GET",
             })
-            .then((response) => response.json())
-            .then((result) => {
-                switch(result) {
-                    case 0:
-                        alert("Can't get data, try later");
-                        break;
-                    default:
-                        //build data with all images
-                        let i;
-                        for (i = 0; i < result.length; i++) {
-                            this.state.initImages.push(
-                                {
-                                    key: "https://thousanday.com/img/pet/" + result[i].pet_id + "/moment/" + result[i].image_name,
-                                    id: result[i].moment_id
-                                }
-                            )
-                        }
-                        let moreLocker = (result.length < 20)? true: false;
-                        this.setState({initImages: this.state.initImages, moreLocker: moreLocker});
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    processError(response);
                 }
+            })
+            .then((result) => {
+                this.setState({refresh: false});
+                //build data with all images
+                let gallery= processGallery(result);
+                let allImages = this.state.initImages.concat(gallery);
+                let moreLocker = (result.length < 20)? true: false;
+                this.setState({initImages: allImages, moreLocker: moreLocker});
             });
         }
     }

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import {CachedImage} from "react-native-img-cache";
 import ImagePicker from 'react-native-image-crop-picker';
+import processError from "../../js/processError.js";
 class PostMoment extends Component {
     constructor(props) {
         super(props);
@@ -65,12 +66,12 @@ class PostMoment extends Component {
             type = "." + type;
             let file = {uri: image.uri, type: 'multipart/form-data', name: type};
             let data = new FormData();
-            data.append("file", file);
+            data.append("file", file, type);
             data.append("message", content);
             data.append("token", this.props.userToken);
-            data.append("id", this.props.userId);
+            data.append("user", this.props.userId);
             data.append("pet", pet);
-            fetch("https://thousanday.com/panels/createMoment", {
+            fetch("http://192.168.0.13:7999/upload/moment", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -78,19 +79,15 @@ class PostMoment extends Component {
                 },
                 body: data
             })
-            .then((response) => response.json())
-            .then((result) => {
-                switch (result) {
-                    case 0:
-                        alert("Can't get data, try later!");
-                        break;
-                    case 2:
-                        alert("Please try to login again");
-                        break;
-                    default:
-                        this.props.refreshMoment(result);
-                        break;
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
                 }
+            })
+            .then((result) => {
+                this.props.refreshMoment(result[0]);
             })
         }
     }
@@ -110,7 +107,7 @@ class PostMoment extends Component {
         let pets = this.props.petList.map((pet, index) =>
             <TouchableOpacity key={"choosepet" + index} style={(this.state.pet === pet.pet_id)?styles.petChoose: null} onPress={this.choosePet.bind(this, pet.pet_id)}>
                 <CachedImage
-                    source={{uri: "https://thousanday.com/img/pet/" + pet.pet_id + "/cover/0.png"}}
+                    source={{uri: "http://192.168.0.13:7999/img/pet/" + pet.pet_id + "/0.png"}}
                     style={styles.petOption}
                     mutable
                 />

@@ -7,6 +7,7 @@ import {
     Image,
     TouchableOpacity
 } from "react-native";
+import processError from "../../js/processError.js";
 class Request extends Component {
     constructor(props) {
         super(props);
@@ -17,65 +18,48 @@ class Request extends Component {
         };
     }
     acceptRequest(pet) {
-        fetch("https://thousanday.com/panels/acceptRequest", {
+        fetch("http://192.168.0.13:7999/request/accept", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "petId": pet,
-                "userToken": this.props.userToken,
-                "userId": this.props.userId
+                "pet": pet,
+                "token": this.props.userToken,
+                "user": this.props.userId
             })
         })
-        .then((response) => response.json())
-        .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, please try later");
-                    break;
-                case 1:
-                    this.state.add.push(pet)
-                    this.setState({add: this.state.add});
-                    this.props.emptyUser();
-                    break;
-                case 2:
-                    alert("Please login again");
-                    break;
-                case 3:
-                    alert("The pet already got a relative");
-                    break;
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                processError(response);
             }
+        })
+        .then((result) => {
+            this.state.add.push(pet)
+            this.setState({add: this.state.add});
+            this.props.emptyUser();
         });
     }
     deleteRequest(pet, index) {
-        fetch("https://thousanday.com/panels/deleteRequest", {
+        fetch("http://192.168.0.13:7999/request/delete", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "petId": pet,
-                "userToken": this.props.userToken,
-                "userId": this.props.userId
+                "pet": pet,
+                "token": this.props.userToken,
+                "user": this.props.userId
             })
         })
         .then((response) => response.json())
         .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, please try later");
-                    break;
-                case 1:
-                    this.state.data.splice(index, 1);
-                    this.setState({data: this.state.data});
-                    break;
-                case 2:
-                    alert("Please login again");
-                    break;
-            }
+            this.state.data.splice(index, 1);
+            this.setState({data: this.state.data});
         });
     }
     render() {
@@ -84,14 +68,14 @@ class Request extends Component {
                 <View style={styles.rootRow}>
                     <Image
                         style={styles.rowImage}
-                        source={{uri: "https://thousanday.com/img/user/" + request.sender_id + ".jpg"}}
+                        source={{uri: "http://192.168.0.13:7999/img/user/" + request.sender_id + ".jpg"}}
                     />
                     <Text style ={styles.rowWant}>
                         wants to add you as
                     </Text>
                     <Image
                         style={styles.rowPet}
-                        source={{uri: "https://thousanday.com/img/pet/" + request.pet_id + "/cover/0.png"}}
+                        source={{uri: "http://192.168.0.13:7999/img/pet/" + request.pet_id + "/cover/0.png"}}
                     />
                     <Text style ={styles.rowWant}>
                         {"'s relative"}

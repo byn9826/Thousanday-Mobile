@@ -13,7 +13,7 @@ const {
     AccessToken
 } = FBSDK;
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
-
+import processError from "../../js/processError.js";
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -37,30 +37,30 @@ class Login extends Component {
         GoogleSignin.signIn()
             .then((user) => {
                 this.setState({refresh: true});
-                fetch("https://thousanday.com/accounts/gLogin", {
+                fetch("http://192.168.0.13:7999/account/google", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        "token": user.idToken
+                        "token": user.idToken,
+                        "platform": "mobile"
                     })
                 })
-                .then((response) => response.json())
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json()
+                    } else {
+                        processError(response);
+                    }
+                })
                 .then((result) => {
                     this.setState({refresh: false});
-                    switch(result) {
-                        case 0:
-                            alert("Can't get data, please try later");
-                            break;
-                        case 2:
-                            //alert("Account not exist");
-                            //go to register page
-                            this.props.goSignup(user, "google");
-                            break;
-                        default:
-                            this.props.processLogin(result, "google");
+                    if (result.id) {
+                        this.props.goSignup(user, "google");
+                    } else {
+                        this.props.processLogin(result, "google");
                     }
                 });
             })
@@ -120,28 +120,30 @@ let Facebook = React.createClass({
                                 AccessToken.getCurrentAccessToken().then(
                                     (data) => {
                                         this.setState({refresh: true});
-                                        fetch("https://thousanday.com/accounts/fLogin", {
+                                        fetch("http://192.168.0.13:7999/account/facebook", {
                                             method: "POST",
                                             headers: {
                                                 "Accept": "application/json",
                                                 "Content-Type": "application/json",
                                             },
                                             body: JSON.stringify({
-                                                "token": data.accessToken
+                                                "token": data.accessToken,
+                                                "platform": "mobile"
                                             })
                                         })
-                                        .then((response) => response.json())
+                                        .then((response) => {
+                                            if (response.ok) {
+                                                return response.json();
+                                            } else {
+                                                processError(response);
+                                            }
+                                        })
                                         .then((result) => {
                                             this.setState({refresh: false});
-                                            switch(result) {
-                                                case 0:
-                                                    alert("Can't get data, please try later");
-                                                    break;
-                                                case 2:
-                                                    this.props.goSignup(data, "facebook");
-                                                    break;
-                                                default:
-                                                    this.props.facebookId(result);
+                                            if (result.id) {
+                                                this.props.goSignup(data, "facebook");
+                                            } else {
+                                                this.props.facebookId(result, "facebook");
                                             }
                                         });
                                     }

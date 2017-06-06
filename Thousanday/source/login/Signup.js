@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     Linking
 } from "react-native";
+import processError from "../../js/processError.js";
 import ImagePicker from 'react-native-image-crop-picker';
 class Signup extends Component {
     constructor(props) {
@@ -36,9 +37,9 @@ class Signup extends Component {
     }
     //open terms and conditions
     openTerms() {
-        Linking.canOpenURL("https://thousanday.com/terms&privacy").then(supported => {
+        Linking.canOpenURL("https://thousanday.com/terms").then(supported => {
             if (supported) {
-                Linking.openURL("https://thousanday.com/terms&privacy");
+                Linking.openURL("https://thousanday.com/terms");
             } else {
                 alert("Can't open this link");
             }
@@ -55,14 +56,15 @@ class Signup extends Component {
             let file = {uri: this.state.image.uri, type: 'multipart/form-data', name:'0.jpg'};
             let data = new FormData();
             data.append("name", name);
-            data.append("file", file);
+            data.append("file", file, "0.jpg");
             if (this.props.platform === "google") {
                 data.append("token", this.props.data.idToken);
             } else {
                 data.append("token", this.props.data.accessToken);
             }
             data.append("platform", this.props.platform);
-            fetch("https://thousanday.com/accounts/createUser", {
+            data.append("method", "mobile");
+            fetch("http://192.168.0.13:7999/upload/create", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -70,21 +72,15 @@ class Signup extends Component {
                 },
                 body: data
             })
-            .then((response) => response.json())
-            .then((result) => {
-                switch (result) {
-                    case 0:
-                        alert("Can't get data, try later!");
-                        break;
-                    case 2:
-                        alert("Please type in name");
-                        break;
-                    case 3:
-                        alert("Please upload image");
-                        break;
-                    default:
-                        this.props.newUser(result, this.props.platform);
+            .then((response) => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    processError(response);
                 }
+            })
+            .then((result) => {
+                this.props.newUser(result, this.props.platform);
             });
         }
     }

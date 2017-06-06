@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import ImagePicker from 'react-native-image-crop-picker';
 import {ImageCache, CachedImage} from "react-native-img-cache";
+import processError from "../../js/processError.js";
 class EditProfile extends Component {
     constructor(props) {
         super(props);
@@ -38,10 +39,10 @@ class EditProfile extends Component {
         let image = this.state.avatar;
         let file = {uri: image.uri, type: 'multipart/form-data', name: image.mime};
         let data = new FormData();
-        data.append("file", file);
+        data.append("file", file, this.props.userId + ".jpg");
         data.append("token", this.props.userToken);
-        data.append("id", this.props.userId);
-        fetch("https://thousanday.com/panels/profileImage", {
+        data.append("user", this.props.userId);
+        fetch("http://192.168.0.13:7999/upload/user", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -49,50 +50,42 @@ class EditProfile extends Component {
             },
             body: data
         })
-        .then((response) => response.json())
-        .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, try later!");
-                    break;
-                case 1:
-                    ImageCache.get().bust("https://thousanday.com/img/user/" + this.props.userId + ".jpg");
-                    this.props.refreshUser();
-                    break;
-                case 2:
-                    alert("Please try to login again");
-                    break;
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                processError(response);
             }
+        })
+        .then((result) => {
+            ImageCache.get().bust("http://192.168.0.13:7999/img/user/" + this.props.userId + ".jpg");
+            this.props.refreshUser();
         });
     }
     //save name
     saveName() {
         if (this.state.name !== this.props.userName) {
-            fetch("https://thousanday.com/panels/profileName", {
+            fetch("http://192.168.0.13:7999/setting/name", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    "id": this.props.userId,
+                    "user": this.props.userId,
                     "token": this.props.userToken,
                     "name": this.state.name
                 })
             })
-            .then((response) => response.json())
-            .then((result) => {
-                switch (result) {
-                    case 0:
-                        alert("Can't get data, try later!");
-                        break;
-                    case 1:
-                        this.props.refreshUser();
-                        break;
-                    case 2:
-                        alert("Please try to login again");
-                        break;
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
                 }
+            })
+            .then((result) => {
+                this.props.refreshUser();
             });
         }
     }
@@ -131,7 +124,7 @@ class EditProfile extends Component {
                         ): (
                             <CachedImage
                                 style={styles.pictureProfile}
-                                source={{uri: "https://thousanday.com/img/user/" + this.props.userId + ".jpg"}}
+                                source={{uri: "http://192.168.0.13:7999/img/user/" + this.props.userId + ".jpg"}}
                                 mutable
                             />
                         )

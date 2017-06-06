@@ -9,6 +9,7 @@ import {
     ScrollView,
     TouchableOpacity
 } from "react-native";
+import processError from "../../js/processError.js";
 import {CachedImage} from "react-native-img-cache";
 import noGetGender from "../../js/noGetGender.js";
 import noGetType from "../../js/noGetType.js";

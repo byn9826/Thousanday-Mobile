@@ -10,6 +10,7 @@ import {
     Button,
     Share
 } from "react-native";
+import processError from "../../js/processError.js";
 import {CachedImage} from "react-native-img-cache";
 class Moment extends Component {
     constructor(props) {
@@ -19,9 +20,9 @@ class Moment extends Component {
             like: this.props.like || [],
             comment: "",
             //store comment list
-            list: this.props.data[2] || [],
+            list: this.props.data[3] || [],
             //load more comment
-            load: (this.props.data[2].length === 5)?1:false,
+            load: (this.props.data[3].length === 5)?1:false,
             //send how many comment
             send: 0
         };
@@ -29,137 +30,101 @@ class Moment extends Component {
     clickLike() {
         if (!this.props.userId) {
             alert("Please login first!");
-        } else if (this.state.like.indexOf(this.props.userId) === -1) {
-            //watch or unwatch pet
-            fetch("https://thousanday.com/moments/updateLike", {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    "action": 1,
-                    "id": this.props.userId,
-                    "moment": this.props.data[0].moment_id,
-                    "token": this.props.userToken
-                })
-            })
-            .then((response) => response.json())
-            .then((result) => {
-                switch (result) {
-                    case 0:
-                        alert("Can't get data, please try later");
-                        break;
-                    case 1:
-                        this.state.like.push(this.props.userId);
-                        this.setState({like: this.state.like});
-                        break;
-                    case 2:
-                        alert("Please login first");
-                        break;
-                }
-            });
         } else {
-            fetch("https://thousanday.com/moments/updateLike", {
+            let action;
+            if (this.state.like.indexOf(this.props.userId) === -1) {
+                action = 1;
+            } else {
+                action = 0;
+            }
+            fetch("http://192.168.0.13:7999/moment/like", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    "action": 0,
-                    "id": this.props.userId,
+                    "action": action,
+                    "user": this.props.userId,
                     "moment": this.props.data[0].moment_id,
                     "token": this.props.userToken
                 })
             })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
+                }
+            })
             .then((result) => {
-                switch (result) {
-                    case 0:
-                        alert("Can't get data, please try later");
-                        break;
-                    case 1:
-                        this.state.like.splice(this.state.like.indexOf(this.props.userId), 1);
-                        this.setState({like: this.state.like});
-                        break;
-                    case 2:
-                        alert("Please login first");
-                        break;
+                if (this.state.like.indexOf(this.props.userId) === -1) {
+                    this.state.like.push(this.props.userId);
+                    this.setState({like: this.state.like});
+                } else {
+                    this.state.like.splice(this.state.like.indexOf(this.props.userId), 1);
+                    this.setState({like: this.state.like});
                 }
             });
         }
     }
     //send new comment
     sendMessage() {
-        fetch("https://thousanday.com/moments/sendComment", {
+        fetch("http://192.168.0.13:7999/moment/comment", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "id": this.props.userId,
+                "user": this.props.userId,
                 "moment": this.props.data[0].moment_id,
                 "token": this.props.userToken,
                 "content": this.state.comment
             })
         })
-        .then((response) => response.json())
-        .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, please try later");
-                    break;
-                case 1:
-                    let post = {
-                        "comment_content": this.state.comment,
-                        "user_id": this.props.userId
-                    };
-                    this.state.list.unshift(post);
-                    this.setState({list: this.state.list, comment: "", send: this.state.send + 1});
-                    break;
-                case 2:
-                    alert("Please login again");
-                    break;
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                processError(response);
             }
+        })
+        .then((result) => {
+            let post = {
+                "comment_content": this.state.comment,
+                "user_id": this.props.userId
+            };
+            this.state.list.unshift(post);
+            this.setState({list: this.state.list, comment: "", send: this.state.send + 1});
         });
     }
     //load more comment
     loadMore() {
-        fetch("https://thousanday.com/moments/loadComments", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                "moment": this.props.data[0].moment_id,
-                "load": this.state.load,
-                "send": this.state.send
-            })
+        fetch("http://192.168.0.13:7999/moment/load?id=" + this.props.data[0].moment_id + "&load=" + (parseInt(this.state.load) - 1) + "&add=" + this.state.send , {
+            method: "GET",
         })
-        .then((response) => response.json())
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                processError(response);
+            }
+        })
         .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, please try later");
-                    break;
-                default:
-                    let add = this.state.list.concat(result);
-                    if (result.length === 5) {
-                        this.setState({list: add, load: this.state.load + 1});
-                    } else {
-                        this.setState({list: add, load: false});
-                    }
-                    break;
+            console.log(result);
+            let add = this.state.list.concat(result);
+            if (result.length === 10) {
+                this.setState({list: add, load: this.state.load + 1});
+            } else {
+                this.setState({list: add, load: false});
             }
         });
     }
     //share moment
     shareMoment() {
         Share.share({
-            message: this.props.data[0].moment_message + " https://thousanday.com/moment/" + this.props.data[0].moment_id,
+            message: this.props.data[0].moment_message + " - See more at https://thousanday.com/moment/" + this.props.data[0].moment_id,
             url: "https://thousanday.com/moment/" + this.props.data[0].moment_id,
             title: 'Thousanday - Your pets and you'
         }, {
@@ -171,7 +136,7 @@ class Moment extends Component {
         let comments = this.state.list.map((comment, index)=>
             <View key={"comments"+ index} style={styles.commentLine}>
                 <CachedImage
-                    source={{uri: "https://thousanday.com/img/user/" + comment.user_id + ".jpg"}}
+                    source={{uri: "http://192.168.0.13:7999/img/user/" + comment.user_id + ".jpg"}}
                     style={styles.lineAvatar}
                 />
                 <Text style={styles.lineContent}>
@@ -184,7 +149,7 @@ class Moment extends Component {
                 <View style={styles.rootTop}>
                     <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[0].pet_id)}>
                         <CachedImage
-                            source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].pet_id + "/cover/0.png"}}
+                            source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
                             style={styles.topAvatar}
                         />
                     </TouchableOpacity>
@@ -198,7 +163,7 @@ class Moment extends Component {
                     </View>
                 </View>
                 <CachedImage
-                    source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].pet_id + "/moment/" + this.props.data[0].image_name}}
+                    source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data[0].pet_id + "/moment/" + this.props.data[0].image_name}}
                     style={styles.rootImg}
                 />
                 <View style={styles.rootSocial}>

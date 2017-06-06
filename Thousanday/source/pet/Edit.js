@@ -9,6 +9,7 @@ import {
     Button,
     ScrollView
 } from "react-native";
+import processError from "../../js/processError.js";
 import ImagePicker from 'react-native-image-crop-picker';
 import {ImageCache, CachedImage} from "react-native-img-cache";
 class EditPet extends Component {
@@ -19,7 +20,7 @@ class EditPet extends Component {
             name: this.props.data.pet_name,
             avatar: null,
             button: null,
-            role: this.props.data.owner_id === this.props.userId,
+            role: this.props.data.owner_id == this.props.userId,
             end: false,
             add: false,
             input: "",
@@ -34,32 +35,29 @@ class EditPet extends Component {
     //save name
     saveName() {
         if (this.state.name !== this.props.data.pet_name) {
-            fetch("https://thousanday.com/panels/petName", {
+            fetch("http://192.168.0.13:7999/edit/name", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    "id": this.props.userId,
+                    "user": this.props.userId,
                     "token": this.props.userToken,
                     "pet": this.props.data.pet_id,
                     "name": this.state.name
                 })
             })
-            .then((response) => response.json())
-            .then((result) => {
-                switch (result) {
-                    case 0:
-                        alert("Can't get data, try later!");
-                        break;
-                    case 1:
-                        this.setState({saveName: "Saved!"});
-                        break;
-                    case 2:
-                        alert("Please try to login again");
-                        break;
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
                 }
+            })
+            .then((result) => {
+                this.setState({saveName: "Saved!"});
+                this.props.emptyUser();
             });
         }
     }
@@ -82,11 +80,11 @@ class EditPet extends Component {
         let image = this.state.avatar;
         let file = {uri: image.uri, type: 'multipart/form-data', name: "0.png"};
         let data = new FormData();
-        data.append("file", file);
+        data.append("file", file, this.props.data.pet_id + ".png");
         data.append("token", this.props.userToken);
-        data.append("id", this.props.userId);
+        data.append("user", this.props.userId);
         data.append("pet", this.props.data.pet_id);
-        fetch("https://thousanday.com/panels/petImage", {
+        fetch("http://192.168.0.13:7999/upload/pet", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -94,21 +92,17 @@ class EditPet extends Component {
             },
             body: data
         })
-        .then((response) => response.json())
-        .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, try later!");
-                    break;
-                case 1:
-                    ImageCache.get().bust("https://thousanday.com/img/pet/" + this.props.data.pet_id + "/cover/0.png");
-                    this.setState({button: "Update Success!"})
-                    this.props.refreshPet();
-                    break;
-                case 2:
-                    alert("Please try to login again");
-                    break;
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                processError(response);
             }
+        })
+        .then((result) => {
+            ImageCache.get().bust("http://192.168.0.13:7999/img/pet/" + this.props.data.pet_id + "/0.png");
+            this.setState({button: "Update Success!"})
+            this.props.refreshPet();
         });
     }
     //click end relationship
@@ -117,31 +111,27 @@ class EditPet extends Component {
     }
     //confirm end relationship
     confirmEnd() {
-        fetch("https://thousanday.com/panels/endRelation", {
+        fetch("http://192.168.0.13:7999/edit/end", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "id": this.props.userId,
+                "user": this.props.userId,
                 "token": this.props.userToken,
                 "pet": this.props.data.pet_id
             })
         })
-        .then((response) => response.json())
-        .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, try later!");
-                    break;
-                case 1:
-                    this.props.refreshUser();
-                    break;
-                case 2:
-                    alert("Please try to login again");
-                    break;
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                processError(response);
             }
+        })
+        .then((result) => {
+            this.props.refreshUser();
         });
     }
     //click Add relative
@@ -150,35 +140,28 @@ class EditPet extends Component {
     }
     //confirm send request
     confirmSend() {
-        fetch("https://thousanday.com/panels/petRequest", {
+        fetch("http://192.168.0.13:7999/edit/add", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "senderId": this.props.userId,
-                "receiverId": this.state.search,
-                "petId": this.props.data.pet_id,
+                "user": this.props.userId,
+                "add": this.state.search,
+                "pet": this.props.data.pet_id,
                 "token": this.props.userToken,
             })
         })
-        .then((response) => response.json())
-        .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, try later!");
-                    break;
-                case 1:
-                    this.setState({addResult: true});
-                    break;
-                case 2:
-                    alert("Please try to login again");
-                    break;
-                case 3:
-                    this.setState({addResult: true});
-                    break;
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                processError(response);
             }
+        })
+        .then((result) => {
+            this.setState({addResult: true});
         });
     }
     //click transfer owner ship
@@ -187,31 +170,22 @@ class EditPet extends Component {
     }
     //confirmTransfer Ownership
     confirmTransfer() {
-        fetch("https://thousanday.com/panels/transferOwnership", {
+        fetch("http://192.168.0.13:7999/edit/transfer", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "id": this.props.userId,
+                "user": this.props.userId,
                 "token": this.props.userToken,
-                "pet": this.props.data.pet_id
+                "pet": this.props.data.pet_id,
+                "relative": this.props.data.relative_id
             })
         })
         .then((response) => response.json())
         .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, try later!");
-                    break;
-                case 1:
-                    this.setState({relative: this.props.userId, role: false});
-                    break;
-                case 2:
-                    alert("Please try to login again");
-                    break;
-            }
+            this.setState({relative: this.props.userId, role: false});
         });
     }
     //click remove pet
@@ -220,31 +194,21 @@ class EditPet extends Component {
     }
     //confirm remove pet
     confirmRemove() {
-        fetch("https://thousanday.com/panels/removeRelative", {
+        fetch("http://192.168.0.13:7999/edit/remove", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "id": this.props.userId,
+                "user": this.props.userId,
                 "token": this.props.userToken,
                 "pet": this.props.data.pet_id
             })
         })
         .then((response) => response.json())
         .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, try later!");
-                    break;
-                case 1:
-                    this.setState({relative: null, remove: false, input: ""});
-                    break;
-                case 2:
-                    alert("Please try to login again");
-                    break;
-            }
+            this.setState({relative: null, remove: false, input: ""});
         });
     }
     render() {
@@ -335,30 +299,21 @@ class EditPet extends Component {
                                         if (id >= 0 || text === "") {
                                             this.setState({search: text})
                                             if (text !== "") {
-                                                fetch("https://thousanday.com/panels/searchUser", {
-                                                    method: "POST",
-                                                    headers: {
-                                                        "Accept": "application/json",
-                                                        "Content-Type": "application/json",
-                                                    },
-                                                    body: JSON.stringify({
-                                                        "id": id,
-                                                    })
+                                                fetch("http://192.168.0.13:7999/edit/search?id=" + id, {
+                                                    method: "GET",
                                                 })
-                                                .then((response) => response.json())
+                                                .then((response) => {
+                                                    if (response.ok) {
+                                                        return response.json();
+                                                    } else {
+                                                        processError(response);
+                                                    }
+                                                })
                                                 .then((result) => {
-                                                    switch (result) {
-                                                        case 0:
-                                                            alert("Can't get data, try later!");
-                                                            break;
-                                                        default:
-                                                            if (result) {
-                                                                this.setState({getName: result[0]});
-                                                                break;
-                                                            } else {
-                                                                this.setState({getName: null});
-                                                                break;
-                                                            }
+                                                    if (result) {
+                                                        this.setState({getName: result.user_name});
+                                                    } else {
+                                                        this.setState({getName: null});
                                                     }
                                                 });
                                             }
@@ -370,7 +325,7 @@ class EditPet extends Component {
                                     (this.state.getName && this.state.search)? (
                                         <View style={styles.confirmInfo}>
                                             <Image
-                                                source={{uri: "https://thousanday.com/img/user/" + this.state.search + ".jpg"}}
+                                                source={{uri: "http://192.168.0.13:7999/img/user/" + this.state.search + ".jpg"}}
                                                 style={styles.infoImage}
                                             />
                                             <Text style={styles.infoName}>
@@ -478,7 +433,7 @@ class EditPet extends Component {
                         ): (
                             <CachedImage
                                 style={styles.pictureProfile}
-                                source={{uri: "https://thousanday.com/img/pet/" + this.props.data.pet_id + "/cover/0.png"}}
+                                source={{uri: "http://192.168.0.13:7999/img/pet/" + this.props.data.pet_id + "/0.png"}}
                                 mutable
                             />
                         )

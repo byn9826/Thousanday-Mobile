@@ -7,6 +7,7 @@ import {
     Image,
     TouchableOpacity
 } from "react-native";
+import processError from "../../js/processError.js";
 import {CachedImage} from "react-native-img-cache";
 class WatchList extends Component {
     constructor(props) {
@@ -19,48 +20,64 @@ class WatchList extends Component {
             //store load how many times
             load: 1,
             //lock load more
-            locker: (this.props.data.length === 20)?false:true
+            //locker: (this.props.data.length === 20)?false:true
         };
     }
     watchPet(id, action) {
-        //watch or unwatch pet
-        fetch("https://thousanday.com/pets/updateWatch", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                "action": action,
-                "petId": id,
-                "userToken": this.props.userToken,
-                "userId": this.props.userId
+        if (action === 1) {
+            fetch("http://192.168.0.13:7999/watch/remove", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "token": this.props.userToken,
+                    "user": this.props.userId,
+                    "pet": id,
+                })
             })
-        })
-        .then((response) => response.json())
-        .then((result) => {
-            switch (result) {
-                case 0:
-                    alert("Can't get data, please try later");
-                    break;
-                case 1:
-                    if (action === 1) {
-                        this.state.unwatch.push(id);
-                        this.setState({unwatch: this.state.unwatch});
-                        this.props.refreshPet();
-                    } else {
-                        this.state.unwatch.splice(this.state.unwatch.indexOf(id), 1);
-                        this.setState({unwatch: this.state.unwatch});
-                        this.props.refreshPet();
-                    }
-                    break;
-                case 2:
-                    alert("Please login first");
-                    break;
-            }
-        });
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
+                }
+            })
+            .then((result) => {
+                this.state.unwatch.push(id);
+                this.setState({unwatch: this.state.unwatch});
+                this.props.refreshPet();
+            });
+        } else {
+            fetch("http://192.168.0.13:7999/watch/add", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "token": this.props.userToken,
+                    "user": this.props.userId,
+                    "pet": id,
+                })
+            })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
+                }
+            })
+            .then((result) => {
+                this.state.unwatch.splice(this.state.unwatch.indexOf(id), 1);
+                this.setState({unwatch: this.state.unwatch});
+                this.props.refreshPet();
+            });
+        }
     }
     //load more watch
+    /*
     loadMore() {
         if (!this.state.locker) {
             fetch("https://thousanday.com/panels/watchList", {
@@ -81,6 +98,7 @@ class WatchList extends Component {
             });
         }
     }
+    */
     render() {
         let lists = [], i;
         for (i = 0; i < this.state.lists.length; i++) {
@@ -112,7 +130,7 @@ class WatchList extends Component {
                         <View key={"privatewatch" + item.key} style={styles.rootRow}>
                             <TouchableOpacity onPress={this.props.clickPet.bind(null, item.id)}>
                                 <CachedImage
-                                    source={{uri: "https://thousanday.com/img/pet/" + item.id + "/cover/0.png"}}
+                                    source={{uri: "http://192.168.0.13:7999/img/pet/" + item.id + "/0.png"}}
                                     style={styles.rowAvatar}
                                     mutable
                                 />
@@ -130,7 +148,7 @@ class WatchList extends Component {
                         <View key={"privatewatch" + item.key} style={styles.rootRow}>
                             <TouchableOpacity onPress={this.props.clickPet.bind(null, item.id)}>
                                 <CachedImage
-                                    source={{uri: "https://thousanday.com/img/pet/" + item.id + "/cover/0.png"}}
+                                    source={{uri: "http://192.168.0.13/img/pet/" + item.id + "/0.png"}}
                                     style={styles.rowAvatar}
                                     mutable
                                 />
@@ -146,7 +164,7 @@ class WatchList extends Component {
                         </View>
                     )
                 }
-                onEndReached={this.loadMore.bind(this)}
+                //onEndReached={this.loadMore.bind(this)}
             />
         )
     }

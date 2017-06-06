@@ -10,6 +10,7 @@ import {
     Image,
     ScrollView
 } from "react-native";
+import processError from "../../js/processError.js";
 import ImagePicker from 'react-native-image-crop-picker';
 class AddPet extends Component {
     constructor(props) {
@@ -80,10 +81,11 @@ class AddPet extends Component {
             data.append("gender", gender);
             data.append("type", type);
             data.append("nature", nature);
-            data.append("file", file);
+            data.append("file", file, ".png");
             data.append("token", this.props.userToken);
-            data.append("id", this.props.userId);
-            fetch("https://thousanday.com/panels/createPet", {
+            data.append("user", this.props.userId);
+            console.log(data);
+            fetch("http://192.168.0.13:7999/upload/add", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -91,19 +93,15 @@ class AddPet extends Component {
                 },
                 body: data
             })
-            .then((response) => response.json())
-            .then((result) => {
-                switch (result) {
-                    case 0:
-                        alert("Can't get data, try later!");
-                        break;
-                    case 1:
-                        this.props.refreshUser();
-                        break;
-                    case 2:
-                        alert("Please try to login again");
-                        break;
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    processError(response);
                 }
+            })
+            .then((result) => {
+                this.props.refreshUser();
             });
         }
     }
