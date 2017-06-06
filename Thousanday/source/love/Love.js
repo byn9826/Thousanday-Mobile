@@ -8,6 +8,7 @@ import {
     FlatList,
     TouchableOpacity
 } from "react-native";
+import processError from "../../js/processError.js";
 import {CachedImage} from "react-native-img-cache";
 class Love extends Component {
     constructor(props) {
@@ -30,39 +31,29 @@ class Love extends Component {
     componentWillMount() {
         this.setState({refresh: true});
         //load 20 newest moments by default
-        fetch("https://thousanday.com/lists/readWatch", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                "id": this.props.userId,
-            })
+        fetch("http://192.168.0.13:7999/watch/read?id=" + this.props.userId, {
+            method: "GET",
         })
-        .then((response) => response.json())
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                processError(response);
+            }
+        })
         .then((result) => {
             this.setState({refresh: false});
-            switch(result) {
-                case 0:
-                    alert("Can't get data, try later");
-                    break;
-                case 1:
-                    break;
-                default:
-                    if (result[0].length === 20) {
-                        this.setState({watchData: result[0], watchList: result[1]});
-                    } else {
-                        this.setState({watchData: result[0], watchList: result[1], locker: true});
-                    }
-                    break;
+            if (result[1].length === 20) {
+                this.setState({watchData: result[1], watchList: result[0]});
+            } else {
+                this.setState({watchData: result[1], watchList: result[0], locker: true});
             }
         });
     }
     loadMore() {
         if (this.state.list === "watch") {
             if (!this.state.locker) {
-                fetch("https://thousanday.com/lists/loadWatch", {
+                fetch("http://192.168.0.13:7999/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -70,83 +61,86 @@ class Love extends Component {
                     },
                     body: JSON.stringify({
                         "list": this.state.watchList,
-                        "load": this.state.load
+                        "load": this.state.load,
+                        "route": "watch",
+                        "user": this.props.userId
                     })
                 })
-                .then((response) => response.json())
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        processError(response);
+                    }
+                })
                 .then((result) => {
-                    switch (result) {
-                        case 0:
-                            alert("Can't get data, try later");
-                            break;
-                        default:
-                            let newData = this.state.watchData.concat(result);
-                            if (result.length === 20) {
-                                this.setState({watchData: newData, load: this.state.load + 1});
-                            } else {
-                                this.setState({watchData: newData, load: this.state.load + 1, locker: true});
-                            }
-                            break;
+                    let newData = this.state.watchData.concat(result);
+                    if (result.length === 20) {
+                        this.setState({watchData: newData, load: this.state.load + 1});
+                    } else {
+                        this.setState({watchData: newData, load: this.state.load + 1, locker: true});
                     }
                 });
             }
         } else if (this.state.list === "love") {
             if (!this.state.loveLocker) {
-                fetch("https://thousanday.com/lists/readLove", {
+                fetch("http://192.168.0.13:7999/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        "id": this.props.userId,
-                        "load": this.state.loveLoad
+                        "user": this.props.userId,
+                        "load": this.state.loveLoad,
+                        "list": null,
+                        "route": "love",
                     })
                 })
-                .then((response) => response.json())
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        processError(response);
+                    }
+                })
                 .then((result) => {
-                    switch (result) {
-                        case 0:
-                            alert("Can't get data, try later");
-                            break;
-                        default:
-                            let newLove = this.state.loveData.concat(result);
-                            if (result.length === 20) {
-                                this.setState({loveData: newLove, loveLoad: this.state.loveLoad + 1});
-                            } else {
-                                this.setState({loveData: newLove, loveLoad: this.state.loveLoad + 1, loveLocker: true});
-                            }
-                            break;
+                    let newLove = this.state.loveData.concat(result);
+                    if (result.length === 20) {
+                        this.setState({loveData: newLove, loveLoad: this.state.loveLoad + 1});
+                    } else {
+                        this.setState({loveData: newLove, loveLoad: this.state.loveLoad + 1, loveLocker: true});
                     }
                 });
             }
         } else if (this.state.list === "comment") {
             if (!this.state.commentLocker) {
-                fetch("https://thousanday.com/lists/readComment", {
+                fetch("http://192.168.0.13:7999/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        "id": this.props.userId,
-                        "load": this.state.commentLoad
+                        "user": this.props.userId,
+                        "load": this.state.commentLoad,
+                        "list": null,
+                        "route": "comment",
                     })
                 })
-                .then((response) => response.json())
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        processError(response);
+                    }
+                })
                 .then((result) => {
-                    switch (result) {
-                        case 0:
-                            alert("Can't get data, try later");
-                            break;
-                        default:
-                            let newComment = this.state.commentData.concat(result);
-                            if (result.length === 20) {
-                                this.setState({commentData: newComment, commentLoad: this.state.commentLoad + 1});
-                            } else {
-                                this.setState({commentData: newComment, commentLoad: this.state.commentLoad + 1, commentLocker: true});
-                            }
-                            break;
+                    let newComment = this.state.commentData.concat(result);
+                    if (result.length === 20) {
+                        this.setState({commentData: newComment, commentLoad: this.state.commentLoad + 1});
+                    } else {
+                        this.setState({commentData: newComment, commentLoad: this.state.commentLoad + 1, commentLocker: true});
                     }
                 });
             }
@@ -158,31 +152,32 @@ class Love extends Component {
             if (list === "love") {
                 if (!this.state.loveData) {
                     this.setState({refresh: true});
-                    fetch("https://thousanday.com/lists/readLove", {
+                    fetch("http://192.168.0.13:7999/watch/load", {
                         method: "POST",
                         headers: {
                             "Accept": "application/json",
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                            "id": this.props.userId,
-                            "load": 0
+                            "user": this.props.userId,
+                            "load": 0,
+                            "list": null,
+                            "route": "love",
                         })
                     })
-                    .then((response) => response.json())
+                    .then((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            processError(response);
+                        }
+                    })
                     .then((result) => {
                         this.setState({refresh: false});
-                        switch (result) {
-                            case 0:
-                                alert("Can't get data, try later");
-                                break;
-                            default:
-                                if (result.length === 20) {
-                                    this.setState({loveData: result, loveLoad: 1, list: "love", loveLocker: false});
-                                } else {
-                                    this.setState({loveData: result, loveLoad: 1, list: "love", loveLocker: true});
-                                }
-                                break;
+                        if (result.length === 20) {
+                            this.setState({loveData: result, loveLoad: 1, list: "love", loveLocker: false});
+                        } else {
+                            this.setState({loveData: result, loveLoad: 1, list: "love", loveLocker: true});
                         }
                     });
                 } else {
@@ -191,31 +186,32 @@ class Love extends Component {
             } else if (list === "comment") {
                 if (!this.state.commentData) {
                     this.setState({refresh: true});
-                    fetch("https://thousanday.com/lists/readComment", {
+                    fetch("http://192.168.0.13:7999/watch/load", {
                         method: "POST",
                         headers: {
                             "Accept": "application/json",
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                            "id": this.props.userId,
-                            "load": 0
+                            "user": this.props.userId,
+                            "load": 0,
+                            "list": null,
+                            "route": "comment",
                         })
                     })
-                    .then((response) => response.json())
+                    .then((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            processError(response);
+                        }
+                    })
                     .then((result) => {
                         this.setState({refresh: false});
-                        switch (result) {
-                            case 0:
-                                alert("Can't get data, try later");
-                                break;
-                            default:
-                                if (result.length === 20) {
-                                    this.setState({commentData: result, commentLoad: 1, list: "comment", commentLocker: false});
-                                } else {
-                                    this.setState({commentData: result, commentLoad: 1, list: "comment", commentLocker: true});
-                                }
-                                break;
+                        if (result.length === 20) {
+                            this.setState({commentData: result, commentLoad: 1, list: "comment", commentLocker: false});
+                        } else {
+                            this.setState({commentData: result, commentLoad: 1, list: "comment", commentLocker: true});
                         }
                     });
                 } else {
@@ -233,7 +229,7 @@ class Love extends Component {
                 data.push(
                     {
                         key: this.state.watchData[i].moment_id,
-                        image: "https://thousanday.com/img/pet/" + this.state.watchData[i].pet_id + "/moment/" + this.state.watchData[i].image_name
+                        image: "http://192.168.0.13:7999/img/pet/" + this.state.watchData[i].pet_id + "/moment/" + this.state.watchData[i].image_name
                     }
                 )
             }
@@ -242,7 +238,7 @@ class Love extends Component {
                 data.push(
                     {
                         key: this.state.loveData[i].moment_id,
-                        image: "https://thousanday.com/img/pet/" + this.state.loveData[i].pet_id + "/moment/" + this.state.loveData[i].image_name
+                        image: "http://192.168.0.13:7999/img/pet/" + this.state.loveData[i].pet_id + "/moment/" + this.state.loveData[i].image_name
                     }
                 )
             }
@@ -251,7 +247,7 @@ class Love extends Component {
                 data.push(
                     {
                         key: this.state.commentData[i].moment_id,
-                        image: "https://thousanday.com/img/pet/" + this.state.commentData[i].pet_id + "/moment/" + this.state.commentData[i].image_name
+                        image: "http://192.168.0.13:7999/img/pet/" + this.state.commentData[i].pet_id + "/moment/" + this.state.commentData[i].image_name
                     }
                 )
             }
@@ -297,7 +293,7 @@ class Love extends Component {
                 }}
                 data = {data}
                 renderItem={({item}) =>
-                    <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.key)}>
+                    <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.key)}>]
                         <CachedImage
                             source={{uri: item.image}}
                             style={styles.rootImage}

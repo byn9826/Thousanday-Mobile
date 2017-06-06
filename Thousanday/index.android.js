@@ -247,6 +247,7 @@ export default class Thousanday extends Component {
             }
         })
         .then((moment) => {
+            console.log(moment);
             this.setState({route: "moment", momentData: moment, momentId: id});
         });
     }
@@ -475,7 +476,7 @@ export default class Thousanday extends Component {
                 let likeUsers = [], i;
                 if (this.state.momentData[2].length !== 0) {
                     for (i = 0; i < this.state.momentData[2].length; i++) {
-                        likeUsers.push(this.state.momentData[1][i].user_id);
+                        likeUsers.push(this.state.momentData[2][i].user_id);
                     }
                 }
                 route = <Moment
