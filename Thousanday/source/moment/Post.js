@@ -26,9 +26,8 @@ class PostMoment extends Component {
     pickImg() {
         ImagePicker.openPicker({
             mediaType: "photo",
-            compressImageMaxWidth: 800,
-            compressImageMaxHeight: 800,
-            compressImageQuality: 0.8
+            compressImageMaxWidth: 1000,
+            compressImageMaxHeight: 1000
         }).then(image => {
             this.setState({
                 image: {uri: image.path, width: image.width, height: image.height, mime: image.mime}
@@ -39,9 +38,8 @@ class PostMoment extends Component {
     useCamera() {
         ImagePicker.openCamera({
             mediaType: "photo",
-            compressImageMaxWidth: 800,
-            compressImageMaxHeight: 800,
-            compressImageQuality: 0.8
+            compressImageMaxWidth: 1000,
+            compressImageMaxHeight: 1000
         }).then(image => {
             this.setState({
                 image: {uri: image.path, width: image.width, height: image.height, mime: image.mime}

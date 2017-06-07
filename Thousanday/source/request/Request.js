@@ -75,7 +75,7 @@ class Request extends Component {
                     </Text>
                     <Image
                         style={styles.rowPet}
-                        source={{uri: "https://thousanday.com/img/pet/" + request.pet_id + "/cover/0.png"}}
+                        source={{uri: "https://thousanday.com/img/pet/" + request.pet_id + "/0.png"}}
                     />
                     <Text style ={styles.rowWant}>
                         {"'s relative"}
