@@ -7,22 +7,25 @@ import {
 } from "react-native";
 import Header from "./source/general/Header";
 import Footer from "./source/general/Footer";
+import processError from "./js/processError.js";
+import processGallery from "./js/processGallery.js";
 import Watch from "./source/watch/Watch";
-import Pet from "./source/pet/Pet";
-import AddPet from "./source/pet/Add";
-//import User from "./source/user/User";
 import Explore from "./source/explore/Explore";
 import Moment from "./source/moment/Moment";
+import Login from "./source/login/Login";
+import User from "./source/user/User";
+/*
+import Pet from "./source/pet/Pet";
+import AddPet from "./source/pet/Add";
 import PostMoment from "./source/moment/Post";
 import EditProfile from "./source/user/Change";
 import EditPet from "./source/pet/Edit";
 import WatchList from "./source/watch/Private";
 import Love from "./source/love/Love";
-//import Login from "./source/login/Login";
-//import Signup from "./source/login/Signup";
+
+import Signup from "./source/login/Signup";
 import Request from "./source/request/Request";
-import processError from "./js/processError.js";
-import processGallery from "./js/processGallery.js";
+*/
 export default class Thousanday extends Component {
     constructor(props) {
         super(props);
@@ -332,9 +335,9 @@ export default class Thousanday extends Component {
         });
     }
     //signup feature
-    //goSignup(data, platform) {
-    //    this.setState({signupData: data, signupPlatform: platform, route: "signup"});
-    //}
+    goSignup(data, platform) {
+        this.setState({signupData: data, signupPlatform: platform, route: "signup"});
+    }
     //new user login
     newUser(result, platform) {
         if (platform === "google") {
@@ -364,6 +367,7 @@ export default class Thousanday extends Component {
     render() {
         //page route system
         let route;
+		
         switch (this.state.route) {
             //default page, watch public images
             case "watch":
@@ -378,6 +382,76 @@ export default class Thousanday extends Component {
             case "explore":
                 route = <Explore clickMoment={this.clickMoment.bind(this)} />;
                 break;
+			case "moment":
+                let likeUsers = [], i;
+                if (this.state.momentData[2].length !== 0) {
+                    for (i = 0; i < this.state.momentData[2].length; i++) {
+                        likeUsers.push(parseInt(this.state.momentData[2][i].user_id));
+                    }
+                }
+                route = <Moment
+                    data={this.state.momentData}
+                    like={likeUsers}
+                    userId={this.state.userId}
+                    userToken={this.state.userToken}
+                    clickPet={this.clickPet.bind(this)}
+                />
+                break;
+			case "home":
+                //user already logged in
+                if (this.state.userId) {
+                    if (this.state.userData) {
+                        route = <User
+                            ref="user"
+                            key={"user" + this.state.userId}
+                            home={true}
+                            userId={this.state.userId}
+                            userToken={this.state.userToken}
+                            data={this.state.userData}
+                            clickUser={this.clickUser.bind(this)}
+                            clickPet={this.clickPet.bind(this)}
+                            clickMoment={this.clickMoment.bind(this)}
+                            clickAddPet={this.clickAddPet.bind(this)}
+                            clickPostMoment={this.clickPostMoment.bind(this)}
+                            clickEditProfile={this.clickEditProfile.bind(this)}
+                            clickEditPet={this.clickEditPet.bind(this)}
+                            clickWatchList={this.clickWatchList.bind(this)}
+                            clickRequestMessage={this.clickRequestMessage.bind(this)}
+                            userLogout={this.userLogout.bind(this)}
+                            platform={this.state.userPlatform}
+                        />;
+                    } else {
+                        //get data for user first
+                        this.processLogin([this.state.userId], this.state.userPlatform, () => {
+                            route = <User
+                                ref="user"
+                                key={"user" + this.state.userId}
+                                home={true}
+                                userId={this.state.userId}
+                                userToken={this.state.userToken}
+                                data={this.state.userData}
+                                clickUser={this.clickUser.bind(this)}
+                                clickPet={this.clickPet.bind(this)}
+                                clickMoment={this.clickMoment.bind(this)}
+                                clickAddPet={this.clickAddPet.bind(this)}
+                                clickPostMoment={this.clickPostMoment.bind(this)}
+                                clickEditProfile={this.clickEditProfile.bind(this)}
+                                clickEditPet={this.clickEditPet.bind(this)}
+                                clickWatchList={this.clickWatchList.bind(this)}
+                                clickRequestMessage={this.clickRequestMessage.bind(this)}
+                                userLogout={this.userLogout.bind(this)}
+                                platform={this.state.userPlatform}
+                            />;
+                        });
+                    }
+                } else {
+                    route = <Login home={false}
+                        processLogin={this.processLogin.bind(this)}
+                        goSignup={this.goSignup.bind(this)}
+                    />;
+                }
+                break;
+			/*
             //go to pet page when user click on pet
             case "pet":
                 route = <Pet
@@ -392,29 +466,14 @@ export default class Thousanday extends Component {
                 break;
             //go to user page when user click on one user
             case "user":
-            //    route = <User
-            //        key={"user" + this.state.pageId}
-            //        data={this.state.pageData}
-            //        userId={this.state.pageId}
-            //        clickUser={this.clickUser.bind(this)}
-            //        clickPet={this.clickPet.bind(this)}
-            //        clickMoment={this.clickMoment.bind(this)}
-            //    />;
-                break;
-            case "moment":
-                let likeUsers = [], i;
-                if (this.state.momentData[2].length !== 0) {
-                    for (i = 0; i < this.state.momentData[2].length; i++) {
-                        likeUsers.push(parseInt(this.state.momentData[2][i].user_id));
-                    }
-                }
-                route = <Moment
-                    data={this.state.momentData}
-                    like={likeUsers}
-                    userId={this.state.userId}
-                    userToken={this.state.userToken}
+                route = <User
+                    key={"user" + this.state.pageId}
+                    data={this.state.pageData}
+                    userId={this.state.pageId}
+                    clickUser={this.clickUser.bind(this)}
                     clickPet={this.clickPet.bind(this)}
-                />
+                    clickMoment={this.clickMoment.bind(this)}
+                />;
                 break;
             case "love":
                 route = <Love
@@ -483,68 +542,15 @@ export default class Thousanday extends Component {
                     emptyUser={this.emptyUser.bind(this)}
                 />
                 break;
-            //case "signup":
-            //    route = <Signup
-            //        data={this.state.signupData}
-            //        platform={this.state.signupPlatform}
-            //        newUser={this.newUser.bind(this)}
-            //    />
-            //    break;
-            case "home":
-                //user already logged in
-				/*
-                if (this.state.userId) {
-                    if (this.state.userData) {
-                        route = <User
-                            ref="user"
-                            key={"user" + this.state.userId}
-                            home={true}
-                            userId={this.state.userId}
-                            userToken={this.state.userToken}
-                            data={this.state.userData}
-                            clickUser={this.clickUser.bind(this)}
-                            clickPet={this.clickPet.bind(this)}
-                            clickMoment={this.clickMoment.bind(this)}
-                            clickAddPet={this.clickAddPet.bind(this)}
-                            clickPostMoment={this.clickPostMoment.bind(this)}
-                            clickEditProfile={this.clickEditProfile.bind(this)}
-                            clickEditPet={this.clickEditPet.bind(this)}
-                            clickWatchList={this.clickWatchList.bind(this)}
-                            clickRequestMessage={this.clickRequestMessage.bind(this)}
-                            userLogout={this.userLogout.bind(this)}
-                            platform={this.state.userPlatform}
-                        />;
-                    } else {
-                        //get data for user first
-                        this.processLogin([this.state.userId], this.state.userPlatform, () => {
-                            route = <User
-                                ref="user"
-                                key={"user" + this.state.userId}
-                                home={true}
-                                userId={this.state.userId}
-                                userToken={this.state.userToken}
-                                data={this.state.userData}
-                                clickUser={this.clickUser.bind(this)}
-                                clickPet={this.clickPet.bind(this)}
-                                clickMoment={this.clickMoment.bind(this)}
-                                clickAddPet={this.clickAddPet.bind(this)}
-                                clickPostMoment={this.clickPostMoment.bind(this)}
-                                clickEditProfile={this.clickEditProfile.bind(this)}
-                                clickEditPet={this.clickEditPet.bind(this)}
-                                clickWatchList={this.clickWatchList.bind(this)}
-                                clickRequestMessage={this.clickRequestMessage.bind(this)}
-                                userLogout={this.userLogout.bind(this)}
-                                platform={this.state.userPlatform}
-                            />;
-                        });
-                    }
-                } else {
-                    //route = <Login home={false}
-                    //    processLogin={this.processLogin.bind(this)}
-                    //    goSignup={this.goSignup.bind(this)}
-                    ///>;
-                }*/
+            case "signup":
+                route = <Signup
+                    data={this.state.signupData}
+                    platform={this.state.signupPlatform}
+                    newUser={this.newUser.bind(this)}
+                />
                 break;
+            
+				*/
         }
         return (
             <View style={styles.container}>
