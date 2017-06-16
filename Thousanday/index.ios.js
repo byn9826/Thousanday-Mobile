@@ -14,15 +14,15 @@ import Explore from "./source/explore/Explore";
 import Moment from "./source/moment/Moment";
 import Login from "./source/login/Login";
 import User from "./source/user/User";
-/*
 import Pet from "./source/pet/Pet";
+/*
+
 import AddPet from "./source/pet/Add";
 import PostMoment from "./source/moment/Post";
 import EditProfile from "./source/user/Change";
 import EditPet from "./source/pet/Edit";
 import WatchList from "./source/watch/Private";
 import Love from "./source/love/Love";
-
 import Signup from "./source/login/Signup";
 import Request from "./source/request/Request";
 */
@@ -93,7 +93,9 @@ export default class Thousanday extends Component {
         });
     }
     componentDidMount() {
-        this._loadUserData().done();
+        //this._loadUserData().done();
+		//need to rebuld login later
+		this.setState({userId: 1, userPlatform: "google"});
     }
     //get stored user id
     async _loadUserData() {
@@ -451,8 +453,18 @@ export default class Thousanday extends Component {
                     />;
                 }
                 break;
-			/*
-            //go to pet page when user click on pet
+			//go to user page when user click on one user
+            case "user":
+                route = <User
+                    key={"user" + this.state.pageId}
+                    data={this.state.pageData}
+                    userId={this.state.pageId}
+                    clickUser={this.clickUser.bind(this)}
+                    clickPet={this.clickPet.bind(this)}
+                    clickMoment={this.clickMoment.bind(this)}
+                />;
+                break;
+			//go to pet page when user click on pet
             case "pet":
                 route = <Pet
                     key={"pet" + this.state.petId}
@@ -464,17 +476,8 @@ export default class Thousanday extends Component {
                     clickMoment={this.clickMoment.bind(this)}
                 />;
                 break;
-            //go to user page when user click on one user
-            case "user":
-                route = <User
-                    key={"user" + this.state.pageId}
-                    data={this.state.pageData}
-                    userId={this.state.pageId}
-                    clickUser={this.clickUser.bind(this)}
-                    clickPet={this.clickPet.bind(this)}
-                    clickMoment={this.clickMoment.bind(this)}
-                />;
-                break;
+			/*
+            
             case "love":
                 route = <Love
                     userId={this.state.userId}

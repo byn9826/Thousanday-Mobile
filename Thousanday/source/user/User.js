@@ -40,6 +40,7 @@ class User extends Component {
     async _gSetup() {
         await GoogleSignin.hasPlayServices({ autoResolve: true });
         await GoogleSignin.configure({
+			iosClientId: '835652983909-gf89tn5ttgcbkdacintdi0kiqem0968t.apps.googleusercontent.com',
             webClientId: '835652983909-6if3h222alkttk9oas3hr3tl15sq1u7m.apps.googleusercontent.com',
             offlineAccess: false
         });
@@ -212,7 +213,7 @@ class User extends Component {
                     <TouchableOpacity onPress={this.props.clickRequestMessage.bind(this)}>
                         <View style={styles.actionCircle}>
                             <Text style={styles.circleContent}>
-                                Message
+                                Msg
                             </Text>
                             <Text style={styles.circleContent}>
                                 Box
