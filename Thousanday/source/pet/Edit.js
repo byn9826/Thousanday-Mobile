@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {
     StyleSheet,
+	Platform,
     Text,
     View,
     TextInput,
@@ -467,7 +468,34 @@ class EditPet extends Component {
         )
     }
 }
-
+let inputStyle, confirmStyle;
+if (Platform.OS === 'ios') {
+	inputStyle = {
+		fontSize: 16,
+		marginTop: 5,
+		marginBottom: 5,
+		paddingLeft: 5,
+		paddingRight: 5,
+		height: 40,
+		backgroundColor: "white"
+	};
+	confirmStyle = {
+        marginHorizontal: 20,
+		marginTop: 5,
+		marginBottom: 5,
+		paddingLeft: 5,
+		paddingRight: 5,
+		backgroundColor: "white",
+		height: 40,
+    };
+} else {
+	inputStyle = {
+		fontSize: 18
+	};
+	confirmStyle = {
+        marginHorizontal: 20
+    };
+}
 const styles = StyleSheet.create({
     root: {
         marginHorizontal: 20,
@@ -479,9 +507,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderRadius: 5
     },
-    rowInput: {
-        fontSize: 18
-    },
+    rowInput: inputStyle,
     rowTitle: {
         flexDirection: "row",
         justifyContent: "space-between"
@@ -557,9 +583,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         paddingHorizontal: 10,
     },
-    confirmInput: {
-        marginHorizontal: 20
-    },
+    confirmInput: confirmStyle,
     ownerAdd: {
         width: 320,
         alignSelf: "center",

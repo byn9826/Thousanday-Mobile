@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {
     StyleSheet,
+	Platform,
     Text,
     View,
     Image,
@@ -167,7 +168,20 @@ class PostMoment extends Component {
         )
     }
 }
-
+let inputStyle;
+if (Platform.OS === 'ios') {
+	inputStyle = {
+		backgroundColor:"#f7f9fc",
+		height: 100,
+		paddingLeft: 5,
+		paddingRight: 5,
+		fontSize: 16,
+	}
+} else {
+	inputStyle = {
+		backgroundColor:"#f7f9fc",
+	}
+}
 const styles = StyleSheet.create({
     root: {
         marginTop: 20,
@@ -210,9 +224,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 10
     },
-    rootInput: {
-        backgroundColor:"#f7f9fc",
-    },
+    rootInput: inputStyle,
     rootHint: {
         fontSize: 12,
         marginTop: 5,

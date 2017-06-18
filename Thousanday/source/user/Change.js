@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {
     StyleSheet,
+	Platform,
     Text,
     View,
     TextInput,
@@ -152,7 +153,22 @@ class EditProfile extends Component {
         )
     }
 }
-
+let inputStyle;
+if (Platform.OS === 'ios') {
+	inputStyle = {
+		backgroundColor: "white",
+		height: 40,
+		paddingLeft: 5,
+		paddingRight: 5,
+		marginTop: 5,
+		marginBottom: 5,
+		fontSize: 16,
+	}
+} else {
+	inputStyle = {
+        fontSize: 18
+    }
+}
 const styles = StyleSheet.create({
     root: {
         marginHorizontal: 20,
@@ -164,9 +180,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderRadius: 5
     },
-    rowInput: {
-        fontSize: 18
-    },
+    rowInput: inputStyle,
     rowTitle: {
         flexDirection: "row",
         justifyContent: "space-between"

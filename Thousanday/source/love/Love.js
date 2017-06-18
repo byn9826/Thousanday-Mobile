@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         borderRadius: 5,
         paddingHorizontal: 2,
-        width: (Dimensions.get("window").width - 26) /3.5,
+        width: Dimensions.get("window").width / 3 - 30,
         marginHorizontal: 10,
         justifyContent: "center"
     },
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         borderRadius: 5,
         paddingHorizontal: 2,
-        width: (Dimensions.get("window").width - 26) /3.5,
+        width: Dimensions.get("window").width / 3 - 30,
         marginHorizontal: 10,
         justifyContent: "center"
     },

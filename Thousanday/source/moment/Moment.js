@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {
     StyleSheet,
+	Platform,
     Text,
     View,
     Dimensions,
@@ -244,6 +245,23 @@ class Moment extends Component {
         )
     }
 }
+let inputStyle;
+if (Platform.OS === 'ios') {
+	inputStyle = {
+		backgroundColor: "#f7f9fc",
+        alignSelf: "stretch",
+        marginBottom: 5,
+        marginHorizontal: 20,
+		height: 100,
+	};
+} else {
+	inputStyle = {
+        backgroundColor: "#f7f9fc",
+        alignSelf: "stretch",
+        marginBottom: 5,
+        marginHorizontal: 20
+    };
+}
 
 const styles = StyleSheet.create({
     root: {
@@ -361,12 +379,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 18
     },
-    rootInput: {
-        backgroundColor: "#f7f9fc",
-        alignSelf: "stretch",
-        marginBottom: 5,
-        marginHorizontal: 20
-    },
+    rootInput: inputStyle,
     rootHint: {
         marginBottom: 20,
         alignSelf: "flex-start",
