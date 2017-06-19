@@ -21,11 +21,18 @@ Features
 
 Test on your localhost
 --
-1. react-native init thousanday<br/>
-2. git clone this repo and replace related files in your project folder<br/>
+1. git clone https://github.com/byn9826/Thousanday-Mobile.git<br/>
+2. cd Thousanday-Mobile/Thousanday<br/>
 2. npm install<br/>
-3. react-native link<br/>
-4. react-native run-andrpod
+2. react-native link<br/>
+3. react-native run-android<br/>
+4. Build errors are always coming from third party modules I use. Please check their guidance<br/>
+    [react-native-fbsdk](https://github.com/facebook/react-native-fbsdk)<br/>
+    [react-native-fetch-blob](https://github.com/wkh237/react-native-fetch-blob)<br/>
+    [react-native-google-signin](https://github.com/devfd/react-native-google-signin)<br/>
+    [react-native-image-crop-picker](https://github.com/ivpusic/react-native-image-crop-picker)<br/>
+    [react-native-img-cache](https://github.com/wcandillon/react-native-img-cache)<br/>
+
 
 Other
 --

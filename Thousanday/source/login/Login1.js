@@ -7,11 +7,12 @@ import {
     Image,
     RefreshControl
 } from "react-native";
+/*
 const FBSDK = require('react-native-fbsdk');
 const {
     LoginButton,
     AccessToken
-} = FBSDK;
+} = FBSDK;*/
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import processError from "../../js/processError.js";
 class Login extends Component {
@@ -88,7 +89,8 @@ class Login extends Component {
                         onPress={this._gSignIn.bind(this)}
                     />
                 </View>
-                <Facebook facebookId={this.props.processLogin.bind(this)} goSignup={this.props.goSignup.bind(this)} />
+				{/*<Facebook facebookId={this.props.processLogin.bind(this)} goSignup={this.props.goSignup.bind(this)} />*/}
+                
                 <Text style={styles.notice}>
                     {"Don't have an account?"}
                 </Text>
@@ -105,7 +107,7 @@ class Login extends Component {
         )
     }
 }
-
+/*
 let Facebook = React.createClass({
     render: function() {
         return (
@@ -157,6 +159,7 @@ let Facebook = React.createClass({
         );
     }
 });
+*/
 
 const styles = StyleSheet.create({
     container: {
