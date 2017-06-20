@@ -1,0 +1,51 @@
+{
+  "project_info": {
+    "project_number": "835652983909",
+    "firebase_url": "https://fir-thousanday.firebaseio.com",
+    "project_id": "firebase-thousanday",
+    "storage_bucket": "firebase-thousanday.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:835652983909:android:fbd8fc2ff87cb57a",
+        "android_client_info": {
+          "package_name": "com.thousanday"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "835652983909-mbe6s38aa7o3nu2ie1hvovmed3gdvnpp.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "835652983909-6if3h222alkttk9oas3hr3tl15sq1u7m.apps.googleusercontent.com",
+          "client_type": 3
+        },
+      ],
+      "api_key": [
+        {
+          "current_key": "111122223333334444455566677788889999111"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "835652983909-mbe6s38aa7o3nu2ie1hvovmed3gdvnpp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
