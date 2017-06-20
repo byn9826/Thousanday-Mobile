@@ -8,25 +8,21 @@ import {
 import Header from "./source/general/Header";
 import Footer from "./source/general/Footer";
 import processError from "./js/processError.js";
-
 import processGallery from "./js/processGallery.js";
+import PostMoment from "./source/moment/Post";
 import Watch from "./source/watch/Watch";
 import Explore from "./source/explore/Explore";
 import Moment from "./source/moment/Moment";
-
-import Login from "./source/login/Login1";
-import User from "./source/user/User1";
-/*
-
-
 import Pet from "./source/pet/Pet";
 import Request from "./source/request/Request";
 import Love from "./source/love/Love";
 import WatchList from "./source/watch/Private";
+import Login from "./source/login/Login1";
+import User from "./source/user/User1";
 import EditPet from "./source/pet/Edit";
-import PostMoment from "./source/moment/Post";
 import EditProfile from "./source/user/Change";
 import AddPet from "./source/pet/Add1";
+/*
 import Signup from "./source/login/Signup";
 */
 export default class Thousanday extends Component {
@@ -372,8 +368,26 @@ export default class Thousanday extends Component {
     render() {
         //page route system
         let route;
-		
         switch (this.state.route) {
+			case "postMoment":
+                if (this.state.userData) {
+                    route = <PostMoment
+                        petList={this.state.userData[1]}
+                        userId={this.state.userId}
+                        userToken={this.state.userToken}
+                        refreshMoment={this.refreshMoment.bind(this)}
+                    />
+                } else {
+                    this.processLogin([this.state.userId], this.state.userPlatform, () => {
+                        route = <PostMoment
+                            petList={this.state.userData[1]}
+                            userId={this.state.userId}
+                            userToken={this.state.userToken}
+                            refreshMoment={this.refreshMoment.bind(this)}
+                        />
+                    });
+                }
+                break;
 			//default page, watch public images
             case "watch":
                 route = <Watch
@@ -387,6 +401,7 @@ export default class Thousanday extends Component {
             case "explore":
                 route = <Explore clickMoment={this.clickMoment.bind(this)} />;
                 break;
+			
 			case "moment":
                 let likeUsers = [], i;
                 if (this.state.momentData[2].length !== 0) {
@@ -467,7 +482,6 @@ export default class Thousanday extends Component {
                     clickMoment={this.clickMoment.bind(this)}
                 />;
                 break;
-			/*
 			//go to pet page when user click on pet
             case "pet":
                 route = <Pet
@@ -495,7 +509,14 @@ export default class Thousanday extends Component {
                     refreshPet={this.refreshPet.bind(this)}
                 />
                 break;
-			
+			case "requestMessage":
+                route = <Request
+                    data={this.state.requestData}
+                    userId={this.state.userId}
+                    userToken={this.state.userToken}
+                    emptyUser={this.emptyUser.bind(this)}
+                />
+                break;
 			case "editPet":
                 route = <EditPet
                     data={this.state.editData}
@@ -503,33 +524,6 @@ export default class Thousanday extends Component {
                     userToken={this.state.userToken}
                     refreshPet={this.refreshPet.bind(this)}
                     refreshUser={this.refreshUser.bind(this)}
-                    emptyUser={this.emptyUser.bind(this)}
-                />
-                break;
-			case "postMoment":
-                if (this.state.userData) {
-                    route = <PostMoment
-                        petList={this.state.userData[1]}
-                        userId={this.state.userId}
-                        userToken={this.state.userToken}
-                        refreshMoment={this.refreshMoment.bind(this)}
-                    />
-                } else {
-                    this.processLogin([this.state.userId], this.state.userPlatform, () => {
-                        route = <PostMoment
-                            petList={this.state.userData[1]}
-                            userId={this.state.userId}
-                            userToken={this.state.userToken}
-                            refreshMoment={this.refreshMoment.bind(this)}
-                        />
-                    });
-                }
-                break;
-			case "requestMessage":
-                route = <Request
-                    data={this.state.requestData}
-                    userId={this.state.userId}
-                    userToken={this.state.userToken}
                     emptyUser={this.emptyUser.bind(this)}
                 />
                 break;
@@ -548,8 +542,7 @@ export default class Thousanday extends Component {
                     refreshUser={this.refreshUser.bind(this)}
                 />
                 break;
-			
-            
+			/*
             case "signup":
                 route = <Signup
                     data={this.state.signupData}

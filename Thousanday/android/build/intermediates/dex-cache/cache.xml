@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-base\9.2.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="421b36cf4f0d3bbd75e8f28647fccf36674ef049">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-base-9.2.1_0ad3bfce79f00e5d41991a36ba19c88ef9c5eaee.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-compat\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="75b1f366ff0bbc78f8b1f7cf0dc82e7c53afef6a">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.android.support-support-compat-25.0.0_667f93cf433f3ec2b4592a8ecaa4a38416e2319b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp-ws\3.4.1\8ace66ef7002d98f633377c9e67daeeb196d8c3b\okhttp-ws-3.4.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="8ace66ef7002d98f633377c9e67daeeb196d8c3b">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\okhttp-ws-3.4.1_e18a441e68a9456df2f375bc60dac78a60bee2fa.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.facebook.react\react-native\0.44.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="af9665a44df26b4098e24c934c1109507845ef5e">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.facebook.react-react-native-0.44.0_6d148980d17d158c9c1e91a6d856aa15e7647960.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\Thousanday\react-native-fetch-blob\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="72c37d78982fde30a1c162090d98d3b4dc1e917d">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\Thousanday-react-native-fetch-blob-unspecified_17d9b1fb32c05a01225b651b10b6d206672dfb20.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.facebook.fresco\imagepipeline-base\1.0.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="050f688115ea65a0292d8483a6ffe6bcdab1e2ef">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.facebook.fresco-imagepipeline-base-1.0.1_13dc42c4dbb5ba67e17d2f63b89c2579de45ab05.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-applinks\1.4.0\8ad21bf21784dacce5f2043afb97218cc377e835\bolts-applinks-1.4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="8ad21bf21784dacce5f2043afb97218cc377e835">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\bolts-applinks-1.4.0_27f55a22c07d24e4c1dc2778644c58ab67f3b44b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="53a420cd4f49274db6bd43475f8006ba67ef6bbd">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.android.support-animated-vector-drawable-25.0.0_6b7f7234e570ccb733eb702008ccdd59b004bcfb.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="e5343c9d19cb19ff55f6b268c7f3fe8c9d224f6f">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0_4a14661e61eaaa98043eece779d0eda22e358043.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.facebook.fresco\fresco\1.0.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="cf836a435a496eb22ff2aa69aa1e619462549f81">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.facebook.fresco-fresco-1.0.1_3cb6b2848330cb5c9c15b22d51553844e45a06a2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.android.support-support-vector-drawable-25.0.0_626a919252688db1f7a2dc03f2fc404ae807defd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="3b61a70884adaf0be3fc06c70c801e3e6df13133">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0_6a68c4ed6a57bf88c5dda425fa1eb23273570619.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.facebook.fbui.textlayoutbuilder\textlayoutbuilder\1.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="f90b593491e4044903f0bbf68dc3fa2790b151b9">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.facebook.fbui.textlayoutbuilder-textlayoutbuilder-1.0.0_1577bee30f9d3544211d72309fb192af9eee92cf.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\.gradle\caches\modules-2\files-2.1\com.google.code.findbugs\jsr305\3.0.0\5871fb60dc68d67da54a663c3fd636a10a532948\jsr305-3.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="5871fb60dc68d67da54a663c3fd636a10a532948">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\jsr305-3.0.0_f1e6f8cb6bb8d530cd582e53f43f655221b4f0d4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-v4\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-25.0.0_12e77227bff1da15217252d3386380acf05bf347.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.facebook.fresco\imagepipeline-okhttp3\1.0.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="ba9b39366b723ccff6359d1117332968e98a4aca">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.facebook.fresco-imagepipeline-okhttp3-1.0.1_8e3cdc3576f515cfc3758075b411502b21068830.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\Thousanday\react-native-google-signin\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="3db33d8c07001f2894650c6d8a811a6ff1e9a1f7">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\Thousanday-react-native-google-signin-unspecified_e2bff4d21048c71adcdeff6825a47858a2758a3d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.facebook.android\facebook-android-sdk\4.22.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="d5cbc9214ee567ea6ef56fb2707d48e58d240fc2">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.facebook.android-facebook-android-sdk-4.22.1_923a99df7f74bb4253bc296e83ed49fcf8d372b4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp\3.4.1\c7c4f9e35c2fd5900da24f9872e3971801f08ce0\okhttp-3.4.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="c7c4f9e35c2fd5900da24f9872e3971801f08ce0">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\okhttp-3.4.1_874235f5d9831d584fb049477b7d798aa91bbf0c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.0.0\support-annotations-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="a22d2cc94da87b254451fa8ed28afc30b4653773">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\support-annotations-25.0.0_768d50f27c63bad7e8e5049f67d55d1b3f70e459.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.facebook.soloader\soloader\0.1.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="8f615bca00639150c9eb6175d4b5471193f70794">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.facebook.soloader-soloader-0.1.0_a1c89f4dea9c093b2c7007b2bd601e43f8598549.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="665d21a8a069c96b4d9e8b434f5096d865b4e261">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0_122be716db334572fd69059ed1fd3721137c041a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\Thousanday\react-native-fbsdk\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="ac6965f038f9100d9814b3456ca35f2fd50e559f">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\Thousanday-react-native-fbsdk-unspecified_6a729b582515793fa61178bf185ffa18d79ddff2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp-urlconnection\3.4.1\63994437f62bc861bc20c605d12962f7246116d1\okhttp-urlconnection-3.4.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="63994437f62bc861bc20c605d12962f7246116d1">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\okhttp-urlconnection-3.4.1_8cda2a71244f78b742e1833127d7aba249a2a247.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-auth\9.2.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="e1bec33f1ec5367e25676638b430b9d585f3dbec">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-auth-9.2.1_aab13828a924a0af274e5da1a0b0a2b11b492916.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.android.support-support-fragment-25.0.0_ebcd584ac39d23569e0ff00bf5c60888086f1ab5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="8a372c4191f80489770a231f7be4820b204b886a">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.android.support-cardview-v7-25.0.0_9ed43cdbcae4cafd049727750cbc7c30ca6e5cb9.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.android.support-support-core-utils-25.0.0_0d8405c837cbca0e066b9359a204b45ca6d56305.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.google.firebase\firebase-analytics-impl\9.2.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="5337354083e89ed67151859ab0b6b80935c60eaf">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-analytics-impl-9.2.1_3fbc84abc7052aecf0de6005787109a7a2b31429.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.9.0\f824591a0016efbaeddb8300bee54832a1398cfa\okio-1.9.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="f824591a0016efbaeddb8300bee54832a1398cfa">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\okio-1.9.0_9df43f2385c212cbbd6bee00a8d1470680de041d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-compat\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="f2e3b9bc1ec25f652e8007ce7774c991e38f6a00">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0_a83fc382b33c95c523545bcce315763751406911.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\.gradle\caches\modules-2\files-2.1\com.facebook.fbui.textlayoutbuilder\staticlayout-proxy\1.0\f162442a19fff13995fbd51ba414d9ee05579080\staticlayout-proxy-1.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="f162442a19fff13995fbd51ba414d9ee05579080">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\staticlayout-proxy-1.0_9d3267e1fa4e4f2e7174e203ae96a23b5436a768.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-25.0.0_dae9708aae448d2064aacdfb85eead2d2e83bdc3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-tasks\9.2.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="819c2c3a4fb135e085445d11131d069cf9c32b2a">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-tasks-9.2.1_a5171bca723f1f41767600f4621aec8f6e23dec9.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-tasks\1.4.0\d85884acf6810a3bbbecb587f239005cbc846dc4\bolts-tasks-1.4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="d85884acf6810a3bbbecb587f239005cbc846dc4">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\bolts-tasks-1.4.0_4dd1800c06f4b257bf0f3d3ed5af9f6155d72b63.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="76fb65a4b41ea42dab8a1310ed772a2420c96b52">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.android.support-support-media-compat-25.0.0_e18690c1514d5f68f309efc90bbc68047b01042d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.facebook.fresco\fbcore\1.0.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="2668e49e4e31c7d451b76a36009b902bf44e0d70">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.facebook.fresco-fbcore-1.0.1_15ac58673da831c29729e8577c34f699836378fc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.google.firebase\firebase-analytics\9.2.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="6a0f2d219f82db499ac03d5a985c4eb3e83fc422">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-analytics-9.2.1_a3dd8a65dfbcf56737ad4d1aeea0252611b4107e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.facebook.fresco\drawee\1.0.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="5a61f17cd72e20aa4323cbf5f909b7c609619275">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.facebook.fresco-drawee-1.0.1_3625bfb379a5b33b4e65370548b7ebaf76a2020a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-auth-base\9.2.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="48917c60ea81213ea39cbd7123996a5401106dc3">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-auth-base-9.2.1_1885eaf42909ab341c443270ccfedbad62652e05.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.google.firebase\firebase-iid\9.2.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="d41b5d21cc9dd7d210f0ae82ac509ba7f091d611">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-iid-9.2.1_6c713e7f7b6a649bdbbacbda8cd9b64ca771d2c7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="26674000177e45447a0326a6ad84612761199a13">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.android.support-support-core-ui-25.0.0_e839e9831e29038157b238ae063b6c5ae297c80a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\.gradle\caches\modules-2\files-2.1\javax.inject\javax.inject\1\6975da39a7040257bd51d21a231b76c915872d38\javax.inject-1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="6975da39a7040257bd51d21a231b76c915872d38">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\javax.inject-1_5c277e5e903e0aa0ee914d42d65da551c0fb862a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.facebook.react\react-native\0.44.0\jars\libs\infer-annotations-1.5.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="dcac634e137395f79693ec760f081a86eb2bd84e">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\infer-annotations-1.5_d51b678619051cdab4945a985a0f36e9dc3b5d52.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0_90a74c33879c98050e8119a2384fc16719b72301.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.facebook.fresco\imagepipeline\1.0.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="d9c4402c3057225d80cbbbec52154e7a25b0ebdf">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.facebook.fresco-imagepipeline-1.0.1_21cd9c642caeb10101fa77aa4eaf8e5fbe1775ba.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.google.firebase\firebase-common\9.2.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="3627eacd7f7cafb5e8ae683992e7b2f9b7dcab1a">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-common-9.2.1_f4541d0a68af9a0fba8c09bfb9cab9602b0e008e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.android.support\customtabs\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="94ba691efc31bf53264db0716d9c9ec03843ea31">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.android.support-customtabs-25.0.0_d1703d6dc7bbb9195c6820a9e84e768155e28dcb.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\9.2.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="6b896c1067633db41e9c10a3a5d0919c5c4cfc8c">
+        <dex dex="C:\Users\BAO\www\Thousanday-Mobile\Thousanday\android\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-basement-9.2.1_7bb7f7a9e80f8affe99b3e7ce7530a2b1cfd6f52.jar" />
+    </item>
+
+</items>
