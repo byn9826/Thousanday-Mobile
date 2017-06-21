@@ -1,0 +1,73 @@
+{
+  'version': 0,
+  'case-sensitive': 'false',
+  'roots': [
+    {
+      'type': 'directory',
+      'name': "/Users/bao/Thousanday/ios/build/Build/Products/Debug-iphonesimulator/RSKImageCropper.framework/Headers",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "CGGeometry+RSKImageCropper.h",
+          'external-contents': "/Users/bao/Thousanday/node_modules/react-native-image-crop-picker/ios/RSKImageCropper/RSKImageCropper/CGGeometry+RSKImageCropper.h"
+        },
+        {
+          'type': 'file',
+          'name': "RSKImageCropViewController+Protected.h",
+          'external-contents': "/Users/bao/Thousanday/node_modules/react-native-image-crop-picker/ios/RSKImageCropper/RSKImageCropper/RSKImageCropViewController+Protected.h"
+        },
+        {
+          'type': 'file',
+          'name': "RSKImageCropViewController.h",
+          'external-contents': "/Users/bao/Thousanday/node_modules/react-native-image-crop-picker/ios/RSKImageCropper/RSKImageCropper/RSKImageCropViewController.h"
+        },
+        {
+          'type': 'file',
+          'name': "RSKImageCropper-Swift.h",
+          'external-contents': "/Users/bao/Thousanday/ios/build/Build/Products/Debug-iphonesimulator/RSKImageCropper.framework/Headers/RSKImageCropper-Swift.h"
+        },
+        {
+          'type': 'file',
+          'name': "RSKImageCropper.h",
+          'external-contents': "/Users/bao/Thousanday/node_modules/react-native-image-crop-picker/ios/RSKImageCropper/RSKImageCropper/RSKImageCropper.h"
+        },
+        {
+          'type': 'file',
+          'name': "RSKImageScrollView.h",
+          'external-contents': "/Users/bao/Thousanday/node_modules/react-native-image-crop-picker/ios/RSKImageCropper/RSKImageCropper/RSKImageScrollView.h"
+        },
+        {
+          'type': 'file',
+          'name': "RSKInternalUtility.h",
+          'external-contents': "/Users/bao/Thousanday/node_modules/react-native-image-crop-picker/ios/RSKImageCropper/RSKImageCropper/RSKInternalUtility.h"
+        },
+        {
+          'type': 'file',
+          'name': "RSKTouchView.h",
+          'external-contents': "/Users/bao/Thousanday/node_modules/react-native-image-crop-picker/ios/RSKImageCropper/RSKImageCropper/RSKTouchView.h"
+        },
+        {
+          'type': 'file',
+          'name': "UIApplication+RSKImageCropper.h",
+          'external-contents': "/Users/bao/Thousanday/node_modules/react-native-image-crop-picker/ios/RSKImageCropper/RSKImageCropper/UIApplication+RSKImageCropper.h"
+        },
+        {
+          'type': 'file',
+          'name': "UIImage+RSKImageCropper.h",
+          'external-contents': "/Users/bao/Thousanday/node_modules/react-native-image-crop-picker/ios/RSKImageCropper/RSKImageCropper/UIImage+RSKImageCropper.h"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/bao/Thousanday/ios/build/Build/Products/Debug-iphonesimulator/RSKImageCropper.framework/Modules",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "module.modulemap",
+          'external-contents': "/Users/bao/Thousanday/ios/build/Build/Intermediates/RSKImageCropper.build/Debug-iphonesimulator/RSKImageCropper.build/module.modulemap"
+        }
+      ]
+    }
+  ]
+}

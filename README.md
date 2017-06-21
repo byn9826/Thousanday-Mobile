@@ -1,6 +1,8 @@
 # Thousanday-Mobile
 Photo sharing social mobile app for your pets and you. <br/>
 
+Please test with real pets images, otherwise I have to delete unrelated photos.<br/>
+
 [Google Play](https://play.google.com/store/apps/details?id=com.thousanday)<br/>
 
 <img src="https://github.com/byn9826/Thousanday-Mobile/blob/master/example.gif?raw=true" width="200px" /><br/>
