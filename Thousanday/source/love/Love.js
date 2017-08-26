@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import processError from "../../js/processError.js";
 import {CachedImage} from "react-native-img-cache";
+import getApiUrl from "../../js/getApiUrl.js";
 class Love extends Component {
     constructor(props) {
         super(props);
@@ -31,7 +32,7 @@ class Love extends Component {
     componentWillMount() {
         this.setState({refresh: true});
         //load 20 newest moments by default
-        fetch("https://thousanday.com/watch/read?id=" + this.props.userId, {
+        fetch(getApiUrl() + "/watch/read?id=" + this.props.userId, {
             method: "GET",
         })
         .then((response) => {
@@ -53,7 +54,7 @@ class Love extends Component {
     loadMore() {
         if (this.state.list === "watch") {
             if (!this.state.locker) {
-                fetch("https://thousanday.com/watch/load", {
+                fetch(getApiUrl() + "/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -84,7 +85,7 @@ class Love extends Component {
             }
         } else if (this.state.list === "love") {
             if (!this.state.loveLocker) {
-                fetch("https://thousanday.com/watch/load", {
+                fetch(getApiUrl() + "/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -115,7 +116,7 @@ class Love extends Component {
             }
         } else if (this.state.list === "comment") {
             if (!this.state.commentLocker) {
-                fetch("https://thousanday.com/watch/load", {
+                fetch(getApiUrl() + "/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -152,7 +153,7 @@ class Love extends Component {
             if (list === "love") {
                 if (!this.state.loveData) {
                     this.setState({refresh: true});
-                    fetch("https://thousanday.com/watch/load", {
+                    fetch(getApiUrl() + "/watch/load", {
                         method: "POST",
                         headers: {
                             "Accept": "application/json",
@@ -186,7 +187,7 @@ class Love extends Component {
             } else if (list === "comment") {
                 if (!this.state.commentData) {
                     this.setState({refresh: true});
-                    fetch("https://thousanday.com/watch/load", {
+                    fetch(getApiUrl() + "/watch/load", {
                         method: "POST",
                         headers: {
                             "Accept": "application/json",
@@ -229,7 +230,7 @@ class Love extends Component {
                 data.push(
                     {
                         key: this.state.watchData[i].moment_id,
-                        image: "https://thousanday.com/img/pet/" + this.state.watchData[i].pet_id + "/moment/" + this.state.watchData[i].image_name
+                        image: getApiUrl() + "/img/pet/" + this.state.watchData[i].pet_id + "/moment/" + this.state.watchData[i].image_name
                     }
                 )
             }
@@ -238,7 +239,7 @@ class Love extends Component {
                 data.push(
                     {
                         key: this.state.loveData[i].moment_id,
-                        image: "https://thousanday.com/img/pet/" + this.state.loveData[i].pet_id + "/moment/" + this.state.loveData[i].image_name
+                        image: getApiUrl() + "/img/pet/" + this.state.loveData[i].pet_id + "/moment/" + this.state.loveData[i].image_name
                     }
                 )
             }
@@ -247,7 +248,7 @@ class Love extends Component {
                 data.push(
                     {
                         key: this.state.commentData[i].moment_id,
-                        image: "https://thousanday.com/img/pet/" + this.state.commentData[i].pet_id + "/moment/" + this.state.commentData[i].image_name
+                        image: getApiUrl() + "/img/pet/" + this.state.commentData[i].pet_id + "/moment/" + this.state.commentData[i].image_name
                     }
                 )
             }

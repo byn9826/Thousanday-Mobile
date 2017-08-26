@@ -11,6 +11,7 @@ import {
 import {CachedImage} from "react-native-img-cache";
 import processError from "../../js/processError.js";
 import processGallery from "../../js/processGallery.js";
+import getApiUrl from "../../js/getApiUrl.js";
 class Explore extends Component {
     constructor(props) {
         super(props);
@@ -39,7 +40,7 @@ class Explore extends Component {
             //require info
             if (this.state.nature) {
                 this.setState({refresh: true});
-                fetch("https://thousanday.com/explore/read?load=0&nature=" + this.state.nature + "&type=" + type, {
+                fetch(getApiUrl() + "/explore/read?load=0&nature=" + this.state.nature + "&type=" + type, {
                     method: "GET",
                 })
                 .then((response) => {
@@ -68,7 +69,7 @@ class Explore extends Component {
             this.setState({nature: nature});
             //if chosed nature and type do search
             if (this.state.type) {
-                fetch("https://thousanday.com/explore/read?load=0&nature=" + nature + "&type=" + this.state.type, {
+                fetch(getApiUrl() + "/explore/read?load=0&nature=" + nature + "&type=" + this.state.type, {
                     method: "GET",
                 })
                 .then((response) => {
@@ -91,7 +92,7 @@ class Explore extends Component {
     //load more momentCursor
     loadMore() {
         if (this.state.type && this.state.nature && !this.state.moreLocker) {
-            fetch("https://thousanday.com/explore/read?load=" + this.state.loadTimes + "&nature=" + this.state.nature + "&type=" + this.state.type, {
+            fetch(getApiUrl() + "/explore/read?load=" + this.state.loadTimes + "&nature=" + this.state.nature + "&type=" + this.state.type, {
                 method: "GET",
             })
             .then((response) => {

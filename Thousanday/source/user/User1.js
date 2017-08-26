@@ -19,6 +19,7 @@ import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import noGetGender from "../../js/noGetGender.js";
 import noGetType from "../../js/noGetType.js";
 import {CachedImage} from "react-native-img-cache";
+import getApiUrl from "../../js/getApiUrl.js";
 class User extends Component {
     constructor(props) {
         super(props);
@@ -50,7 +51,7 @@ class User extends Component {
     _gLogout() {
         GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
             this.setState({refresh: true});
-            fetch("https://thousanday.com/account/logout", {
+            fetch(getApiUrl() + "/account/logout", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -77,7 +78,7 @@ class User extends Component {
     //load more moments
     loadMore() {
         if (!this.state.userLocker) {
-            fetch("https://thousanday.com/user/load", {
+            fetch(getApiUrl() + "/user/load", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -112,7 +113,7 @@ class User extends Component {
             <View key={"petsthousn" + index} style={styles.petHub}>
                 <TouchableOpacity onPress={this.props.clickPet.bind(null, pet.pet_id)}>
                     <CachedImage
-                        source={{uri: "https://thousanday.com/img/pet/" + pet.pet_id + "/0.png"}}
+                        source={{uri: getApiUrl() + "/img/pet/" + pet.pet_id + "/0.png"}}
                         style={styles.hubPet}
                         mutable
                     />
@@ -160,7 +161,7 @@ class User extends Component {
         let relatives = reldata.map((relative, index) =>
             <TouchableOpacity key={"relativesthousn" + index} onPress={this.props.clickUser.bind(null, parseInt(relative))}>
                 <CachedImage
-                    source={{uri: "https://thousanday.com/img/user/" + relative + ".jpg"}}
+                    source={{uri: getApiUrl() + "/img/user/" + relative + ".jpg"}}
                     style={styles.userImg}
                     mutable
                 />
@@ -268,7 +269,7 @@ class User extends Component {
                         <View style={styles.mainHeader}>
                             <View style={styles.headerRow}>
                                 <CachedImage
-                                    source={{uri: "https://thousanday.com/img/user/" + this.props.userId + ".jpg"}}
+                                    source={{uri: getApiUrl() + "/img/user/" + this.props.userId + ".jpg"}}
                                     style={styles.headerAvatar}
                                     mutable
                                 />
@@ -337,7 +338,7 @@ let Facebook = React.createClass({
                 onLogoutFinished={
                     () => {
                         this.setState({refresh: true});
-                        fetch("https://thousanday.com/account/logout", {
+                        fetch(getApiUrl() + "/account/logout", {
                             method: "POST",
                             headers: {
                                 "Accept": "application/json",

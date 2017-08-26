@@ -8,6 +8,7 @@ import {
     TouchableOpacity
 } from "react-native";
 import processError from "../../js/processError.js";
+import getApiUrl from "../../js/getApiUrl.js";
 class Request extends Component {
     constructor(props) {
         super(props);
@@ -18,7 +19,7 @@ class Request extends Component {
         };
     }
     acceptRequest(pet) {
-        fetch("https://thousanday.com/request/accept", {
+        fetch(getApiUrl() + "/request/accept", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -44,7 +45,7 @@ class Request extends Component {
         });
     }
     deleteRequest(pet, index) {
-        fetch("https://thousanday.com/request/delete", {
+        fetch(getApiUrl() + "/request/delete", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -68,14 +69,14 @@ class Request extends Component {
                 <View style={styles.rootRow}>
                     <Image
                         style={styles.rowImage}
-                        source={{uri: "https://thousanday.com/img/user/" + request.sender_id + ".jpg"}}
+                        source={{uri: getApiUrl() + "/img/user/" + request.sender_id + ".jpg"}}
                     />
                     <Text style ={styles.rowWant}>
                         wants to add you as
                     </Text>
                     <Image
                         style={styles.rowPet}
-                        source={{uri: "https://thousanday.com/img/pet/" + request.pet_id + "/0.png"}}
+                        source={{uri: getApiUrl() + "/img/pet/" + request.pet_id + "/0.png"}}
                     />
                     <Text style ={styles.rowWant}>
                         {"'s relative"}

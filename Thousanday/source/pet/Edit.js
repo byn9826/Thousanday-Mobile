@@ -13,6 +13,7 @@ import {
 import processError from "../../js/processError.js";
 import ImagePicker from 'react-native-image-crop-picker';
 import {ImageCache, CachedImage} from "react-native-img-cache";
+import getApiUrl from "../../js/getApiUrl.js";
 class EditPet extends Component {
     constructor(props) {
         super(props);
@@ -36,7 +37,7 @@ class EditPet extends Component {
     //save name
     saveName() {
         if (this.state.name !== this.props.data.pet_name) {
-            fetch("https://thousanday.com/edit/name", {
+            fetch(getApiUrl() + "/edit/name", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -85,7 +86,7 @@ class EditPet extends Component {
         data.append("token", this.props.userToken);
         data.append("user", this.props.userId);
         data.append("pet", this.props.data.pet_id);
-        fetch("https://thousanday.com/upload/pet", {
+        fetch(getApiUrl() + "/upload/pet", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -101,7 +102,7 @@ class EditPet extends Component {
             }
         })
         .then((result) => {
-            ImageCache.get().bust("https://thousanday.com/img/pet/" + this.props.data.pet_id + "/0.png");
+            ImageCache.get().bust(getApiUrl() + "/img/pet/" + this.props.data.pet_id + "/0.png");
             this.setState({button: "Update Success!"})
             this.props.refreshPet();
         });
@@ -112,7 +113,7 @@ class EditPet extends Component {
     }
     //confirm end relationship
     confirmEnd() {
-        fetch("https://thousanday.com/edit/end", {
+        fetch(getApiUrl() + "/edit/end", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -141,7 +142,7 @@ class EditPet extends Component {
     }
     //confirm send request
     confirmSend() {
-        fetch("https://thousanday.com/edit/add", {
+        fetch(getApiUrl() + "/edit/add", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -171,7 +172,7 @@ class EditPet extends Component {
     }
     //confirmTransfer Ownership
     confirmTransfer() {
-        fetch("https://thousanday.com/edit/transfer", {
+        fetch(getApiUrl() + "/edit/transfer", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -195,7 +196,7 @@ class EditPet extends Component {
     }
     //confirm remove pet
     confirmRemove() {
-        fetch("https://thousanday.com/edit/remove", {
+        fetch(getApiUrl() + "/edit/remove", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -300,7 +301,7 @@ class EditPet extends Component {
                                         if (id >= 0 || text === "") {
                                             this.setState({search: text})
                                             if (text !== "") {
-                                                fetch("https://thousanday.com/edit/search?id=" + id, {
+                                                fetch(getApiUrl() + "/edit/search?id=" + id, {
                                                     method: "GET",
                                                 })
                                                 .then((response) => {
@@ -326,7 +327,7 @@ class EditPet extends Component {
                                     (this.state.getName && this.state.search)? (
                                         <View style={styles.confirmInfo}>
                                             <Image
-                                                source={{uri: "https://thousanday.com/img/user/" + this.state.search + ".jpg"}}
+                                                source={{uri: getApiUrl() + "/img/user/" + this.state.search + ".jpg"}}
                                                 style={styles.infoImage}
                                             />
                                             <Text style={styles.infoName}>
@@ -434,7 +435,7 @@ class EditPet extends Component {
                         ): (
                             <CachedImage
                                 style={styles.pictureProfile}
-                                source={{uri: "https://thousanday.com/img/pet/" + this.props.data.pet_id + "/0.png"}}
+                                source={{uri: getApiUrl() + "/img/pet/" + this.props.data.pet_id + "/0.png"}}
                                 mutable
                             />
                         )

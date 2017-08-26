@@ -15,6 +15,7 @@ const {
 } = FBSDK;*/
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import processError from "../../js/processError.js";
+import getApiUrl from "../../js/getApiUrl.js";
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -39,7 +40,7 @@ class Login extends Component {
         GoogleSignin.signIn()
             .then((user) => {
                 this.setState({refresh: true});
-                fetch("https://thousanday.com/account/google", {
+                fetch(getApiUrl() + "/account/google", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -123,7 +124,7 @@ let Facebook = React.createClass({
                                 AccessToken.getCurrentAccessToken().then(
                                     (data) => {
                                         this.setState({refresh: true});
-                                        fetch("https://thousanday.com/account/facebook", {
+                                        fetch(getApiUrl() + "/account/facebook", {
                                             method: "POST",
                                             headers: {
                                                 "Accept": "application/json",

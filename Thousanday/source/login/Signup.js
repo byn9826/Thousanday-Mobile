@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import processError from "../../js/processError.js";
 import ImagePicker from 'react-native-image-crop-picker';
+import getApiUrl from "../../js/getApiUrl.js";
 class Signup extends Component {
     constructor(props) {
         super(props);
@@ -37,9 +38,9 @@ class Signup extends Component {
     }
     //open terms and conditions
     openTerms() {
-        Linking.canOpenURL("https://thousanday.com/terms").then(supported => {
+        Linking.canOpenURL(getApiUrl() + "/terms").then(supported => {
             if (supported) {
-                Linking.openURL("https://thousanday.com/terms");
+                Linking.openURL(getApiUrl() + "/terms");
             } else {
                 alert("Can't open this link");
             }
@@ -64,7 +65,7 @@ class Signup extends Component {
             }
             data.append("platform", this.props.platform);
             data.append("method", "mobile");
-            fetch("https://thousanday.com/upload/create", {
+            fetch(getApiUrl() + "/upload/create", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",

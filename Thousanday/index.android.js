@@ -22,7 +22,9 @@ import Login from "./source/login/Login";
 import Signup from "./source/login/Signup";
 import Request from "./source/request/Request";
 import processError from "./js/processError.js";
+import getApiUrl from "./js/getApiUrl.js";
 import processGallery from "./js/processGallery.js";
+
 export default class Thousanday extends Component {
     constructor(props) {
         super(props);
@@ -72,10 +74,11 @@ export default class Thousanday extends Component {
     //get most recent public images for watch on app open
     componentWillMount() {
         //load 20 newest moments by default
-        fetch("https://thousanday.com/index/read?load=0", {
+        fetch(getApiUrl() + "/index/read?load=0", {
             method: "GET",
         })
         .then((response) => {
+            console.log(response);
             if (response.ok) {
                 return response.json();
             } else {
@@ -84,7 +87,7 @@ export default class Thousanday extends Component {
         })
         .then((result) => {
             this.setState({refresh: false});
-            //consist watchd ata with all image src
+            //build watched ata with all image src
             let watch = processGallery(result);
             this.setState({watchData: watch});
         });
@@ -129,7 +132,7 @@ export default class Thousanday extends Component {
     loadWatch() {
         //check if watch lock exist
         if (!this.state.watchLocker) {
-            fetch("https://thousanday.com/index/read?load=" + this.state.watchTimes, {
+            fetch(getApiUrl() + "/index/read?load=" + this.state.watchTimes, {
                 method: "GET",
             })
             .then((response) => {
@@ -163,27 +166,19 @@ export default class Thousanday extends Component {
             });
         }
     }
-    //if user click on one pet, read pet data
-    clickPet(id) {
-        //pet page didn't be requested before
-        if (this.state.petId !== id) {
-            fetch("https://thousanday.com/pet/read?id=" + id, {
-                method: "GET"
-            })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    processError(response);
-                }
-            })
-            .then((pet) => {
-                this.setState({route: "pet", petData: pet, petId: id});
-            });
-        } else {
-            //go to user page directlly
-            this.setState({route: "pet"});
-        }
+    //click into one pet's page
+    clickPet( id ) {
+        fetch( getApiUrl() + "/pet/read?id=" + id, { method: "GET" } )
+        .then( response => {
+            if ( response.ok ) {
+                return response.json();
+            } else {
+                processError( response );
+            }
+        })
+        .then( pet => {
+            this.setState({ route: "pet", petData: pet, petId: id });
+        });
     }
     //if user click on one user, read user data
     clickUser(id) {
@@ -193,7 +188,7 @@ export default class Thousanday extends Component {
         } else {
             //user page didn't be requested before
             if (this.state.pageId !== id) {
-                fetch("https://thousanday.com/user/read?id=" + id, {
+                fetch(getApiUrl() + "/user/read?id=" + id, {
                     method: "GET",
                 })
                 .then((response) => {
@@ -214,7 +209,7 @@ export default class Thousanday extends Component {
     }
     //if user click on one moment, read moment data
     clickMoment(id) {
-        fetch("https://thousanday.com/moment/read?id=" + id, {
+        fetch(getApiUrl() + "/moment/read?id=" + id, {
             method: "GET",
         })
         .then((response) => {
@@ -238,7 +233,7 @@ export default class Thousanday extends Component {
     }
     //process user login action
     processLogin(result, platform) {
-        fetch("https://thousanday.com/user/read?id=" + result[0], {
+        fetch(getApiUrl() + "/user/read?id=" + result[0], {
             method: "GET",
         })
         .then((response) => {
@@ -281,7 +276,7 @@ export default class Thousanday extends Component {
     }
     //refresh user,moment, pet data, and go to new moment
     refreshMoment(id) {
-        fetch("https://thousanday.com/moment/read?id=" + id, {
+        fetch(getApiUrl() + "/moment/read?id=" + id, {
             method: "GET",
         })
         .then((response) => {
@@ -301,7 +296,7 @@ export default class Thousanday extends Component {
     }
     //click edit pet, get info for one pet
     clickEditPet(id) {
-        fetch("https://thousanday.com/edit/read?pet=" + id + "&user=" + this.state.userId, {
+        fetch(getApiUrl() + "/edit/read?pet=" + id + "&user=" + this.state.userId, {
             method: "GET",
         })
         .then((response) => {
@@ -317,7 +312,7 @@ export default class Thousanday extends Component {
     }
     //click watch lists,get watch list info
     clickWatchList() {
-        fetch("https://thousanday.com/watch/read?id=" + this.state.userId, {
+        fetch(getApiUrl() + "/watch/read?id=" + this.state.userId, {
             method: "GET",
         })
         .then((response) => {
@@ -347,7 +342,7 @@ export default class Thousanday extends Component {
     }
     //click friend request button
     clickRequestMessage() {
-        fetch("https://thousanday.com/request/read?id=" + this.state.userId, {
+        fetch(getApiUrl() + "/request/read?id=" + this.state.userId, {
             method: "GET",
         })
         .then((response) => {

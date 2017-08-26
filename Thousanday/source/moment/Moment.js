@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import processError from "../../js/processError.js";
 import {CachedImage} from "react-native-img-cache";
+import getApiUrl from "../../js/getApiUrl.js";
 class Moment extends Component {
     constructor(props) {
         super(props);
@@ -38,7 +39,7 @@ class Moment extends Component {
             } else {
                 action = 0;
             }
-            fetch("https://thousanday.com/moment/like", {
+            fetch(getApiUrl() + "/moment/like", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -71,7 +72,7 @@ class Moment extends Component {
     }
     //send new comment
     sendMessage() {
-        fetch("https://thousanday.com/moment/comment", {
+        fetch(getApiUrl() + "/moment/comment", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -102,7 +103,7 @@ class Moment extends Component {
     }
     //load more comment
     loadMore() {
-        fetch("https://thousanday.com/moment/load?id=" + this.props.data[0].moment_id + "&load=" + (parseInt(this.state.load) - 1) + "&add=" + this.state.send , {
+        fetch(getApiUrl() + "/moment/load?id=" + this.props.data[0].moment_id + "&load=" + (parseInt(this.state.load) - 1) + "&add=" + this.state.send , {
             method: "GET",
         })
         .then((response) => {
@@ -125,7 +126,7 @@ class Moment extends Component {
     shareMoment() {
         Share.share({
             message: this.props.data[0].moment_message + " - See more at https://thousanday.com/moment/" + this.props.data[0].moment_id,
-            url: "https://thousanday.com/moment/" + this.props.data[0].moment_id,
+            url: getApiUrl() + "/moment/" + this.props.data[0].moment_id,
             title: 'Thousanday - Your pets and you'
         }, {
             dialogTitle: 'Share moment to the world',
@@ -136,7 +137,7 @@ class Moment extends Component {
         let comments = this.state.list.map((comment, index)=>
             <View key={"comments"+ index} style={styles.commentLine}>
                 <CachedImage
-                    source={{uri: "https://thousanday.com/img/user/" + comment.user_id + ".jpg"}}
+                    source={{uri: getApiUrl() + "/img/user/" + comment.user_id + ".jpg"}}
                     style={styles.lineAvatar}
                 />
                 <Text style={styles.lineContent}>
@@ -149,7 +150,7 @@ class Moment extends Component {
                 <View style={styles.rootTop}>
                     <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[0].pet_id)}>
                         <CachedImage
-                            source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
+                            source={{uri: getApiUrl() + "/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
                             style={styles.topAvatar}
                         />
                     </TouchableOpacity>
@@ -163,7 +164,7 @@ class Moment extends Component {
                     </View>
                 </View>
                 <CachedImage
-                    source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].pet_id + "/moment/" + this.props.data[0].image_name}}
+                    source={{uri: getApiUrl() + "/img/pet/" + this.props.data[0].pet_id + "/moment/" + this.props.data[0].image_name}}
                     style={styles.rootImg}
                 />
                 <View style={styles.rootSocial}>

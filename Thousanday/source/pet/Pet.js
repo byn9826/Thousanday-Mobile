@@ -15,6 +15,8 @@ import {CachedImage} from "react-native-img-cache";
 import noGetGender from "../../js/noGetGender.js";
 import noGetType from "../../js/noGetType.js";
 import noGetNature from "../../js/noGetNature.js";
+import getApiUrl from "../../js/getApiUrl.js";
+
 class Pet extends Component {
     constructor(props) {
         super(props);
@@ -40,7 +42,7 @@ class Pet extends Component {
     }
     loadMore() {
         if (!this.state.petLocker) {
-            fetch("https://thousanday.com/pet/load?add=0&load=" + this.state.loadTimes + "&pet=" + this.props.data[0].pet_id, {
+            fetch(getApiUrl() + "/pet/load?add=0&load=" + this.state.loadTimes + "&pet=" + this.props.data[0].pet_id, {
                 method: "GET"
             })
             .then((response) => {
@@ -73,7 +75,7 @@ class Pet extends Component {
                 action = 1;
             }
             //watch or unwatch pet
-            fetch("https://thousanday.com/pet/watch", {
+            fetch(getApiUrl() + "/pet/watch", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -112,7 +114,7 @@ class Pet extends Component {
                 <TouchableOpacity onPress={this.props.clickUser.bind(null, parseInt(this.props.data[0].relative_id))}>
                     <CachedImage
                         style={styles.boxRound}
-                        source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].relative_id + ".jpg"}}
+                        source={{uri: getApiUrl() + "/img/user/" + this.props.data[0].relative_id + ".jpg"}}
                         mutable
                     />
                 </TouchableOpacity>
@@ -125,7 +127,7 @@ class Pet extends Component {
                 <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[2][0].pet_id)}>
                     <CachedImage
                         style={styles.boxImage}
-                        source={{uri: "https://thousanday.com/img/pet/" + this.props.data[2][0].pet_id + "/0.png"}}
+                        source={{uri: getApiUrl() + "/img/pet/" + this.props.data[2][0].pet_id + "/0.png"}}
                         mutable
                     />
                 </TouchableOpacity>
@@ -136,7 +138,7 @@ class Pet extends Component {
                 <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[2][1].pet_id)}>
                     <CachedImage
                         style={styles.boxImage}
-                        source={{uri: "https://thousanday.com/img/pet/" + this.props.data[2][1].pet_id + "/0.png"}}
+                        source={{uri: getApiUrl() + "/img/pet/" + this.props.data[2][1].pet_id + "/0.png"}}
                         mutable
                     />
                 </TouchableOpacity>
@@ -151,7 +153,7 @@ class Pet extends Component {
                     return (
                         <View style={styles.containerHeader}>
                             <CachedImage
-                                source={{uri: "https://thousanday.com/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
+                                source={{uri: getApiUrl() + "/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
                                 style={styles.headerAvatar}
                                 mutable
                             />
@@ -178,7 +180,7 @@ class Pet extends Component {
                                         <TouchableOpacity onPress={this.props.clickUser.bind(null, parseInt(this.props.data[0].owner_id))}>
                                             <CachedImage
                                                 style={styles.boxRound}
-                                                source={{uri: "https://thousanday.com/img/user/" + this.props.data[0].owner_id + ".jpg"}}
+                                                source={{uri: getApiUrl() + "/img/user/" + this.props.data[0].owner_id + ".jpg"}}
                                                 mutable
                                             />
                                         </TouchableOpacity>

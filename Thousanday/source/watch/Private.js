@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import processError from "../../js/processError.js";
 import {CachedImage} from "react-native-img-cache";
+import getApiUrl from "../../js/getApiUrl.js";
 class WatchList extends Component {
     constructor(props) {
         super(props);
@@ -25,7 +26,7 @@ class WatchList extends Component {
     }
     watchPet(id, action) {
         if (action === 1) {
-            fetch("https://thousanday.com/watch/remove", {
+            fetch(getApiUrl() + "/watch/remove", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -50,7 +51,7 @@ class WatchList extends Component {
                 this.props.refreshPet();
             });
         } else {
-            fetch("https://thousanday.com/watch/add", {
+            fetch(getApiUrl() + "/watch/add", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -80,7 +81,7 @@ class WatchList extends Component {
     /*
     loadMore() {
         if (!this.state.locker) {
-            fetch("https://thousanday.com/panels/watchList", {
+            fetch(getApiUrl() + "/panels/watchList", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -130,7 +131,7 @@ class WatchList extends Component {
                         <View key={"privatewatch" + item.key} style={styles.rootRow}>
                             <TouchableOpacity onPress={this.props.clickPet.bind(null, item.id)}>
                                 <CachedImage
-                                    source={{uri: "https://thousanday.com/img/pet/" + item.id + "/0.png"}}
+                                    source={{uri: getApiUrl() + "/img/pet/" + item.id + "/0.png"}}
                                     style={styles.rowAvatar}
                                     mutable
                                 />
@@ -148,7 +149,7 @@ class WatchList extends Component {
                         <View key={"privatewatch" + item.key} style={styles.rootRow}>
                             <TouchableOpacity onPress={this.props.clickPet.bind(null, item.id)}>
                                 <CachedImage
-                                    source={{uri: "https://thousanday.com/img/pet/" + item.id + "/0.png"}}
+                                    source={{uri: getApiUrl() + "/img/pet/" + item.id + "/0.png"}}
                                     style={styles.rowAvatar}
                                     mutable
                                 />

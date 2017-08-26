@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import processError from "../../js/processError.js";
 import ImagePicker from 'react-native-image-crop-picker';
+import getApiUrl from "../../js/getApiUrl.js";
 class AddPet extends Component {
     constructor(props) {
         super(props);
@@ -84,7 +85,7 @@ class AddPet extends Component {
             data.append("file", file, ".png");
             data.append("token", this.props.userToken);
             data.append("user", this.props.userId);
-            fetch("https://thousanday.com/upload/add", {
+            fetch(getApiUrl() + "/upload/add", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",

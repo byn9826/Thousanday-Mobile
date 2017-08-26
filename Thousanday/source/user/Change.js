@@ -12,6 +12,7 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import {ImageCache, CachedImage} from "react-native-img-cache";
 import processError from "../../js/processError.js";
+import getApiUrl from "../../js/getApiUrl.js";
 class EditProfile extends Component {
     constructor(props) {
         super(props);
@@ -43,7 +44,7 @@ class EditProfile extends Component {
         data.append("file", file, this.props.userId + ".jpg");
         data.append("token", this.props.userToken);
         data.append("user", this.props.userId);
-        fetch("https://thousanday.com/upload/user", {
+        fetch(getApiUrl() + "/upload/user", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -59,14 +60,14 @@ class EditProfile extends Component {
             }
         })
         .then((result) => {
-            ImageCache.get().bust("https://thousanday.com/img/user/" + this.props.userId + ".jpg");
+            ImageCache.get().bust(getApiUrl() + "/img/user/" + this.props.userId + ".jpg");
             this.props.refreshUser();
         });
     }
     //save name
     saveName() {
         if (this.state.name !== this.props.userName) {
-            fetch("https://thousanday.com/setting/name", {
+            fetch(getApiUrl() + "/setting/name", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -125,7 +126,7 @@ class EditProfile extends Component {
                         ): (
                             <CachedImage
                                 style={styles.pictureProfile}
-                                source={{uri: "https://thousanday.com/img/user/" + this.props.userId + ".jpg"}}
+                                source={{uri: getApiUrl() + "/img/user/" + this.props.userId + ".jpg"}}
                                 mutable
                             />
                         )

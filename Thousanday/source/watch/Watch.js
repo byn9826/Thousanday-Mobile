@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import {CachedImage} from "react-native-img-cache";
 import processError from "../../js/processError.js";
+import getApiUrl from "../../js/getApiUrl.js";
 class Watch extends Component {
     render() {
         return (
