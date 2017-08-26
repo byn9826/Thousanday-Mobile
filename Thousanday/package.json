@@ -1,5 +1,5 @@
 {
-  "name": "Thousanday",
+  "name": "thousanday-mobile",
   "version": "0.0.2",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
   "dependencies": {
     "react": "16.0.0-alpha.6",
     "react-native": "0.44.0",
-    "react-native-fbsdk": "^0.5.0",
+    "react-native-fbsdk": "^0.5.1",
     "react-native-fetch-blob": "^0.10.5",
     "react-native-google-signin": "^0.10.0",
     "react-native-image-crop-picker": "^0.13.0",
