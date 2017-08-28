@@ -1,13 +1,12 @@
 import React, { Component } from "react";
-import {
-    AppRegistry,
-    StyleSheet,
-    View,
-    AsyncStorage
-} from "react-native";
+import { AppRegistry, StyleSheet, View, AsyncStorage } from "react-native";
+import { apiUrl } from "./js/Params.js";
+import processError from "./js/processError.js";
+import Watch from "./source/watch/Watch";
+
+
 import Header from "./source/general/Header";
 import Footer from "./source/general/Footer";
-import Watch from "./source/watch/Watch";
 import Pet from "./source/pet/Pet";
 import AddPet from "./source/pet/Add";
 import User from "./source/user/User";
@@ -21,16 +20,37 @@ import Love from "./source/love/Love";
 import Login from "./source/login/Login";
 import Signup from "./source/login/Signup";
 import Request from "./source/request/Request";
-import processError from "./js/processError.js";
-import getApiUrl from "./js/getApiUrl.js";
 import processGallery from "./js/processGallery.js";
 
+
+
 export default class Thousanday extends Component {
-    constructor(props) {
-        super(props);
+    constructor( props ) {
+        super( props );
         this.state = {
-            //indicate route location
+            //store current view name
             route: "watch",
+            //store special id used in current view
+            id: null,
+            //store login user id
+            userId: null,
+            //store login user id platform
+            userPlatform: null,
+            //store login user token
+            userToken: null,
+
+
+            
+            //store data for current view
+            data: null,
+            //show refresh animation or not
+            refresh: true,
+            //allow load more moment or not
+            locker: false,
+            //record load times,
+            pin: 1,
+
+            
             //store data show watch public image page
             watchData: [],
             //indicate how many time watch image have be reload
@@ -45,14 +65,7 @@ export default class Thousanday extends Component {
             pageData: [],
             //indicate which user data have been stored now
             pageId: null,
-            //store login user id
-            userId: null,
-            //store all info for user page
-            userData: null,
-            //store which platform user login
-            userPlatform: null,
-            //store user token
-            userToken: null,
+            
             //store visit moment id
             momentId: null,
             //store all moment data
@@ -67,162 +80,81 @@ export default class Thousanday extends Component {
             signupPlatform: null,
             //store friend request data
             requestData: [],
-            //refresh public list
-            refresh: true
+            
         };
-    }
-    //get most recent public images for watch on app open
-    componentWillMount() {
-        //load 20 newest moments by default
-        fetch(getApiUrl() + "/index/read?load=0", {
-            method: "GET",
-        })
-        .then((response) => {
-            console.log(response);
-            if (response.ok) {
-                return response.json();
-            } else {
-                processError(response);
-            }
-        })
-        .then((result) => {
-            this.setState({refresh: false});
-            //build watched ata with all image src
-            let watch = processGallery(result);
-            this.setState({watchData: watch});
-        });
     }
     componentDidMount() {
         this._loadUserData().done();
     }
     //get stored user id
     async _loadUserData() {
-        let userId = await AsyncStorage.getItem("USER_KEY");
-        let platform = await AsyncStorage.getItem("Platform_KEY");
-        let token = await AsyncStorage.getItem("Token_KEY");
-        if (userId != null) {
-            this.setState({userId: parseInt(userId), userPlatform: platform, userToken: token});
-        }
-    }
-    //set up user id
-    async _setUserData(key, platform) {
-        await AsyncStorage.setItem("USER_KEY", key[0].toString());
-        await AsyncStorage.setItem("Platform_KEY", platform);
-        await AsyncStorage.setItem("Token_KEY", key[2]);
-    }
-    //remove user data
-    async _removeUser() {
-        await AsyncStorage.removeItem("USER_KEY");
-        await AsyncStorage.removeItem("Platform_KEY");
-        await AsyncStorage.removeItem("Token_KEY");
-    }
-    //change view by route if user click on footer
-    changeView(view) {
-        if (this.state.route != view) {
-            if (view === "postMoment" && !this.state.userId) {
-                this.setState({route: "home"});
-            } else if (view === "love" && !this.state.userId) {
-                this.setState({route: "home"});
-            } else {
-                this.setState({route: view});
-            }
-        }
-    }
-    //load more images for watch page
-    loadWatch() {
-        //check if watch lock exist
-        if (!this.state.watchLocker) {
-            fetch(getApiUrl() + "/index/read?load=" + this.state.watchTimes, {
-                method: "GET",
-            })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json()
-                } else {
-                    processError(response);
-                }
-            })
-            .then((result) => {
-                if (result.length !== 0) {
-                    //consist watch data with all image src
-                    let newWatch = processGallery(result);
-                    //lock load more watch public image function
-                    if (result.length < 20) {
-                        this.setState({
-                            watchData: this.state.watchData.concat(newWatch),
-                            watchTimes: this.state.watchTimes + 1,
-                            watchLocker: true
-                        });
-                    } else {
-                        this.setState({
-                            watchData: this.state.watchData.concat(newWatch),
-                            watchTimes: this.state.watchTimes + 1
-                        });
-                    }
-                } else {
-                    //active lock when no more images
-                    this.setState({watchLocker: true});
-                }
+        let userId = await AsyncStorage.getItem( "USER_KEY" );
+        let platform = await AsyncStorage.getItem( "Platform_KEY" );
+        let token = await AsyncStorage.getItem( "Token_KEY" );
+        if ( userId != null ) {
+            this.setState({
+                userId: parseInt( userId ), userPlatform: platform, userToken: token
             });
         }
     }
-    //click into one pet's page
-    clickPet( id ) {
-        fetch( getApiUrl() + "/pet/read?id=" + id, { method: "GET" } )
-        .then( response => {
-            if ( response.ok ) {
-                return response.json();
+    //change to desired view if user click on footer
+    changeView( view ) {
+        if ( this.state.route != view ) {
+            if ( view === "postMoment" && !this.state.userId ) {
+                //require login
+                this.setState({ route: "home" });
+            } else if (view === "love" && !this.state.userId) {
+                //require login
+                this.setState({ route: "home" });
             } else {
-                processError( response );
-            }
-        })
-        .then( pet => {
-            this.setState({ route: "pet", petData: pet, petId: id });
-        });
-    }
-    //if user click on one user, read user data
-    clickUser(id) {
-        if (this.state.userId && this.state.userId === id) {
-            //click on owne page, directlly go to home route
-            this.setState({route: "home"});
-        } else {
-            //user page didn't be requested before
-            if (this.state.pageId !== id) {
-                fetch(getApiUrl() + "/user/read?id=" + id, {
-                    method: "GET",
-                })
-                .then((response) => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        processError(response);
-                    }
-                })
-                .then((user) => {
-                    this.setState({route: "user", pageData: user, pageId: id});
-                });
-            } else {
-                //go to user page directlly
-                this.setState({route: "user"});
+                this.setState({ route: view });
             }
         }
     }
-    //if user click on one moment, read moment data
-    clickMoment(id) {
-        fetch(getApiUrl() + "/moment/read?id=" + id, {
-            method: "GET",
-        })
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                processError(response);
-            }
-        })
-        .then((moment) => {
-            this.setState({route: "moment", momentData: moment, momentId: id});
+    //enter into one moment's view
+    clickMoment( id ) {
+        this.setState({ route: "moment", id: id });
+    }
+    //enter into one pet's view
+    clickPet( id ) {
+        this.setState({ route: "pet", id: id });
+    }
+    //enter into one user's view
+    clickUser( id ) {
+        if ( this.state.userId && this.state.userId === id ) {
+            //enter into current user's own view
+            this.setState({ route: "home", id: id });
+        } else {
+            //enter into other user's view
+            this.setState({ route: "user", id: id });
+        }
+    }
+    //enter into one user's view and update login user's info
+    goHome( user, platform ) {
+        this.setState({
+            userId: parseInt( user[ 0 ] ), userToken: user[ 2 ], 
+            userPlatform: platform, route: "home", id: parseInt( user[ 0 ] )
         });
     }
+    //logout current user
+    userLogout() {
+        this._removeUser().done();
+        this.setState({
+            userId: null, userToken: null, userPlatform: null, route: "watch"
+        });
+    }
+    //remove user data
+    async _removeUser() {
+        await AsyncStorage.removeItem( "USER_KEY" );
+        await AsyncStorage.removeItem( "Platform_KEY" );
+        await AsyncStorage.removeItem( "Token_KEY" );
+    }
+
+
+
+
+
+   
     //if user click on add pet
     clickAddPet() {
         this.setState({route: "addPet"});
@@ -231,37 +163,8 @@ export default class Thousanday extends Component {
     clickPostMoment() {
         this.setState({route: "postMoment"});
     }
-    //process user login action
-    processLogin(result, platform) {
-        fetch(getApiUrl() + "/user/read?id=" + result[0], {
-            method: "GET",
-        })
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                processError(response);
-            }
-        })
-        .then((user) => {
-            if (!this.state.userId) {
-                if (platform && platform === "google") {
-                    this._setUserData(result, "google");
-                    this.setState({userData: user, userId: result[0], userToken: result[2], userPlatform: "google"});
-                } else {
-                    this._setUserData(result, "facebook");
-                    this.setState({userData: user, userId: result[0], userToken: result[2], userPlatform: "facebook"});
-                }
-            } else {
-                this.setState({userData: user});
-            }
-        });
-    }
-    //facebook user logout
-    userLogout() {
-        this._removeUser();
-        this.setState({userId: null, userData: null, userToken: null, userPlatform: null, route: "watch"});
-    }
+    
+    
     //refresh user's data
     refreshUser() {
         this.setState({userData: null, route: "home", petId: null});
@@ -276,7 +179,7 @@ export default class Thousanday extends Component {
     }
     //refresh user,moment, pet data, and go to new moment
     refreshMoment(id) {
-        fetch(getApiUrl() + "/moment/read?id=" + id, {
+        fetch(apiUrl + "/moment/read?id=" + id, {
             method: "GET",
         })
         .then((response) => {
@@ -296,7 +199,7 @@ export default class Thousanday extends Component {
     }
     //click edit pet, get info for one pet
     clickEditPet(id) {
-        fetch(getApiUrl() + "/edit/read?pet=" + id + "&user=" + this.state.userId, {
+        fetch(apiUrl + "/edit/read?pet=" + id + "&user=" + this.state.userId, {
             method: "GET",
         })
         .then((response) => {
@@ -312,7 +215,7 @@ export default class Thousanday extends Component {
     }
     //click watch lists,get watch list info
     clickWatchList() {
-        fetch(getApiUrl() + "/watch/read?id=" + this.state.userId, {
+        fetch(apiUrl + "/watch/read?id=" + this.state.userId, {
             method: "GET",
         })
         .then((response) => {
@@ -342,7 +245,7 @@ export default class Thousanday extends Component {
     }
     //click friend request button
     clickRequestMessage() {
-        fetch(getApiUrl() + "/request/read?id=" + this.state.userId, {
+        fetch(apiUrl + "/request/read?id=" + this.state.userId, {
             method: "GET",
         })
         .then((response) => {
@@ -356,60 +259,89 @@ export default class Thousanday extends Component {
             this.setState({requestData: list, route: "requestMessage"});
         });
     }
+
+
+
+
     render() {
-        //page route system
+        //view route system
         let route;
-        switch (this.state.route) {
-            //default page, watch public images
+        switch ( this.state.route ) {
+            //default view, watch public images
             case "watch":
-                route = <Watch
-                    data={this.state.watchData}
-                    loadWatch={this.loadWatch.bind(this)}
-                    clickMoment={this.clickMoment.bind(this)}
-                    refresh={this.state.refresh}
+                route=<Watch clickMoment={ this.clickMoment.bind( this ) } />;
+                break;
+            //moment view, show one moment's info
+            case "moment":       
+                route = <Moment
+                    key={ "moment" + this.state.id }
+                    id={ this.state.id }
+                    clickPet={ this.clickPet.bind( this ) }
+                    userId={ this.state.userId }
+                    userToken={ this.state.userToken }
+                />
+                break;
+            //pet view, show one pet's info
+            case "pet":
+                route = <Pet
+                    key={ "pet" + this.state.id }
+                    id={ this.state.id }
+                    clickMoment={ this.clickMoment.bind( this ) }
+                    clickPet={ this.clickPet.bind( this ) }
+                    clickUser={ this.clickUser.bind( this ) }
+                    userId={ this.state.userId }
+                    userToken={ this.state.userToken }
                 />;
                 break;
+            //user view, show other user's info
+            case "user":
+                route = <User
+                    key={ "user" + this.state.id }
+                    id={ this.state.id }
+                    userId={ this.state.userId }
+                    userToken={ this.state.userToken }
+                    clickMoment={ this.clickMoment.bind( this ) }
+                    clickPet={ this.clickPet.bind( this ) }
+                    clickUser={ this.clickUser.bind( this ) }
+                />;
+                break;
+            //home view, show login user's info
+            case "home":
+                if ( this.state.userId ) {
+                    route = <User
+                        //ref="user"
+                        key={ "user" + this.state.userId }
+                        id={ this.state.userId }
+                        userId={ this.state.userId }
+                        userToken={ this.state.userToken }
+                        platform={ this.state.userPlatform }
+                        clickMoment={ this.clickMoment.bind( this ) }
+                        clickPet={ this.clickPet.bind( this ) }
+                        clickUser={ this.clickUser.bind( this ) }
+                        userLogout={ this.userLogout.bind( this ) }
+                
+                        clickAddPet={this.clickAddPet.bind(this)}
+                        clickPostMoment={this.clickPostMoment.bind(this)}
+                        clickEditProfile={this.clickEditProfile.bind(this)}
+                        clickEditPet={this.clickEditPet.bind(this)}
+                        clickWatchList={this.clickWatchList.bind(this)}
+                        clickRequestMessage={this.clickRequestMessage.bind(this)}
+                    />;
+                } else {
+                    //require user login
+                    route = <Login
+                        goHome={ this.goHome.bind( this ) }
+                        goSignup={ this.goSignup.bind( this ) }
+                    />;
+                }
+                break;
+
+
+
+
             //explore page could be seen by public
             case "explore":
                 route = <Explore clickMoment={this.clickMoment.bind(this)} />;
-                break;
-            //go to pet page when user click on pet
-            case "pet":
-                route = <Pet
-                    key={"pet" + this.state.petId}
-                    data={this.state.petData}
-                    userId={this.state.userId}
-                    userToken={this.state.userToken}
-                    clickUser={this.clickUser.bind(this)}
-                    clickPet={this.clickPet.bind(this)}
-                    clickMoment={this.clickMoment.bind(this)}
-                />;
-                break;
-            //go to user page when user click on one user
-            case "user":
-                route = <User
-                    key={"user" + this.state.pageId}
-                    data={this.state.pageData}
-                    userId={this.state.pageId}
-                    clickUser={this.clickUser.bind(this)}
-                    clickPet={this.clickPet.bind(this)}
-                    clickMoment={this.clickMoment.bind(this)}
-                />;
-                break;
-            case "moment":
-                let likeUsers = [], i;
-                if (this.state.momentData[2].length !== 0) {
-                    for (i = 0; i < this.state.momentData[2].length; i++) {
-                        likeUsers.push(parseInt(this.state.momentData[2][i].user_id));
-                    }
-                }
-                route = <Moment
-                    data={this.state.momentData}
-                    like={likeUsers}
-                    userId={this.state.userId}
-                    userToken={this.state.userToken}
-                    clickPet={this.clickPet.bind(this)}
-                />
                 break;
             case "love":
                 route = <Love
@@ -485,60 +417,7 @@ export default class Thousanday extends Component {
                     newUser={this.newUser.bind(this)}
                 />
                 break;
-            case "home":
-                //user already logged in
-                if (this.state.userId) {
-                    if (this.state.userData) {
-                        route = <User
-                            ref="user"
-                            key={"user" + this.state.userId}
-                            home={true}
-                            userId={this.state.userId}
-                            userToken={this.state.userToken}
-                            data={this.state.userData}
-                            clickUser={this.clickUser.bind(this)}
-                            clickPet={this.clickPet.bind(this)}
-                            clickMoment={this.clickMoment.bind(this)}
-                            clickAddPet={this.clickAddPet.bind(this)}
-                            clickPostMoment={this.clickPostMoment.bind(this)}
-                            clickEditProfile={this.clickEditProfile.bind(this)}
-                            clickEditPet={this.clickEditPet.bind(this)}
-                            clickWatchList={this.clickWatchList.bind(this)}
-                            clickRequestMessage={this.clickRequestMessage.bind(this)}
-                            userLogout={this.userLogout.bind(this)}
-                            platform={this.state.userPlatform}
-                        />;
-                    } else {
-                        //get data for user first
-                        this.processLogin([this.state.userId], this.state.userPlatform, () => {
-                            route = <User
-                                ref="user"
-                                key={"user" + this.state.userId}
-                                home={true}
-                                userId={this.state.userId}
-                                userToken={this.state.userToken}
-                                data={this.state.userData}
-                                clickUser={this.clickUser.bind(this)}
-                                clickPet={this.clickPet.bind(this)}
-                                clickMoment={this.clickMoment.bind(this)}
-                                clickAddPet={this.clickAddPet.bind(this)}
-                                clickPostMoment={this.clickPostMoment.bind(this)}
-                                clickEditProfile={this.clickEditProfile.bind(this)}
-                                clickEditPet={this.clickEditPet.bind(this)}
-                                clickWatchList={this.clickWatchList.bind(this)}
-                                clickRequestMessage={this.clickRequestMessage.bind(this)}
-                                userLogout={this.userLogout.bind(this)}
-                                platform={this.state.userPlatform}
-                            />;
-                        });
-                    }
-                } else {
-                    route = <Login home={false}
-                        processLogin={this.processLogin.bind(this)}
-                        goSignup={this.goSignup.bind(this)}
-                    />;
-                }
-                break;
+            
         }
         return (
             <View style={styles.container}>

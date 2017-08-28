@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import processError from "../../js/processError.js";
 import {CachedImage} from "react-native-img-cache";
-import getApiUrl from "../../js/getApiUrl.js";
+//import getApiUrl from "../../js/getApiUrl.js";
 class Love extends Component {
     constructor(props) {
         super(props);

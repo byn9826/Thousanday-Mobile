@@ -1,229 +1,259 @@
 import React, { Component } from "react";
 import {
-    StyleSheet,
-    Text,
-    View,
-    Image,
-    FlatList,
-    Dimensions,
-    ScrollView,
-    TouchableOpacity
+    StyleSheet, Text, View, Image, FlatList, Dimensions, TouchableOpacity
 } from "react-native";
-import processError from "../../js/processError.js";
+import { CachedImage } from "react-native-img-cache";
+import { apiUrl, getGender, getType, getNature } from "../../js/Params.js";
 import processGallery from "../../js/processGallery.js";
-import {CachedImage} from "react-native-img-cache";
-import noGetGender from "../../js/noGetGender.js";
-import noGetType from "../../js/noGetType.js";
-import noGetNature from "../../js/noGetNature.js";
-import getApiUrl from "../../js/getApiUrl.js";
+import processError from "../../js/processError.js";
 
 class Pet extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            //indicate lock load more function
-            petLocker: (this.props.data[3].length < 20)? true: false,
+            //allow load more images or not
+            locker: false,
             //store images
-            petImages: this.props.data[3] || [],
-            //indicate how many time load more image
-            loadTimes: 1,
-            refresh: false,
-            //store watch id list
-            watchData: []
+            images: [],
+            //record load images for how many times
+            pin: 1,
+            //show load animation or not
+            refresh: true,
+            //store watchers' id list
+            watch: [],
+            //store pet info
+            pet: {},
+            //store friends info
+            friends: []
         };
     }
     componentWillMount() {
-        //get all watcher id
-        let watch = [], i;
-        for (i = 0; i < this.props.data[4].length; i++) {
-            watch[i] = parseInt(this.props.data[4][i].user_id);
-        }
-        this.setState({watchData: watch});
+        fetch( apiUrl + "/pet/read?id=" + this.props.id, { method: "GET" } )
+        .then( response => {
+            if ( response.ok ) {
+                return response.json();
+            } else {
+                processError( response );
+            }
+        })
+        .then( pet => {
+            let watch = [];
+            pet[ 4 ].forEach( p => {
+                watch.push( parseInt( p.user_id ) );
+            });
+            this.setState({
+                locker: pet[ 3 ].length < 20 ? true : false,
+                images: processGallery( pet[ 3 ] ),
+                watch: watch,
+                pet: pet[ 0 ],
+                friends: pet[ 2 ],
+                refresh: false
+            });
+        });
     }
+    //load more moment for current pet
     loadMore() {
-        if (!this.state.petLocker) {
-            fetch(getApiUrl() + "/pet/load?add=0&load=" + this.state.loadTimes + "&pet=" + this.props.data[0].pet_id, {
+        if ( !this.state.locker ) {
+            fetch( apiUrl + "/pet/load?add=0&load=" + this.state.pin + "&pet=" + this.state.pet.pet_id, {
                 method: "GET"
             })
-            .then((response) => {
-                if (response.ok) {
+            .then( response => {
+                if ( response.ok ) {
                     return response.json();
                 } else {
-                    processError(response);
+                    processError( response );
                 }
             })
-            .then((pet) => {
-                let newImage = this.state.petImages.concat(pet);
-                if (pet.length === 20) {
-                    this.setState({petImages: newImage, loadTimes: this.state.loadTimes + 1});
+            .then( result => {
+                if ( result.length !== 0 ) {
+                    let more = processGallery( result );
+                    if ( result.length === 20 ) {
+                        this.setState({
+                            images: this.state.images.concat( more ),
+                            pin: this.state.pin + 1,
+                        });
+                    } else {
+                        this.setState({
+                            images: this.state.images.concat( more ),
+                            pin: this.state.pin + 1,
+                            locker: true
+                        });
+                    }
                 } else {
-                    this.setState({petImages: newImage, loadTimes: this.state.loadTimes + 1, petLocker: true});
+                    this.setState({ locker: true });
                 }
             });
         }
     }
     //watch a pet
     petWatch() {
-        if (!this.props.userId) {
-            //must login first
-            alert("Please login first");
-        } else  {
-            let action;
-            if (this.state.watchData.indexOf(this.props.userId) !== -1) {
-                action = 0;
+        if ( !this.props.userId ) {
+            alert( "Please login first" );
+            return false;
+        } 
+        let action;
+        this.state.watch.indexOf( this.props.userId ) !== -1 ? action = 0 : action = 1;
+        //watch or unwatch pet
+        fetch( apiUrl + "/pet/watch", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "action": action,
+                "user": this.props.userId,
+                "pet": this.props.id,
+                "token": this.props.userToken
+            })
+        })
+        .then( response => {
+            if ( response.ok ) {
+                return response.json();
             } else {
-                action = 1;
+                processError( response );
             }
-            //watch or unwatch pet
-            fetch(getApiUrl() + "/pet/watch", {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    "action": action,
-                    "user": this.props.userId,
-                    "pet": this.props.data[0].pet_id,
-                    "token": this.props.userToken
-                })
-            })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    processError(response);
-                }
-            })
-            .then((result) => {
-                if (action === 1) {
-                    this.state.watchData.push(this.props.userId);
-                    this.setState({watchData: this.state.watchData});
-                } else {
-                    this.state.watchData.splice(this.state.watchData.indexOf(this.props.userId), 1);
-                    this.setState({watchData: this.state.watchData});
-                }
-            });
-        }
+        })
+        .then( result => {
+            if ( action === 1 ) {
+                this.state.watch.push( this.props.userId );
+                this.setState({ watch: this.state.watch });
+            } else {
+                this.state.watch.splice( 
+                    this.state.watch.indexOf( this.props.userId ), 1
+                );
+                this.setState({ watch: this.state.watch });
+            }
+        });
     }
     render() {
         //show second relative if exist
-        let parent;
-        if (this.props.data[0].relative_id) {
-            parent = (
-                <TouchableOpacity onPress={this.props.clickUser.bind(null, parseInt(this.props.data[0].relative_id))}>
+        let relative;
+        if ( this.state.pet.relative_id ) {
+            relative = (
+                <TouchableOpacity 
+                    onPress={ 
+                        this.props.clickUser.bind( 
+                            null, parseInt( this.state.pet.relative_id ) 
+                        )
+                    }>
                     <CachedImage
-                        style={styles.boxRound}
-                        source={{uri: getApiUrl() + "/img/user/" + this.props.data[0].relative_id + ".jpg"}}
-                        mutable
+                        mutable style={ styles.boxRound }
+                        source={{
+                            uri: apiUrl + "/img/user/" + this.state.pet.relative_id + ".jpg"
+                        }}
                     />
                 </TouchableOpacity>
             )
         }
         //show friends if exist
-        let friend1, friend2;
-        if (this.props.data[2][0]) {
-            friend1 = (
-                <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[2][0].pet_id)}>
-                    <CachedImage
-                        style={styles.boxImage}
-                        source={{uri: getApiUrl() + "/img/pet/" + this.props.data[2][0].pet_id + "/0.png"}}
-                        mutable
-                    />
-                </TouchableOpacity>
-            )
-        }
-        if (this.props.data[2][1]) {
-            friend2 = (
-                <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[2][1].pet_id)}>
-                    <CachedImage
-                        style={styles.boxImage}
-                        source={{uri: getApiUrl() + "/img/pet/" + this.props.data[2][1].pet_id + "/0.png"}}
-                        mutable
-                    />
-                </TouchableOpacity>
-            )
-        }
-        //process data to get all images
-        let gallery = processGallery(this.state.petImages);
+        let friends = this.state.friends.map( ( f, i ) =>
+            <TouchableOpacity 
+                key={ "friend" + i }
+                onPress={ this.props.clickPet.bind( null, f.pet_id ) }>
+                <CachedImage
+                    mutable style={ styles.boxImage }
+                    source={{ uri: apiUrl + "/img/pet/" + f.pet_id + "/0.png" }}
+                />
+            </TouchableOpacity>
+        );
         return (
             <FlatList
-                contentContainerStyle={styles.container}
-                ListHeaderComponent={()=>{
+                contentContainerStyle={ styles.container }
+                ListHeaderComponent={ () => {
                     return (
-                        <View style={styles.containerHeader}>
+                        <View style={ styles.containerHeader }>
                             <CachedImage
-                                source={{uri: getApiUrl() + "/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
-                                style={styles.headerAvatar}
-                                mutable
+                                source={{
+                                    uri: apiUrl + "/img/pet/" + this.state.pet.pet_id + "/0.png"
+                                }}
+                                mutable style={ styles.headerAvatar }
                             />
-                            <Text style={styles.headerName}>
-                                {this.props.data[0].pet_name}
+                            <Text style={ styles.headerName }>
+                                { this.state.pet.pet_name}
                             </Text>
-                            <View style={styles.headerRow}>
-                                <Text style={styles.rowGender}>
-                                    {noGetGender(this.props.data[0].pet_gender)}
+                            <View style={ styles.headerRow }>
+                                <Text style={ styles.rowGender }>
+                                    { getGender( this.state.pet.pet_gender ) }
                                 </Text>
-                                <Text style={styles.rowType}>
-                                    {noGetType(this.props.data[0].pet_type)}
+                                <Text style={ styles.rowType }>
+                                    { getType( this.state.pet.pet_type ) }
                                 </Text>
-                                <Text style={styles.rowType}>
-                                    {noGetNature(this.props.data[0].pet_nature)}
+                                <Text style={ styles.rowType }>
+                                    { getNature( this.state.pet.pet_nature ) }
                                 </Text>
                             </View>
-                            <View style={styles.headerTeam}>
-                                <View style={styles.teamParent}>
-                                    <Text style={styles.parentTitle}>
-                                        {this.props.data[0].pet_gender === 0 ? "His ": "Her "}Family
+                            <View style={ styles.headerTeam }>
+                                <View style={ styles.teamParent }>
+                                    <Text style={ styles.parentTitle }>
+                                        { 
+                                            this.state.pet.pet_gender === 0 
+                                                ? "His ": "Her "
+                                        }
+                                        Family
                                     </Text>
-                                    <View style={styles.parentBox}>
-                                        <TouchableOpacity onPress={this.props.clickUser.bind(null, parseInt(this.props.data[0].owner_id))}>
+                                    <View style={ styles.parentBox }>
+                                        <TouchableOpacity 
+                                            onPress={
+                                                this.props.clickUser.bind(
+                                                    null, 
+                                                    parseInt( this.state.pet.owner_id)
+                                                )
+                                            }>
                                             <CachedImage
-                                                style={styles.boxRound}
-                                                source={{uri: getApiUrl() + "/img/user/" + this.props.data[0].owner_id + ".jpg"}}
+                                                style={ styles.boxRound }
+                                                source={{
+                                                    uri: apiUrl + "/img/user/" + this.state.pet.owner_id + ".jpg"
+                                                }}
                                                 mutable
                                             />
                                         </TouchableOpacity>
-                                        {parent}
+                                        { relative }
                                     </View>
                                 </View>
-                                <View style={styles.teamFriend}>
-                                    <Text style={styles.parentTitle}>
+                                <View style={ styles.teamFriend }>
+                                    <Text style={ styles.parentTitle }>
                                         Best Friends
                                     </Text>
-                                    <View style={styles.parentBox}>
-                                        {friend1}
-                                        {friend2}
+                                    <View style={ styles.parentBox }>
+                                        { friends }
                                     </View>
                                 </View>
                             </View>
-                            <TouchableOpacity onPress={this.petWatch.bind(this)}>
-                                <Text style={styles.headerWatch}>
-                                    {this.state.watchData.indexOf(this.props.userId) === -1?"+ Watch":"Watched"} | by {this.state.watchData.length}
+                            <TouchableOpacity onPress={ this.petWatch.bind( this ) }>
+                                <Text style={ styles.headerWatch }>
+                                    { 
+                                        this.state.watch.indexOf( this.props.userId ) === -1
+                                            ? "+ Watch" : "Watched"
+                                    } | by { this.state.watch.length }
                                 </Text>
                             </TouchableOpacity>
-                            <View style={styles.headerHolder}>
-                                <Image style={styles.holderIcon} source={require("../../image/moment.png")} />
-                                <Text style={styles.holderTitle}>
-                                    {this.props.data[0].pet_name + "'s"} Moments
+                            <View style={ styles.headerHolder }>
+                                <Image 
+                                    style={ styles.holderIcon } 
+                                    source={ require( "../../image/moment.png" ) } 
+                                />
+                                <Text style={ styles.holderTitle }>
+                                    { this.state.pet.pet_name + "'s"} Moments
                                 </Text>
                             </View>
                         </View>
                     )
                 }}
-                data = {gallery}
-                numColumns={2}
+                data = { this.state.images }
+                numColumns={ 2 }
                 columnWrapperStyle={{
                     justifyContent: "space-between",
                 }}
-                onRefresh={()=>{}}
-                refreshing={this.state.refresh}
-                onEndReached={this.loadMore.bind(this)}
-                renderItem={({item}) =>
-                    <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.id)} >
+                onRefresh={ () => {} }
+                refreshing={ this.state.refresh }
+                onEndReached={ this.loadMore.bind( this ) }
+                renderItem={ ( {item} ) =>
+                    <TouchableOpacity 
+                        onPress={ this.props.clickMoment.bind( null, item.id ) } 
+                    >
                         <CachedImage
-                            source={{uri: item.key}}
-                            style={styles.containerImage}
+                            source={{ uri: item.key }} style={ styles.containerImage }
                         />
                     </TouchableOpacity>
                 }

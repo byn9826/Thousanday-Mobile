@@ -11,7 +11,7 @@ import {
 import {CachedImage} from "react-native-img-cache";
 import processError from "../../js/processError.js";
 import processGallery from "../../js/processGallery.js";
-import getApiUrl from "../../js/getApiUrl.js";
+//import getApiUrl from "../../js/getApiUrl.js";
 class Explore extends Component {
     constructor(props) {
         super(props);

@@ -13,7 +13,7 @@ import {
 import processError from "../../js/processError.js";
 import ImagePicker from 'react-native-image-crop-picker';
 import {ImageCache, CachedImage} from "react-native-img-cache";
-import getApiUrl from "../../js/getApiUrl.js";
+//import getApiUrl from "../../js/getApiUrl.js";
 class EditPet extends Component {
     constructor(props) {
         super(props);

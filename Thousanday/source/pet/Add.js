@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import processError from "../../js/processError.js";
 import ImagePicker from 'react-native-image-crop-picker';
-import getApiUrl from "../../js/getApiUrl.js";
+//import getApiUrl from "../../js/getApiUrl.js";
 class AddPet extends Component {
     constructor(props) {
         super(props);

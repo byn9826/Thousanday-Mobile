@@ -1,16 +1,20 @@
 import React, { Component } from "react";
-import {
-    StyleSheet,
-    Image,
-    View,
-    TouchableOpacity
-} from "react-native";
+import { StyleSheet, Image, View, TouchableOpacity } from "react-native";
 class Footer extends Component {
     render() {
         return (
             <View style={styles.footer}>
-                <TouchableOpacity style={styles.footerTouch} onPress={this.props.changeView.bind(this, "watch")}>
-                    <Image style={styles.touchIcon} source={this.props.view === "watch"?require("../../image/watch.png"):require("../../image/watch1.png")} />
+                <TouchableOpacity 
+                    style={ styles.footerTouch } 
+                    onPress={ this.props.changeView.bind( this, "watch" ) }
+                >
+                    <Image style={styles.touchIcon} 
+                        source={ 
+                            this.props.view === "watch" 
+                                ? require( "../../image/watch.png" ) 
+                                : require( "../../image/watch1.png" )
+                        } 
+                    />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.footerTouch} onPress={this.props.changeView.bind(this, "explore")}>
                     <Image style={styles.touchIcon} source={this.props.view === "explore"?require("../../image/explore.png"):require("../../image/explore1.png")} />

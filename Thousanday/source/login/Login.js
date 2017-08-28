@@ -1,25 +1,17 @@
 import React, { Component } from "react";
 import {
-    StyleSheet,
-    Text,
-    View,
-    ScrollView,
-    Image,
-    RefreshControl
+    StyleSheet, Text, View, ScrollView, Image, RefreshControl, AsyncStorage
 } from "react-native";
-const FBSDK = require('react-native-fbsdk');
-const {
-    LoginButton,
-    AccessToken
-} = FBSDK;
-import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
+const FBSDK = require( 'react-native-fbsdk' );
+const { LoginButton, AccessToken } = FBSDK;
+import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
+import { apiUrl } from "../../js/Params.js";
 import processError from "../../js/processError.js";
-import getApiUrl from "../../js/getApiUrl.js";
+
 class Login extends Component {
-    constructor(props) {
-        super(props);
+    constructor( props ) {
+        super( props );
         this.state = {
-            //show refresh
             refresh: false
         };
     }
@@ -29,7 +21,6 @@ class Login extends Component {
     async _gSetup() {
         await GoogleSignin.hasPlayServices({ autoResolve: true });
         await GoogleSignin.configure({
-			//iosClientId: '835652983909-gf89tn5ttgcbkdacintdi0kiqem0968t.apps.googleusercontent.com',
             webClientId: '835652983909-6if3h222alkttk9oas3hr3tl15sq1u7m.apps.googleusercontent.com',
             offlineAccess: false
         });
@@ -37,92 +28,105 @@ class Login extends Component {
     }
     _gSignIn() {
         GoogleSignin.signIn()
-            .then((user) => {
-                this.setState({refresh: true});
-                fetch(getApiUrl() + "/account/google", {
-                    method: "POST",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        "token": user.idToken,
-                        "platform": "mobile"
-                    })
+        .then( user => {
+            this.setState({ refresh: true });
+            fetch( apiUrl + "/account/google", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "token": user.idToken,
+                    "platform": "mobile"
                 })
-                .then((response) => {
-                    if (response.ok) {
-                        return response.json()
-                    } else {
-                        processError(response);
-                    }
-                })
-                .then((result) => {
-                    this.setState({refresh: false});
-                    if (result.id) {
-                        this.props.goSignup(user, "google");
-                    } else {
-                        this.props.processLogin(result, "google");
-                    }
-                });
             })
-            .done();
+            .then( response => {
+                if ( response.ok ) {
+                    return response.json()
+                } else {
+                    processError( response );
+                }
+            })
+            .then( result => {
+                if ( result.id ) {
+                    this.props.goSignup( user, "google" );
+                } else {
+                    this.processLogin( result, "google" );
+                }
+            });
+        }).done();
+    }
+    //process user login action
+    processLogin( result, platform ) {
+        this._setUserData( result, platform );
+        this.setState({ refresh: false });
+        this.props.goHome( result, platform );
+    }
+    //set up login info
+    async _setUserData( key, platform ) {
+        await AsyncStorage.setItem( "USER_KEY", key[ 0 ].toString() );
+        await AsyncStorage.setItem( "Platform_KEY", platform );
+        await AsyncStorage.setItem( "Token_KEY", key[ 2 ] );
     }
     render() {
         return (
             <ScrollView
-                contentContainerStyle={styles.container}
+                contentContainerStyle={ styles.container }
                 refreshControl={
                     <RefreshControl
-                        refreshing={this.state.refresh}
+                        refreshing={ this.state.refresh }
                     />
                 }>
-                <Image style={styles.logo} source={require("../../image/logo.png")} />
-                <Text style={styles.title}>
+                <Image style={ styles.logo } source={ require( "../../image/logo.png" ) } />
+                <Text style={ styles.title }>
                     Welcome! Please login ..
                 </Text>
-                <View style={styles.google}>
+                <View style={ styles.google }>
                     <GoogleSigninButton
-                        style={{width: 186, height: 38}}
-                        size={GoogleSigninButton.Size.Standard}
-                        color={GoogleSigninButton.Color.Dark}
-                        onPress={this._gSignIn.bind(this)}
+                        style={{ width: 186, height: 38 }}
+                        size={ GoogleSigninButton.Size.Standard }
+                        color={ GoogleSigninButton.Color.Dark }
+                        onPress={ this._gSignIn.bind( this ) }
                     />
                 </View>
-                <Facebook facebookId={this.props.processLogin.bind(this)} goSignup={this.props.goSignup.bind(this)} />
-                <Text style={styles.notice}>
-                    {"Don't have an account?"}
+                <Facebook 
+                    processLogin={ this.processLogin.bind( this ) } 
+                    goSignup={ this.props.goSignup.bind( this ) } 
+                />
+                <Text style={ styles.notice }>
+                    Don't have an account?
                 </Text>
-                <Text style={styles.notice}>
-                    {"Simply click the"}
+                <Text style={ styles.notice }>
+                    Simply click the
                 </Text>
-                <Text style={styles.notice}>
-                    {"Google or Facebook button above"}
+                <Text style={ styles.notice }>
+                    Google or Facebook button above
                 </Text>
-                <Text style={styles.notice}>
-                    {"to create one"}
+                <Text style={ styles.notice }>
+                    to create one
                 </Text>
             </ScrollView>
         )
     }
 }
 
-let Facebook = React.createClass({
+const Facebook = React.createClass({
     render: function() {
         return (
-            <View style={styles.facebook}>
+            <View style={ styles.facebook }>
                 <LoginButton
                     onLoginFinished={
-                        (error, result) => {
-                            if (error) {
-                                alert("Login Error: " + result.error);
-                            } else if (result.isCancelled) {
-                                //alert("login is cancelled.");
+                        ( error, result ) => {
+                            if ( error ) {
+                                alert( "Login Error: " + result.error );
+                            } else if ( result.isCancelled ) {
+                                alert( "login is cancelled." );
                             } else {
                                 AccessToken.getCurrentAccessToken().then(
-                                    (data) => {
-                                        this.setState({refresh: true});
-                                        fetch(getApiUrl() + "/account/facebook", {
+                                    ( data ) => {
+                                        this.setState({ refresh: true });
+                                        fetch( apiUrl + "/account/facebook", {
                                             method: "POST",
                                             headers: {
                                                 "Accept": "application/json",
@@ -133,19 +137,18 @@ let Facebook = React.createClass({
                                                 "platform": "mobile"
                                             })
                                         })
-                                        .then((response) => {
-                                            if (response.ok) {
+                                        .then( response => {
+                                            if ( response.ok ) {
                                                 return response.json();
                                             } else {
-                                                processError(response);
+                                                processError( response );
                                             }
                                         })
-                                        .then((result) => {
-                                            this.setState({refresh: false});
-                                            if (result.id) {
-                                                this.props.goSignup(data, "facebook");
+                                        .then( result => {
+                                            if ( result.id ) {
+                                                this.props.goSignup( data, "facebook" );
                                             } else {
-                                                this.props.facebookId(result, "facebook");
+                                                this.props.processLogin( result, "facebook" );
                                             }
                                         });
                                     }

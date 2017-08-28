@@ -8,7 +8,7 @@ import {
     TouchableOpacity
 } from "react-native";
 import processError from "../../js/processError.js";
-import getApiUrl from "../../js/getApiUrl.js";
+//import getApiUrl from "../../js/getApiUrl.js";
 class Request extends Component {
     constructor(props) {
         super(props);

@@ -13,7 +13,7 @@ import {
 import {CachedImage} from "react-native-img-cache";
 import ImagePicker from 'react-native-image-crop-picker';
 import processError from "../../js/processError.js";
-import getApiUrl from "../../js/getApiUrl.js";
+//import getApiUrl from "../../js/getApiUrl.js";
 class PostMoment extends Component {
     constructor(props) {
         super(props);

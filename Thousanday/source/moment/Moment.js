@@ -1,78 +1,105 @@
 import React, { Component } from "react";
-import {
-    StyleSheet,
-	Platform,
-    Text,
-    View,
-    Dimensions,
-    TouchableOpacity,
-    ScrollView,
-    TextInput,
-    Button,
-    Share
+import { 
+    StyleSheet, Platform, Text, View, Dimensions, TouchableOpacity, ScrollView,
+    TextInput, Button, Share, RefreshControl
 } from "react-native";
+import { CachedImage } from "react-native-img-cache";
+import { apiUrl } from "../../js/Params.js";
+import processGallery from "../../js/processGallery.js";
 import processError from "../../js/processError.js";
-import {CachedImage} from "react-native-img-cache";
-import getApiUrl from "../../js/getApiUrl.js";
+
 class Moment extends Component {
-    constructor(props) {
-        super(props);
+    constructor( props ) {
+        super( props );
         this.state = {
-            //if current user watched this pet
-            like: this.props.like || [],
-            comment: "",
+            //store data for images
+            data: {},
+            //users' id list for who like this moment
+            like: [],
             //store comment list
-            list: this.props.data[3] || [],
+            list: [],
             //load more comment
-            load: (this.props.data[3].length === 5)?1:false,
-            //send how many comment
-            send: 0
+            load: 1,
+            //store content in comment field
+            comment: "",
+            //record current user has sent how many comment
+            send: 0,
+            //show refresh animation or not
+            refresh: true
         };
     }
-    clickLike() {
-        if (!this.props.userId) {
-            alert("Please login first!");
-        } else {
-            let action;
-            if (this.state.like.indexOf(this.props.userId) === -1) {
-                action = 1;
+    componentWillMount() {
+        fetch( apiUrl + "/moment/read?id=" + this.props.id, {
+            method: "GET",
+        })
+        .then( response => {
+            if ( response.ok ) {
+                return response.json();
             } else {
-                action = 0;
+                processError( response );
             }
-            fetch(getApiUrl() + "/moment/like", {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    "action": action,
-                    "user": this.props.userId,
-                    "moment": this.props.data[0].moment_id,
-                    "token": this.props.userToken
-                })
-            })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    processError(response);
-                }
-            })
-            .then((result) => {
-                if (this.state.like.indexOf(this.props.userId) === -1) {
-                    this.state.like.push(this.props.userId);
-                    this.setState({like: this.state.like});
-                } else {
-                    this.state.like.splice(this.state.like.indexOf(this.props.userId), 1);
-                    this.setState({like: this.state.like});
-                }
+        })
+        .then( moment => {
+            let like = [];
+            moment[ 2 ].forEach( d => {
+                like.push( parseInt( d.user_id ) );
             });
+            if ( moment[ 3 ].length === 5 ) {
+                this.setState({ data: moment[ 0 ], like: like, list: moment[ 3 ] });
+            } else {
+                this.setState({ 
+                    data: moment[ 0 ], like: like, list: moment[ 3 ], load: false 
+                });
+            }
+            this.setState({ refresh: false });
+        });
+    }
+    clickLike() {
+        if ( !this.props.userId ) {
+            alert( "Please login first!" );
+            return false;
         }
+        let action;
+        this.state.like.indexOf( this.props.userId ) === -1 ? action = 1 : action = 0;
+        fetch( apiUrl + "/moment/like", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "action": action,
+                "user": this.props.userId,
+                "moment": this.state.data.moment_id,
+                "token": this.props.userToken
+            })
+        })
+        .then( response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                processError(response);
+            }
+        })
+        .then( result => {
+            if ( this.state.like.indexOf( this.props.userId ) === -1 ) {
+                this.state.like.push( this.props.userId );
+                this.setState({ like: this.state.like });
+            } else {
+                this.state.like.splice( 
+                    this.state.like.indexOf( this.props.userId ), 1 
+                );
+                this.setState({ like: this.state.like });
+            }
+        });
     }
     //send new comment
     sendMessage() {
-        fetch(getApiUrl() + "/moment/comment", {
+        if ( !this.props.userId ) {
+            alert( "Please login first!" );
+            return false;
+        }
+        fetch( apiUrl + "/moment/comment", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -80,164 +107,181 @@ class Moment extends Component {
             },
             body: JSON.stringify({
                 "user": this.props.userId,
-                "moment": this.props.data[0].moment_id,
+                "moment": this.state.data.moment_id,
                 "token": this.props.userToken,
                 "content": this.state.comment
             })
         })
-        .then((response) => {
-            if (response.ok) {
+        .then( response  => {
+            if ( response.ok ) {
                 return response.json();
             } else {
-                processError(response);
+                processError( response );
             }
         })
-        .then((result) => {
+        .then( result => {
             let post = {
                 "comment_content": this.state.comment,
                 "user_id": this.props.userId
             };
-            this.state.list.unshift(post);
-            this.setState({list: this.state.list, comment: "", send: this.state.send + 1});
+            this.state.list.unshift( post );
+            this.setState({ 
+                list: this.state.list, comment: "", send: this.state.send + 1
+            });
         });
     }
     //load more comment
     loadMore() {
-        fetch(getApiUrl() + "/moment/load?id=" + this.props.data[0].moment_id + "&load=" + (parseInt(this.state.load) - 1) + "&add=" + this.state.send , {
+        fetch( apiUrl + "/moment/load?id=" + this.props.id + "&load=" + ( this.state.load - 1 ) + "&add=" + this.state.send , {
             method: "GET",
         })
-        .then((response) => {
-            if (response.ok) {
+        .then( response => {
+            if ( response.ok ) {
                 return response.json();
             } else {
-                processError(response);
+                processError( response );
             }
         })
-        .then((result) => {
-            let add = this.state.list.concat(result);
-            if (result.length === 10) {
-                this.setState({list: add, load: this.state.load + 1});
+        .then( result => {
+            let add = this.state.list.concat( result );
+            if ( result.length === 10 ) {
+                this.setState({ list: add, load: this.state.load + 1 });
             } else {
-                this.setState({list: add, load: false});
+                this.setState({ list: add, load: false });
             }
         });
     }
     //share moment
     shareMoment() {
         Share.share({
-            message: this.props.data[0].moment_message + " - See more at https://thousanday.com/moment/" + this.props.data[0].moment_id,
-            url: getApiUrl() + "/moment/" + this.props.data[0].moment_id,
-            title: 'Thousanday - Your pets and you'
+            message: this.state.data.moment_message + " - See more at https://thousanday.com/moment/" + this.state.data.moment_id,
+            url: apiUrl + "/moment/" + this.state.data.moment_id,
+            title: "Thousanday - Your pets and you"
         }, {
-            dialogTitle: 'Share moment to the world',
-            tintColor: 'green'
+            dialogTitle: "Share moment to the world",
+            tintColor: "green"
         });
     }
     render() {
-        let comments = this.state.list.map((comment, index)=>
-            <View key={"comments"+ index} style={styles.commentLine}>
+        let comments = this.state.list.map( ( comment, index ) =>
+            <View key={ "comments"+ index } style={ styles.commentLine }>
                 <CachedImage
-                    source={{uri: getApiUrl() + "/img/user/" + comment.user_id + ".jpg"}}
-                    style={styles.lineAvatar}
+                    source={ { uri: apiUrl + "/img/user/" + comment.user_id + ".jpg" } }
+                    style={ styles.lineAvatar }
                 />
-                <Text style={styles.lineContent}>
-                    {comment.comment_content}
+                <Text style={ styles.lineContent }>
+                    { comment.comment_content }
                 </Text>
             </View>
         )
         return (
-            <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
-                <View style={styles.rootTop}>
-                    <TouchableOpacity onPress={this.props.clickPet.bind(null, this.props.data[0].pet_id)}>
+            <ScrollView 
+                contentContainerStyle={ styles.root } keyboardShouldPersistTaps="always"
+                refreshControl={ 
+                    <RefreshControl
+                        refreshing={ this.state.refresh }
+                        onRefresh={ () => {} }
+                    />
+                }
+            >
+                <View style={ styles.rootTop }>
+                    <TouchableOpacity 
+                        onPress={ 
+                            this.props.clickPet.bind( null, this.state.data.pet_id )
+                        }
+                    >
                         <CachedImage
-                            source={{uri: getApiUrl() + "/img/pet/" + this.props.data[0].pet_id + "/0.png"}}
-                            style={styles.topAvatar}
+                            source={{
+                                uri: apiUrl + "/img/pet/" + this.state.data.pet_id + "/0.png"
+                            }}
+                            style={ styles.topAvatar }
                         />
                     </TouchableOpacity>
-                    <View style={styles.topMessage}>
-                        <Text style={styles.messageMoment}>
-                            {this.props.data[0].moment_message}
+                    <View style={ styles.topMessage }>
+                        <Text style={ styles.messageMoment }>
+                            { this.state.data.moment_message }
                         </Text>
-                        <Text style={styles.messageDate}>
-                            {new Date(this.props.data[0].moment_date).toISOString().substring(0, 10)}
+                        <Text style={ styles.messageDate} >
+                            {
+                                this.state.data.moment_date ? (
+                                    new Date( this.state.data.moment_date ).toISOString().substring( 0, 10 )
+                                ) : null
+                            }
                         </Text>
                     </View>
                 </View>
                 <CachedImage
-                    source={{uri: getApiUrl() + "/img/pet/" + this.props.data[0].pet_id + "/moment/" + this.props.data[0].image_name}}
-                    style={styles.rootImg}
+                    source={{
+                        uri: apiUrl + "/img/pet/" + this.state.data.pet_id + "/moment/" + this.state.data.image_name
+                    }}
+                    style={ styles.rootImg }
                 />
-                <View style={styles.rootSocial}>
+                <View style={ styles.rootSocial }>
                     {
-                        (this.state.like.indexOf(this.props.userId) === -1)?(
-                            <TouchableOpacity onPress={this.clickLike.bind(this)}>
-                                <Text style={styles.socialLove}>
-                                    &#128151; {this.state.like.length}
+                        this.state.like.indexOf( this.props.userId ) === -1 ? (
+                            <TouchableOpacity onPress={ this.clickLike.bind( this ) }>
+                                <Text style={ styles.socialLove }>
+                                    &#128151; { this.state.like.length }
                                 </Text>
                             </TouchableOpacity>
-                        ):(
-                            <TouchableOpacity onPress={this.clickLike.bind(this)}>
-                                <Text style={styles.socialLove}>
-                                    &#128152; {this.state.like.length}
+                        ) : (
+                            <TouchableOpacity onPress={ this.clickLike.bind( this ) }>
+                                <Text style={ styles.socialLove }>
+                                    &#128152; { this.state.like.length }
                                 </Text>
                             </TouchableOpacity>
                         )
                     }
-                    <TouchableOpacity onPress={this.shareMoment.bind(this)}>
-                        <Text style={styles.socialShare}>Share</Text>
+                    <TouchableOpacity onPress={ this.shareMoment.bind( this ) }>
+                        <Text style={ styles.socialShare }>Share</Text>
                     </TouchableOpacity>
                 </View>
                 {
-                    (this.state.list.length > 0)?(
-                        <Text style={styles.rootTitle}>
-                            Comments
-                        </Text>
-                    ):null
+                    this.state.list.length > 0 ? (
+                        <Text style={ styles.rootTitle }>Comments</Text>
+                    ) : null
                 }
-                <View style={styles.rootComment}>
-                    {comments}
+                <View style={ styles.rootComment }>
+                    { comments }
                     {
-                        this.state.load?(
-                            <TouchableOpacity onPress={this.loadMore.bind(this)}>
-                                <Text style={styles.commentMore}>
+                        this.state.load ? (
+                            <TouchableOpacity onPress={ this.loadMore.bind( this ) }>
+                                <Text style={ styles.commentMore }>
                                     Load More Comments ...
                                 </Text>
                             </TouchableOpacity>
-                        ):null
+                        ) : null
                     }
                 </View>
                 {
-                    (this.props.userId)?(
-                        <View style={styles.rootContain}>
-                            <Text style={styles.rootLeave}>
-                                Leave a comment:
-                            </Text>
+                    this.props.userId ? (
+                        <View style={ styles.rootContain }>
+                            <Text style={ styles.rootLeave }>Leave a comment:</Text>
                             <TextInput
-                                style={styles.rootInput}
-                                multiline={true}
-                                numberOfLines={5}
-                                onChangeText={(text) =>
-                                    this.setState({comment: text.substr(0, 150)})
+                                style={ styles.rootInput }
+                                multiline={ true } numberOfLines={5}
+                                onChangeText={ text =>
+                                    this.setState({ comment: text.substr( 0, 150 ) })
                                 }
-                                value={this.state.comment}
+                                value={ this.state.comment }
                             />
-                            <Text style={styles.rootHint}>
-                                {this.state.comment.length} / 150
+                            <Text style={ styles.rootHint }>
+                                { this.state.comment.length } / 150
                             </Text>
                             {
-                                (this.state.comment.length > 0)?(
-                                    <View style={styles.rootButton}>
+                                this.state.comment.length > 0 ? (
+                                    <View style={ styles.rootButton }>
                                         <Button
-                                            onPress={this.sendMessage.bind(this)}
+                                            onPress={ this.sendMessage.bind( this ) }
                                             title="Send"
                                             color="#052456"
                                         />
                                     </View>
-                                ):null
+                                ) : null
                             }
                         </View>
-                    ):(
-                        <Text style={styles.rootLogin}>
+                    ) : (
+                        <Text style={ styles.rootLogin }>
                             Login to leave a comment.
                         </Text>
                     )
@@ -245,23 +289,6 @@ class Moment extends Component {
             </ScrollView>
         )
     }
-}
-let inputStyle;
-if (Platform.OS === 'ios') {
-	inputStyle = {
-		backgroundColor: "#f7f9fc",
-        alignSelf: "stretch",
-        marginBottom: 5,
-        marginHorizontal: 20,
-		height: 100,
-	};
-} else {
-	inputStyle = {
-        backgroundColor: "#f7f9fc",
-        alignSelf: "stretch",
-        marginBottom: 5,
-        marginHorizontal: 20
-    };
 }
 
 const styles = StyleSheet.create({
@@ -380,7 +407,12 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 18
     },
-    rootInput: inputStyle,
+    rootInput: {
+        backgroundColor: "#f7f9fc",
+        alignSelf: "stretch",
+        marginBottom: 5,
+        marginHorizontal: 20
+    },
     rootHint: {
         marginBottom: 20,
         alignSelf: "flex-start",

@@ -1,13 +1,9 @@
 import React, { Component } from "react";
-import {
-    StyleSheet,
-    Text,
-    View
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 class Header extends Component {
     render() {
         let title;
-        switch (this.props.title) {
+        switch ( this.props.title ) {
             case "watch":
                 title = "Watch the world";
                 break;
@@ -52,9 +48,9 @@ class Header extends Component {
                 break;
         }
         return (
-            <View style={styles.header}>
-                <Text style={styles.headerBrand}>
-                    {title}
+            <View style={ styles.header }>
+                <Text style={ styles.headerBrand }>
+                    { title }
                 </Text>
             </View>
         )

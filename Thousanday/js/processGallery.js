@@ -1,13 +1,14 @@
-import getApiUrl from "./getApiUrl.js";
-export default function processGallery(data) {
-    let i, images = [];
-    for (i= 0; i < data.length; i++) {
+import { apiUrl } from "./Params.js";
+
+export default function processGallery( data ) {
+    let images = [];
+    data.forEach( d => {
         images.push(
             {
-                key: getApiUrl() + "/img/pet/" + data[i].pet_id + "/moment/" + data[i].image_name,
-                id: data[i].moment_id
+                key: apiUrl + "/img/pet/" + d.pet_id + "/moment/" + d.image_name,
+                id: d.moment_id
             }
         );
-    }
+    });
     return images;
 }
