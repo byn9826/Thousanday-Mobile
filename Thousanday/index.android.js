@@ -3,8 +3,6 @@ import { AppRegistry, StyleSheet, View, AsyncStorage } from "react-native";
 import { apiUrl } from "./js/Params.js";
 import processError from "./js/processError.js";
 import Watch from "./source/watch/Watch";
-
-
 import Header from "./source/general/Header";
 import Footer from "./source/general/Footer";
 import Pet from "./source/pet/Pet";
@@ -22,8 +20,6 @@ import Signup from "./source/login/Signup";
 import Request from "./source/request/Request";
 import processGallery from "./js/processGallery.js";
 
-
-
 export default class Thousanday extends Component {
     constructor( props ) {
         super( props );
@@ -38,49 +34,10 @@ export default class Thousanday extends Component {
             userPlatform: null,
             //store login user token
             userToken: null,
-
-
-            
-            //store data for current view
-            data: null,
-            //show refresh animation or not
-            refresh: true,
-            //allow load more moment or not
-            locker: false,
-            //record load times,
-            pin: 1,
-
-            
-            //store data show watch public image page
-            watchData: [],
-            //indicate how many time watch image have be reload
-            watchTimes: 1,
-            //indicate don't need to load watch images any more
-            watchLocker: false,
-            //information to show one pet
-            petData: [],
-            //indicate which pet data have been stored now
-            petId: null,
-            //information to show one user
-            pageData: [],
-            //indicate which user data have been stored now
-            pageId: null,
-            
-            //store visit moment id
-            momentId: null,
-            //store all moment data
-            momentData: [],
-            //store edit pet data
-            editData: [],
-            //store watch list data
-            privateData: [],
             //store token for signup
             signupData: null,
             //store signup platform
             signupPlatform: null,
-            //store friend request data
-            requestData: [],
-            
         };
     }
     componentDidMount() {
@@ -96,6 +53,19 @@ export default class Thousanday extends Component {
                 userId: parseInt( userId ), userPlatform: platform, userToken: token
             });
         }
+    }
+    //logout current user
+    userLogout() {
+        this._removeUser().done();
+        this.setState({
+            userId: null, userToken: null, userPlatform: null, route: "watch"
+        });
+    }
+    //remove user data
+    async _removeUser() {
+        await AsyncStorage.removeItem( "USER_KEY" );
+        await AsyncStorage.removeItem( "Platform_KEY" );
+        await AsyncStorage.removeItem( "Token_KEY" );
     }
     //change to desired view if user click on footer
     changeView( view ) {
@@ -136,133 +106,50 @@ export default class Thousanday extends Component {
             userPlatform: platform, route: "home", id: parseInt( user[ 0 ] )
         });
     }
-    //logout current user
-    userLogout() {
-        this._removeUser().done();
-        this.setState({
-            userId: null, userToken: null, userPlatform: null, route: "watch"
-        });
-    }
-    //remove user data
-    async _removeUser() {
-        await AsyncStorage.removeItem( "USER_KEY" );
-        await AsyncStorage.removeItem( "Platform_KEY" );
-        await AsyncStorage.removeItem( "Token_KEY" );
-    }
-
-
-
-
-
-   
     //if user click on add pet
     clickAddPet() {
-        this.setState({route: "addPet"});
+        this.setState({ route: "addPet" });
     }
     //if user click on post moment
     clickPostMoment() {
-        this.setState({route: "postMoment"});
+        this.setState({ route: "postMoment" });
     }
-    
-    
-    //refresh user's data
-    refreshUser() {
-        this.setState({userData: null, route: "home", petId: null});
-    }
-    //empty user data
-    emptyUser() {
-        this.setState({userData: null, petId: null});
-    }
-    //empty pet data
-    refreshPet() {
-        this.setState({petId: null});
-    }
-    //refresh user,moment, pet data, and go to new moment
-    refreshMoment(id) {
-        fetch(apiUrl + "/moment/read?id=" + id, {
-            method: "GET",
-        })
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                processError(response);
-            }
-        })
-        .then((moment) => {
-            this.setState({route: "moment", userData: null, petId: null, momentData: moment, momentId: id});
-        });
+    //if user click on edit pet
+    clickEditPet( id ) {
+        this.setState({ route: "editPet", id: id });
     }
     //click edit profile page
-    clickEditProfile() {
-        this.setState({route: "editProfile"});
-    }
-    //click edit pet, get info for one pet
-    clickEditPet(id) {
-        fetch(apiUrl + "/edit/read?pet=" + id + "&user=" + this.state.userId, {
-            method: "GET",
-        })
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                processError(response);
-            }
-        })
-        .then((pet) => {
-            this.setState({editData: pet, route: "editPet"});
-        });
+    clickEditProfile( name ) {
+        this.setState({ route: "editProfile", id: name });
     }
     //click watch lists,get watch list info
     clickWatchList() {
-        fetch(apiUrl + "/watch/read?id=" + this.state.userId, {
-            method: "GET",
-        })
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                processError(response);
-            }
-        })
-        .then((list) => {
-            this.setState({privateData: list[2], route: "watchList"});
-        });
+        this.setState({ route: "watchList" });
+    }
+    //click msg box
+    clickRequestMessage() {
+        this.setState({ route: "requestMessage" });
     }
     //signup feature
-    goSignup(data, platform) {
-        this.setState({signupData: data, signupPlatform: platform, route: "signup"});
+    goSignup( data, platform ) {
+        this.setState({ signupData: data, signupPlatform: platform, route: "signup" });
     }
     //new user login
-    newUser(result, platform) {
-        if (platform === "google") {
-            this._setUserData(result, "google");
-            this.setState({userId: result[0], userToken: result[1], userData: null, userPlatform: "google", route: "home"});
+    newUser( result, platform ) {
+        if ( platform === "google" ) {
+            this._setUserData( result, "google" );
+            this.setState({ userId: result[0], userToken: result[1], userPlatform: "google", route: "home" });
         } else {
-            this._setUserData(result, "facebook");
-            this.setState({userId: result[0], userToken: result[1], userData: null, userPlatform: "facebook", route: "home"});
+            this._setUserData( result, "facebook" );
+            this.setState({ userId: result[0], userToken: result[1], userPlatform: "facebook", route: "home" });
         }
     }
-    //click friend request button
-    clickRequestMessage() {
-        fetch(apiUrl + "/request/read?id=" + this.state.userId, {
-            method: "GET",
-        })
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                processError(response);
-            }
-        })
-        .then((list) => {
-            this.setState({requestData: list, route: "requestMessage"});
-        });
+    //set up login info
+    async _setUserData( key, platform ) {
+        await AsyncStorage.setItem( "USER_KEY", key[ 0 ].toString() );
+        await AsyncStorage.setItem( "Platform_KEY", platform );
+        await AsyncStorage.setItem( "Token_KEY", key[ 2 ] );
     }
-
-
-
-
     render() {
         //view route system
         let route;
@@ -299,7 +186,6 @@ export default class Thousanday extends Component {
                     key={ "user" + this.state.id }
                     id={ this.state.id }
                     userId={ this.state.userId }
-                    userToken={ this.state.userToken }
                     clickMoment={ this.clickMoment.bind( this ) }
                     clickPet={ this.clickPet.bind( this ) }
                     clickUser={ this.clickUser.bind( this ) }
@@ -318,14 +204,13 @@ export default class Thousanday extends Component {
                         clickMoment={ this.clickMoment.bind( this ) }
                         clickPet={ this.clickPet.bind( this ) }
                         clickUser={ this.clickUser.bind( this ) }
+                        clickAddPet={ this.clickAddPet.bind( this ) }
+                        clickEditPet={ this.clickEditPet.bind( this ) }
+                        clickEditProfile={ this.clickEditProfile.bind( this ) }
+                        clickWatchList={ this.clickWatchList.bind( this ) }
+                        clickRequestMessage={ this.clickRequestMessage.bind( this ) }
+                        clickPostMoment={ this.clickPostMoment.bind( this ) }
                         userLogout={ this.userLogout.bind( this ) }
-                
-                        clickAddPet={this.clickAddPet.bind(this)}
-                        clickPostMoment={this.clickPostMoment.bind(this)}
-                        clickEditProfile={this.clickEditProfile.bind(this)}
-                        clickEditPet={this.clickEditPet.bind(this)}
-                        clickWatchList={this.clickWatchList.bind(this)}
-                        clickRequestMessage={this.clickRequestMessage.bind(this)}
                     />;
                 } else {
                     //require user login
@@ -335,97 +220,82 @@ export default class Thousanday extends Component {
                     />;
                 }
                 break;
-
-
-
-
+            //add pet view
+            case "addPet":
+                route = <AddPet
+                    userId={ this.state.userId }
+                    userToken={ this.state.userToken }
+                    backHome={ this.clickUser.bind( this ) }
+                />
+                break;
+            //edit pet view
+            case "editPet":
+                route = <EditPet
+                    key={ "editpet" + this.state.id }
+                    id={ this.state.id }
+                    userId={ this.state.userId }
+                    userToken={ this.state.userToken }
+                    backHome={ this.clickUser.bind( this ) }
+                />
+                break;
+            //edit profile view
+            case "editProfile":
+                route = <EditProfile
+                    userName={ this.state.id }
+                    userId={ this.state.userId }
+                    userToken={ this.state.userToken }
+                    backHome={ this.clickUser.bind( this ) }
+                />
+                break;
+            //watch list view
+            case "watchList":
+                route = <WatchList
+                    userId={ this.state.userId }
+                    userToken={ this.state.userToken }
+                    clickPet={ this.clickPet.bind( this ) }
+                />
+                break;
+            //request msg view
+            case "requestMessage":
+                route = <Request
+                    userId={ this.state.userId }
+                    userToken={ this.state.userToken }
+                />
+                break;
             //explore page could be seen by public
             case "explore":
-                route = <Explore clickMoment={this.clickMoment.bind(this)} />;
+                route = <Explore clickMoment={ this.clickMoment.bind( this ) } />;
                 break;
             case "love":
                 route = <Love
-                    userId={this.state.userId}
-                    clickMoment={this.clickMoment.bind(this)}
-                />
-                break;
-            case "addPet":
-                route = <AddPet
-                    userId={this.state.userId}
-                    userToken={this.state.userToken}
-                    refreshUser={this.refreshUser.bind(this)}
+                    userId={ this.state.userId }
+                    clickMoment={ this.clickMoment.bind( this ) }
                 />
                 break;
             case "postMoment":
-                if (this.state.userData) {
-                    route = <PostMoment
-                        petList={this.state.userData[1]}
-                        userId={this.state.userId}
-                        userToken={this.state.userToken}
-                        refreshMoment={this.refreshMoment.bind(this)}
-                    />
-                } else {
-                    this.processLogin([this.state.userId], this.state.userPlatform, () => {
-                        route = <PostMoment
-                            petList={this.state.userData[1]}
-                            userId={this.state.userId}
-                            userToken={this.state.userToken}
-                            refreshMoment={this.refreshMoment.bind(this)}
-                        />
-                    });
-                }
-                break;
-            case "editProfile":
-                route = <EditProfile
-                    userId={this.state.userId}
-                    userName={this.state.userData[0].user_name}
-                    userToken={this.state.userToken}
-                    refreshUser={this.refreshUser.bind(this)}
-                />
-                break;
-            case "editPet":
-                route = <EditPet
-                    data={this.state.editData}
-                    userId={this.state.userId}
-                    userToken={this.state.userToken}
-                    refreshPet={this.refreshPet.bind(this)}
-                    refreshUser={this.refreshUser.bind(this)}
-                    emptyUser={this.emptyUser.bind(this)}
-                />
-                break;
-            case "watchList":
-                route = <WatchList
-                    data={this.state.privateData}
-                    userId={this.state.userId}
-                    userToken={this.state.userToken}
-                    clickPet={this.clickPet.bind(this)}
-                    refreshPet={this.refreshPet.bind(this)}
-                />
-                break;
-            case "requestMessage":
-                route = <Request
-                    data={this.state.requestData}
-                    userId={this.state.userId}
-                    userToken={this.state.userToken}
-                    emptyUser={this.emptyUser.bind(this)}
+                route = <PostMoment
+                    userId={ this.state.userId }
+                    userToken={ this.state.userToken }
+                    goMoment={ this.clickMoment.bind( this ) }
                 />
                 break;
             case "signup":
                 route = <Signup
-                    data={this.state.signupData}
-                    platform={this.state.signupPlatform}
-                    newUser={this.newUser.bind(this)}
+                    data={ this.state.signupData }
+                    platform={ this.state.signupPlatform }
+                    newUser={ this.newUser.bind(this)}
                 />
                 break;
-            
         }
         return (
-            <View style={styles.container}>
-                <Header title={this.state.route} />
-                <View style={styles.main}>
-                    {route}
+            <View style={ styles.container }>
+                <Header title={ this.state.route } />
+                <View style={ styles.main }>
+                    { route }
                 </View>
-                <Footer changeView={this.changeView.bind(this)} view={this.state.route} />
+                <Footer 
+                    changeView={ this.changeView.bind( this ) } view={ this.state.route } 
+                />
             </View>
         );
     }

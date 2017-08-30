@@ -1,19 +1,14 @@
 import React, { Component } from "react";
 import {
-    StyleSheet,
-    Text,
-    View,
-    Image,
-    Dimensions,
-    FlatList,
-    TouchableOpacity
+    StyleSheet, Text, View, Image, Dimensions, FlatList, TouchableOpacity
 } from "react-native";
 import processError from "../../js/processError.js";
-import {CachedImage} from "react-native-img-cache";
-//import getApiUrl from "../../js/getApiUrl.js";
+import { CachedImage } from "react-native-img-cache";
+import { apiUrl } from "../../js/Params.js";
+
 class Love extends Component {
-    constructor(props) {
-        super(props);
+    constructor( props ) {
+        super( props );
         this.state = {
             watchData: [],
             watchList: [],
@@ -26,35 +21,36 @@ class Love extends Component {
             load: 1,
             locker: false,
             list: "watch",
-            refresh: false
+            refresh: true
         };
     }
     componentWillMount() {
-        this.setState({refresh: true});
         //load 20 newest moments by default
-        fetch(getApiUrl() + "/watch/read?id=" + this.props.userId, {
+        fetch( apiUrl + "/watch/read?id=" + this.props.userId, {
             method: "GET",
         })
-        .then((response) => {
-            if (response.ok) {
+        .then( response => {
+            if ( response.ok ) {
                 return response.json();
             } else {
-                processError(response);
+                processError( response );
             }
         })
-        .then((result) => {
-            this.setState({refresh: false});
-            if (result[1].length === 20) {
-                this.setState({watchData: result[1], watchList: result[0]});
+        .then( result => {
+            this.setState({ refresh: false });
+            if ( result[ 1 ].length === 20 ) {
+                this.setState({ watchData: result[ 1 ], watchList: result[ 0 ] });
             } else {
-                this.setState({watchData: result[1], watchList: result[0], locker: true});
+                this.setState({
+                    watchData: result[ 1 ], watchList: result[ 0 ], locker: true
+                });
             }
         });
     }
     loadMore() {
-        if (this.state.list === "watch") {
-            if (!this.state.locker) {
-                fetch(getApiUrl() + "/watch/load", {
+        if ( this.state.list === "watch" ) {
+            if ( !this.state.locker ) {
+                fetch( apiUrl + "/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -67,25 +63,27 @@ class Love extends Component {
                         "user": this.props.userId
                     })
                 })
-                .then((response) => {
-                    if (response.ok) {
+                .then( response => {
+                    if ( response.ok ) {
                         return response.json();
                     } else {
-                        processError(response);
+                        processError( response );
                     }
                 })
-                .then((result) => {
-                    let newData = this.state.watchData.concat(result);
-                    if (result.length === 20) {
-                        this.setState({watchData: newData, load: this.state.load + 1});
+                .then( result => {
+                    let newData = this.state.watchData.concat( result );
+                    if ( result.length === 20 ) {
+                        this.setState({ watchData: newData, load: this.state.load + 1 });
                     } else {
-                        this.setState({watchData: newData, load: this.state.load + 1, locker: true});
+                        this.setState({
+                            watchData: newData, load: this.state.load + 1, locker: true
+                        });
                     }
                 });
             }
-        } else if (this.state.list === "love") {
-            if (!this.state.loveLocker) {
-                fetch(getApiUrl() + "/watch/load", {
+        } else if ( this.state.list === "love" ) {
+            if ( !this.state.loveLocker ) {
+                fetch( apiUrl + "/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -98,25 +96,31 @@ class Love extends Component {
                         "route": "love",
                     })
                 })
-                .then((response) => {
+                .then( response => {
                     if (response.ok) {
                         return response.json();
                     } else {
-                        processError(response);
+                        processError( response );
                     }
                 })
-                .then((result) => {
-                    let newLove = this.state.loveData.concat(result);
-                    if (result.length === 20) {
-                        this.setState({loveData: newLove, loveLoad: this.state.loveLoad + 1});
+                .then( result => {
+                    let newLove = this.state.loveData.concat( result );
+                    if ( result.length === 20 ) {
+                        this.setState({
+                            loveData: newLove, loveLoad: this.state.loveLoad + 1
+                        });
                     } else {
-                        this.setState({loveData: newLove, loveLoad: this.state.loveLoad + 1, loveLocker: true});
+                        this.setState({
+                            loveData: newLove, 
+                            loveLoad: this.state.loveLoad + 1, 
+                            loveLocker: true
+                        });
                     }
                 });
             }
-        } else if (this.state.list === "comment") {
-            if (!this.state.commentLocker) {
-                fetch(getApiUrl() + "/watch/load", {
+        } else if ( this.state.list === "comment" ) {
+            if ( !this.state.commentLocker ) {
+                fetch( apiUrl + "/watch/load", {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
@@ -129,31 +133,38 @@ class Love extends Component {
                         "route": "comment",
                     })
                 })
-                .then((response) => {
-                    if (response.ok) {
+                .then( response => {
+                    if ( response.ok ) {
                         return response.json();
                     } else {
-                        processError(response);
+                        processError( response );
                     }
                 })
-                .then((result) => {
-                    let newComment = this.state.commentData.concat(result);
-                    if (result.length === 20) {
-                        this.setState({commentData: newComment, commentLoad: this.state.commentLoad + 1});
+                .then(result => {
+                    let newComment = this.state.commentData.concat( result );
+                    if ( result.length === 20 ) {
+                        this.setState({
+                            commentData: newComment, 
+                            commentLoad: this.state.commentLoad + 1
+                        });
                     } else {
-                        this.setState({commentData: newComment, commentLoad: this.state.commentLoad + 1, commentLocker: true});
+                        this.setState({
+                            commentData: newComment, 
+                            commentLoad: this.state.commentLoad + 1, 
+                            commentLocker: true
+                        });
                     }
                 });
             }
         }
     }
     //change lists
-    changeList(list) {
-        if (list !== this.state.list) {
-            if (list === "love") {
-                if (!this.state.loveData) {
-                    this.setState({refresh: true});
-                    fetch(getApiUrl() + "/watch/load", {
+    changeList( list ) {
+        if ( list !== this.state.list ) {
+            if ( list === "love" ) {
+                if ( !this.state.loveData ) {
+                    this.setState({ refresh: true });
+                    fetch( apiUrl + "/watch/load", {
                         method: "POST",
                         headers: {
                             "Accept": "application/json",
@@ -166,28 +177,34 @@ class Love extends Component {
                             "route": "love",
                         })
                     })
-                    .then((response) => {
-                        if (response.ok) {
+                    .then( response => {
+                        if ( response.ok ) {
                             return response.json();
                         } else {
-                            processError(response);
+                            processError( response );
                         }
                     })
-                    .then((result) => {
-                        this.setState({refresh: false});
-                        if (result.length === 20) {
-                            this.setState({loveData: result, loveLoad: 1, list: "love", loveLocker: false});
+                    .then( result => {
+                        this.setState({ refresh: false });
+                        if ( result.length === 20 ) {
+                            this.setState({
+                                loveData: result, loveLoad: 1, list: "love", 
+                                loveLocker: false
+                            });
                         } else {
-                            this.setState({loveData: result, loveLoad: 1, list: "love", loveLocker: true});
+                            this.setState({
+                                loveData: result, loveLoad: 1, list: "love", 
+                                loveLocker: true
+                            });
                         }
                     });
                 } else {
-                    this.setState({list: "love"});
+                    this.setState({ list: "love" });
                 }
-            } else if (list === "comment") {
-                if (!this.state.commentData) {
-                    this.setState({refresh: true});
-                    fetch(getApiUrl() + "/watch/load", {
+            } else if ( list === "comment" ) {
+                if ( !this.state.commentData ) {
+                    this.setState({ refresh: true });
+                    fetch( apiUrl + "/watch/load", {
                         method: "POST",
                         headers: {
                             "Accept": "application/json",
@@ -200,91 +217,116 @@ class Love extends Component {
                             "route": "comment",
                         })
                     })
-                    .then((response) => {
-                        if (response.ok) {
+                    .then( response => {
+                        if ( response.ok ) {
                             return response.json();
                         } else {
-                            processError(response);
+                            processError( response );
                         }
                     })
-                    .then((result) => {
-                        this.setState({refresh: false});
-                        if (result.length === 20) {
-                            this.setState({commentData: result, commentLoad: 1, list: "comment", commentLocker: false});
+                    .then( result => {
+                        this.setState({ refresh: false });
+                        if ( result.length === 20 ) {
+                            this.setState({
+                                commentData: result, commentLoad: 1, 
+                                list: "comment", commentLocker: false
+                            });
                         } else {
-                            this.setState({commentData: result, commentLoad: 1, list: "comment", commentLocker: true});
+                            this.setState({
+                                commentData: result, commentLoad: 1, 
+                                list: "comment", commentLocker: true
+                            });
                         }
                     });
                 } else {
-                    this.setState({list: "comment"});
+                    this.setState({ list: "comment" });
                 }
             } else {
-                this.setState({list: list});
+                this.setState({ list: list });
             }
         }
     }
     render() {
-        let data = [], i;
+        let data = [];
         if (this.state.list === "watch") {
-            for (i = 0; i < this.state.watchData.length; i++) {
+            this.state.watchData.forEach( w => {
                 data.push(
                     {
-                        key: this.state.watchData[i].moment_id,
-                        image: getApiUrl() + "/img/pet/" + this.state.watchData[i].pet_id + "/moment/" + this.state.watchData[i].image_name
+                        key: w.moment_id,
+                        image: apiUrl + "/img/pet/" + w.pet_id + "/moment/" + w.image_name
                     }
                 )
-            }
-        } else if (this.state.list === "love") {
-            for (i = 0; i < this.state.loveData.length; i++) {
+            });
+        } else if ( this.state.list === "love" ) {
+            this.state.loveData.forEach( l => {
                 data.push(
                     {
-                        key: this.state.loveData[i].moment_id,
-                        image: getApiUrl() + "/img/pet/" + this.state.loveData[i].pet_id + "/moment/" + this.state.loveData[i].image_name
+                        key: l.moment_id,
+                        image: apiUrl + "/img/pet/" + l.pet_id + "/moment/" + l.image_name
                     }
                 )
-            }
-        } else if (this.state.list === "comment") {
-            for (i = 0; i < this.state.commentData.length; i++) {
+            });
+        } else if ( this.state.list === "comment" ) {
+            this.state.commentData.forEach( c => {
                 data.push(
                     {
-                        key: this.state.commentData[i].moment_id,
-                        image: getApiUrl() + "/img/pet/" + this.state.commentData[i].pet_id + "/moment/" + this.state.commentData[i].image_name
+                        key: c.moment_id,
+                        image: apiUrl + "/img/pet/" + c.pet_id + "/moment/" + c.image_name
                     }
                 )
-            }
+            });
         }
         return (
             <FlatList
-                contentContainerStyle={styles.root}
-                ListHeaderComponent={()=>{
+                contentContainerStyle={ styles.root }
+                ListHeaderComponent={ () => {
                     return (
-                        <View style={styles.rootHeader}>
-                            <TouchableOpacity onPress={this.changeList.bind(this, "watch")}>
-                                <View style={(this.state.list === "watch")?styles.headerContain:styles.headerChoose}>
+                        <View style={ styles.rootHeader }>
+                            <TouchableOpacity 
+                                onPress={ this.changeList.bind( this, "watch" ) }>
+                                <View 
+                                    style={
+                                        this.state.list === "watch"
+                                            ? styles.headerContain : styles.headerChoose
+                                    }
+                                >
                                     <Image
-                                        source={require("../../image/follow.png")}
+                                        source={ require( "../../image/follow.png" ) }
                                     />
-                                    <Text style={styles.containSection}>
+                                    <Text style={ styles.containSection }>
                                         Watch
                                     </Text>
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={this.changeList.bind(this, "love")}>
-                                <View style={(this.state.list === "love")?styles.headerContain:styles.headerChoose}>
+                            <TouchableOpacity 
+                                onPress={ this.changeList.bind( this, "love" ) }
+                            >
+                                <View 
+                                    style={ 
+                                        this.state.list === "love"
+                                            ? styles.headerContain : styles.headerChoose
+                                    }
+                                >
                                     <Image
-                                        source={require("../../image/love.png")}
+                                        source={ require( "../../image/love.png" ) }
                                     />
-                                    <Text style={styles.containSection}>
+                                    <Text style={ styles.containSection }>
                                         Love
                                     </Text>
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={this.changeList.bind(this, "comment")}>
-                                <View style={(this.state.list === "comment")?styles.headerContain:styles.headerChoose}>
+                            <TouchableOpacity 
+                                onPress={ this.changeList.bind( this, "comment" ) }>
+                                <View 
+                                    style={
+                                        this.state.list === "comment"
+                                            ? styles.headerContain : styles.headerChoose
+                                    }
+                                >
                                     <Image
-                                        source={require("../../image/comment.png")}
+                                        source={ require( "../../image/comment.png" ) }
                                     />
-                                    <Text style={styles.containSection}>
+                                    <Text style={ styles.containSection }>
                                         Comment
                                     </Text>
                                 </View>
@@ -292,22 +334,24 @@ class Love extends Component {
                         </View>
                     )
                 }}
-                data = {data}
-                renderItem={({item}) =>
-                    <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.key)}>
+                data = { data }
+                renderItem={ ( { item } ) =>
+                    <TouchableOpacity 
+                        onPress={ this.props.clickMoment.bind( null, item.key ) }
+                    >
                         <CachedImage
-                            source={{uri: item.image}}
-                            style={styles.rootImage}
+                            source={{ uri: item.image }}
+                            style={ styles.rootImage }
                         />
                     </TouchableOpacity>
                 }
-                numColumns={2}
+                numColumns={ 2 }
                 columnWrapperStyle={{
                     justifyContent: "space-between",
                 }}
-                onEndReached={this.loadMore.bind(this)}
-                onRefresh={()=>{}}
-                refreshing={this.state.refresh}
+                onEndReached={ this.loadMore.bind( this ) }
+                onRefresh={ () => {} }
+                refreshing={ this.state.refresh }
             />
         )
     }

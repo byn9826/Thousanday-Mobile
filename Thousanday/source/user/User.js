@@ -80,12 +80,12 @@ class User extends Component {
             })
             .then( response => {
                 if ( response.ok ) {
-                    return response.json();
+                    return true;
                 } else {
                     processError( response );
                 }
             })
-            .then( result => {
+            .then( () => {
                 this.setState({ refresh: false });
                 this.props.userLogout();
             });
@@ -203,7 +203,12 @@ class User extends Component {
                             </Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={ this.props.clickEditProfile.bind( this ) }>
+                    <TouchableOpacity 
+                        onPress={ 
+                            this.props.clickEditProfile.bind( 
+                                null, this.state.user.user_name 
+                            ) 
+                        }>
                         <View style={ styles.actionCircle }>
                             <Text style={ styles.circleContent }>
                                 Edit
@@ -374,12 +379,12 @@ const Facebook = React.createClass({
                         })
                         .then( response => {
                             if ( response.ok ) {
-                                return response.json();
+                                return true;
                             } else {
                                 processError( response );
                             }
                         })
-                        .then( result => {
+                        .then( () => {
                             this.setState({ refresh: false });
                             this.props.userLogout();
                         });

@@ -1,28 +1,42 @@
 import React, { Component } from "react";
 import {
-    StyleSheet,
-	Platform,
-    Text,
-    View,
-    Image,
-    TextInput,
-    TouchableOpacity,
-    ScrollView,
-    Button
+    StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ScrollView, Button,
+    RefreshControl
 } from "react-native";
-import {CachedImage} from "react-native-img-cache";
+import { CachedImage } from "react-native-img-cache";
 import ImagePicker from 'react-native-image-crop-picker';
 import processError from "../../js/processError.js";
-//import getApiUrl from "../../js/getApiUrl.js";
+import { apiUrl } from "../../js/Params.js";
+
 class PostMoment extends Component {
-    constructor(props) {
-        super(props);
+    constructor( props ) {
+        super( props );
         this.state = {
             info: "",
             image: null,
             error: null,
-            pet: null
+            pet: null,
+            refresh: true,
+            petList: []
         };
+    }
+    componentWillMount() {
+        fetch( apiUrl + "/user/read?id=" + this.props.userId, {
+            method: "GET",
+        })
+        .then( response => {
+            if ( response.ok ) {
+                return response.json();
+            } else {
+                processError( response );
+            }
+        })
+        .then( user => {
+            this.setState({ refresh: false });
+            this.setState({ 
+                petList: user[ 1 ]
+            });
+        });
     }
     //pick photo
     pickImg() {
@@ -30,9 +44,12 @@ class PostMoment extends Component {
             mediaType: "photo",
             compressImageMaxWidth: 1000,
             compressImageMaxHeight: 1000
-        }).then(image => {
+        }).then( image => {
             this.setState({
-                image: {uri: image.path, width: image.width, height: image.height, mime: image.mime}
+                image: {
+                    uri: image.path, width: image.width, 
+                    height: image.height, mime: image.mime
+                }
             });
         });
     }
@@ -42,9 +59,12 @@ class PostMoment extends Component {
             mediaType: "photo",
             compressImageMaxWidth: 1000,
             compressImageMaxHeight: 1000
-        }).then(image => {
+        }).then( image => {
             this.setState({
-                image: {uri: image.path, width: image.width, height: image.height, mime: image.mime}
+                image: {
+                    uri: image.path, width: image.width, height: image.height, 
+                    mime: image.mime
+                }
             });
         });
     }
@@ -53,25 +73,26 @@ class PostMoment extends Component {
         let content = this.state.info.trim();
         let image = this.state.image;
         let pet = this.state.pet;
-        if (!pet) {
-            this.setState({error: "Please choose a pet!"});
-        } else if (content.length <= 0 || content.length > 120) {
-            this.setState({error: "Please write something!"});
-        } else if (!image) {
-            this.setState({error: "Please choose an image!"});
+        if ( !pet ) {
+            this.setState({ error: "Please choose a pet!" });
+        } else if ( content.length <= 0 || content.length > 120 ) {
+            this.setState({ error: "Please write something!" });
+        } else if ( !image ) {
+            this.setState({ error: "Please choose an image!" });
         } else {
-            this.setState({error: null});
+            this.setState({ refresh: true });
+            this.setState({ error: null });
             let type = image.mime;
-            type = type.split("/")[1];
+            type = type.split( "/" )[ 1 ];
             type = "." + type;
-            let file = {uri: image.uri, type: 'multipart/form-data', name: type};
+            let file = { uri: image.uri, type: 'multipart/form-data', name: type };
             let data = new FormData();
-            data.append("file", file, type);
-            data.append("message", content);
-            data.append("token", this.props.userToken);
-            data.append("user", this.props.userId);
-            data.append("pet", pet);
-            fetch(getApiUrl() + "/upload/moment", {
+            data.append( "file", file, type );
+            data.append( "message", content );
+            data.append( "token", this.props.userToken );
+            data.append( "user", this.props.userId );
+            data.append( "pet", pet );
+            fetch( apiUrl + "/upload/moment", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -79,110 +100,117 @@ class PostMoment extends Component {
                 },
                 body: data
             })
-            .then((response) => {
-                if (response.ok) {
+            .then( response => {
+                this.setState({ refresh: false });
+                if ( response.ok ) {
                     return response.json();
                 } else {
-                    processError(response);
+                    processError( response );
                 }
             })
-            .then((result) => {
-                this.props.refreshMoment(result[0]);
+            .then( result => {
+                this.props.goMoment( parseInt( result[ 0 ] ) );
             })
         }
     }
     //choose a pet
-    choosePet(id) {
-        if (id === this.state.pet) {
-            this.setState({pet: null});
+    choosePet( id ) {
+        if ( id === this.state.pet ) {
+            this.setState({ pet: null });
         } else {
-            this.setState({pet: id});
+            this.setState({ pet: id });
         }
     }
     render() {
         let image;
-        if (this.state.image){
-            image = <Image source={this.state.image} style={styles.rootImage} />
+        if ( this.state.image ){
+            image = <Image source={ this.state.image } style={ styles.rootImage } />
         }
-        let pets = this.props.petList.map((pet, index) =>
-            <TouchableOpacity key={"choosepet" + index} style={(this.state.pet === pet.pet_id)?styles.petChoose: null} onPress={this.choosePet.bind(this, pet.pet_id)}>
+        let pets = this.state.petList.map( ( pet, index ) =>
+            <TouchableOpacity 
+                key={ "choosepet" + index } 
+                style={ 
+                    this.state.pet === pet.pet_id
+                        ? styles.petChoose : null
+                } 
+                onPress={ this.choosePet.bind( this, pet.pet_id ) }>
                 <CachedImage
-                    source={{uri: getApiUrl() + "/img/pet/" + pet.pet_id + "/0.png"}}
-                    style={styles.petOption}
+                    source={{ uri: apiUrl + "/img/pet/" + pet.pet_id + "/0.png" }}
+                    style={ styles.petOption }
                     mutable
                 />
             </TouchableOpacity>
         )
         return (
-            <ScrollView style={styles.root}>
-                <View style={styles.rootHeader}>
-                    <Text style={styles.headerError}>
-                        {this.state.error}
+            <ScrollView 
+                style={ styles.root }
+                refreshControl={ 
+                    <RefreshControl
+                        refreshing={ this.state.refresh }
+                        onRefresh={ () => {} }
+                    />
+                }
+            >
+                <View style={ styles.rootHeader }>
+                    <Text style={ styles.headerError }>
+                        { this.state.error }
                     </Text>
                     <Button
-                        style={styles.headerSend}
+                        style={ styles.headerSend }
                         title="Send"
-                        onPress={this.sendMoment.bind(this)}
+                        onPress={ this.sendMoment.bind( this ) }
                     />
                 </View>
-                <Text style={styles.rootTitle}>
+                <Text style={ styles.rootTitle }>
                     Please choose one of your pet:
                 </Text>
-                <View style={styles.rootPet}>
-                    {pets}
+                <View style={ styles.rootPet }>
+                    { pets }
                 </View>
-                <Text style={styles.rootTitle}>
+                <Text style={ styles.rootTitle }>
                     Write something for this moment:
                 </Text>
                 <TextInput
-                    style={styles.rootInput}
-                    multiline={true}
-                    numberOfLines={4}
-                    onChangeText={(text) =>
-                        this.setState({info: text.substr(0, 120)})
+                    style={ styles.rootInput }
+                    multiline={ true }
+                    numberOfLines={ 4 }
+                    onChangeText={ text =>
+                        this.setState({ info: text.substr( 0, 120 ) })
                     }
-                    value={this.state.info}
+                    value={ this.state.info }
                 />
-                <Text style={styles.rootHint}>
-                    {this.state.info.length} / 120
+                <Text style={ styles.rootHint }>
+                    { this.state.info.length } / 120
                 </Text>
-                <View style={styles.rootRow}>
-                    <TouchableOpacity onPress={this.pickImg.bind(this)}>
-                        <View style={styles.rowButton}>
-                            <Image style={styles.buttonIcon} source={require("../../image/watch.png")} />
-                            <Text style={styles.buttonTitle}>
+                <View style={ styles.rootRow }>
+                    <TouchableOpacity onPress={ this.pickImg.bind( this ) }>
+                        <View style={ styles.rowButton }>
+                            <Image 
+                                style={ styles.buttonIcon } 
+                                source={ require( "../../image/watch.png" ) } 
+                            />
+                            <Text style={ styles.buttonTitle }>
                                 Upload Image
                             </Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={this.useCamera.bind(this)}>
-                        <View style={styles.rowButton}>
-                            <Image style={styles.buttonIcon} source={require("../../image/camera.png")} />
-                            <Text style={styles.buttonTitle}>
+                    <TouchableOpacity onPress={ this.useCamera.bind( this ) }>
+                        <View style={ styles.rowButton }>
+                            <Image 
+                                style={ styles.buttonIcon } 
+                                source={ require( "../../image/camera.png" ) } />
+                            <Text style={ styles.buttonTitle }>
                                 Take Photo
                             </Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-                {image}
+                { image }
             </ScrollView>
         )
     }
 }
-let inputStyle;
-if (Platform.OS === 'ios') {
-	inputStyle = {
-		backgroundColor:"#f7f9fc",
-		height: 100,
-		paddingLeft: 5,
-		paddingRight: 5,
-		fontSize: 16,
-	}
-} else {
-	inputStyle = {
-		backgroundColor:"#f7f9fc",
-	}
-}
+
 const styles = StyleSheet.create({
     root: {
         marginTop: 20,
@@ -225,7 +253,9 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 10
     },
-    rootInput: inputStyle,
+    rootInput: {
+		backgroundColor:"#f7f9fc",
+	},
     rootHint: {
         fontSize: 12,
         marginTop: 5,

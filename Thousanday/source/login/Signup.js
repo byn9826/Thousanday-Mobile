@@ -1,23 +1,17 @@
 import React, { Component } from "react";
 import {
-    StyleSheet,
-    Text,
-    View,
-    TextInput,
-    Image,
-    ScrollView,
-    Button,
-    TouchableOpacity,
-    Linking
+    StyleSheet, Text, View, TextInput, Image, ScrollView, Button,
+    TouchableOpacity, Linking
 } from "react-native";
 import processError from "../../js/processError.js";
 import ImagePicker from 'react-native-image-crop-picker';
-//import getApiUrl from "../../js/getApiUrl.js";
+import { apiUrl } from "../../js/Params.js";
+
 class Signup extends Component {
-    constructor(props) {
-        super(props);
+    constructor( props ) {
+        super( props );
         this.state = {
-            name: (this.props.platform === "google")?this.props.data.name.substr(0, 10): "",
+            name: this.props.platform === "google" ? this.props.data.name.substr( 0, 10 ) : "",
             image: null,
             error: null
         };
@@ -25,47 +19,52 @@ class Signup extends Component {
     //pick an image
     pickImg() {
         ImagePicker.openPicker({
-            width: 300,
-            height: 300,
+            width: 500,
+            height: 500,
             mediaType: "photo",
             cropping: true,
-        }).then(image => {
+        }).then( image => {
             this.setState({
-                image: {uri: image.path, width: image.width, height: image.height, mime: "image/jpg"},
+                image: { 
+                    uri: image.path, width: image.width, height: image.height, 
+                    mime: "image/jpg"
+                },
                 button: "Confirm Update?"
             });
         });
     }
     //open terms and conditions
     openTerms() {
-        Linking.canOpenURL(getApiUrl() + "/terms").then(supported => {
-            if (supported) {
-                Linking.openURL(getApiUrl() + "/terms");
+        Linking.canOpenURL( apiUrl + "/terms").then( supported => {
+            if ( supported ) {
+                Linking.openURL( apiUrl + "/terms");
             } else {
-                alert("Can't open this link");
+                alert( "Can't open this link" );
             }
         });
     }
     //signup new users
     signUp() {
         let name = this.state.name.trim();
-        if (name.length === 0 || name.length > 10) {
-            this.setState({error: "Please type in your name."});
-        } else if (!this.state.image) {
-            this.setState({error: "Please upload avatar"});
+        if ( name.length === 0 || name.length > 10 ) {
+            this.setState({ error: "Please type in your name." });
+        } else if ( !this.state.image ) {
+            this.setState({ error: "Please upload avatar" });
         } else {
-            let file = {uri: this.state.image.uri, type: 'multipart/form-data', name:'0.jpg'};
+            let file = {
+                uri: this.state.image.uri, type: 'multipart/form-data', name:'0.jpg'
+            };
             let data = new FormData();
-            data.append("name", name);
-            data.append("file", file, "0.jpg");
-            if (this.props.platform === "google") {
-                data.append("token", this.props.data.idToken);
+            data.append( "name", name );
+            data.append( "file", file, "0.jpg" );
+            if ( this.props.platform === "google" ) {
+                data.append( "token", this.props.data.idToken );
             } else {
-                data.append("token", this.props.data.accessToken);
+                data.append( "token", this.props.data.accessToken );
             }
-            data.append("platform", this.props.platform);
-            data.append("method", "mobile");
-            fetch(getApiUrl() + "/upload/create", {
+            data.append( "platform", this.props.platform );
+            data.append( "method", "mobile" );
+            fetch( apiUrl + "/upload/create", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -73,64 +72,64 @@ class Signup extends Component {
                 },
                 body: data
             })
-            .then((response) => {
-                if (response.ok) {
+            .then( response => {
+                if ( response.ok ) {
                     return response.json()
                 } else {
-                    processError(response);
+                    processError( response );
                 }
             })
-            .then((result) => {
-                this.props.newUser(result, this.props.platform);
+            .then( result => {
+                this.props.newUser( result, this.props.platform );
             });
         }
     }
     render() {
         return (
-            <ScrollView style={styles.root}>
-                <View style={styles.rootRow}>
-                    <Text style={styles.rowLabel}>
+            <ScrollView style={ styles.root }>
+                <View style={ styles.rootRow }>
+                    <Text style={ styles.rowLabel }>
                         Your username:
                     </Text>
                     <TextInput
-                        onChangeText={(text) =>
-                            this.setState({name: text.substr(0, 10)})
+                        onChangeText={ text =>
+                            this.setState({ name: text.substr( 0, 10 ) })
                         }
-                        value={this.state.name}
+                        value={ this.state.name }
                     />
-                    <Text style={styles.rowHint}>
-                        {this.state.name.length} / 10
+                    <Text style={ styles.rowHint }>
+                        { this.state.name.length } / 10
                     </Text>
                 </View>
-                <View style={styles.rootImage}>
-                    <Text style={styles.rowLabel}>
+                <View style={ styles.rootImage }>
+                    <Text style={ styles.rowLabel }>
                         Your avatar:
                     </Text>
                     {
-                        (this.state.image)? (
+                        this.state.image ? (
                             <Image
-                                style={styles.imageProfile}
-                                source={this.state.image}
+                                style={ styles.imageProfile }
+                                source={ this.state.image }
                             />
-                        ):null
+                        ) : null
                     }
-                    <View style={styles.rootButton}>
+                    <View style={ styles.rootButton }>
                         <Button
-                            onPress={this.pickImg.bind(this)}
+                            onPress={ this.pickImg.bind( this ) }
                             title="Upload Avatar"
                             color="#841584"
                         />
                     </View>
                 </View>
-                <Text style={styles.rootError}>
-                    {this.state.error}
+                <Text style={ styles.rootError }>
+                    { this.state.error }
                 </Text>
                 <Button
-                    onPress={this.signUp.bind(this)}
+                    onPress={ this.signUp.bind( this ) }
                     title="SIGN UP"
                 />
-                <TouchableOpacity onPress={this.openTerms.bind(this)}>
-                    <Text style={styles.rootTerm}>
+                <TouchableOpacity onPress={ this.openTerms.bind( this ) }>
+                    <Text style={ styles.rootTerm }>
                         By signing up, you agree to our Terms & Privacy Policy
                     </Text>
                 </TouchableOpacity>

@@ -76,12 +76,12 @@ class Moment extends Component {
         })
         .then( response => {
             if (response.ok) {
-                return response.json();
+                return true;
             } else {
                 processError(response);
             }
         })
-        .then( result => {
+        .then( () => {
             if ( this.state.like.indexOf( this.props.userId ) === -1 ) {
                 this.state.like.push( this.props.userId );
                 this.setState({ like: this.state.like });
@@ -114,12 +114,12 @@ class Moment extends Component {
         })
         .then( response  => {
             if ( response.ok ) {
-                return response.json();
+                return true;
             } else {
                 processError( response );
             }
         })
-        .then( result => {
+        .then( () => {
             let post = {
                 "comment_content": this.state.comment,
                 "user_id": this.props.userId

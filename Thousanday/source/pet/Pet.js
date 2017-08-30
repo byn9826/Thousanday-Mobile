@@ -109,12 +109,12 @@ class Pet extends Component {
         })
         .then( response => {
             if ( response.ok ) {
-                return response.json();
+                return true;
             } else {
                 processError( response );
             }
         })
-        .then( result => {
+        .then( () => {
             if ( action === 1 ) {
                 this.state.watch.push( this.props.userId );
                 this.setState({ watch: this.state.watch });
@@ -147,16 +147,28 @@ class Pet extends Component {
             )
         }
         //show friends if exist
-        let friends = this.state.friends.map( ( f, i ) =>
-            <TouchableOpacity 
-                key={ "friend" + i }
-                onPress={ this.props.clickPet.bind( null, f.pet_id ) }>
-                <CachedImage
-                    mutable style={ styles.boxImage }
-                    source={{ uri: apiUrl + "/img/pet/" + f.pet_id + "/0.png" }}
-                />
-            </TouchableOpacity>
-        );
+        let i = 0; friends = [];
+        for ( i; i < 2; i++ ) {
+            if ( this.state.friends[ i ] ) {
+                friends.push(
+                    <TouchableOpacity 
+                        key={ "friend" + i }
+                        onPress={ 
+                            this.props.clickPet.bind( 
+                                null, this.state.friends[ i ].pet_id 
+                            ) 
+                        }
+                    >
+                        <CachedImage
+                            mutable style={ styles.boxImage }
+                            source={{ 
+                                uri: apiUrl + "/img/pet/" + this.state.friends[ i ].pet_id + "/0.png" 
+                            }}
+                        />
+                    </TouchableOpacity>
+                )
+            }
+        }
         return (
             <FlatList
                 contentContainerStyle={ styles.container }

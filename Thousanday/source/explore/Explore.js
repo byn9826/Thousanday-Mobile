@@ -1,20 +1,15 @@
 import React, { Component } from "react";
 import {
-    StyleSheet,
-    Text,
-    Dimensions,
-    Image,
-    View,
-    FlatList,
-    TouchableOpacity
+    StyleSheet, Text, Dimensions, Image, View, FlatList, TouchableOpacity
 } from "react-native";
-import {CachedImage} from "react-native-img-cache";
-import processError from "../../js/processError.js";
+import { CachedImage } from "react-native-img-cache";
 import processGallery from "../../js/processGallery.js";
-//import getApiUrl from "../../js/getApiUrl.js";
+import processError from "../../js/processError.js";
+import { apiUrl } from "../../js/Params.js";
+
 class Explore extends Component {
-    constructor(props) {
-        super(props);
+    constructor( props ) {
+        super( props );
         this.state = {
             //store init images
             initImages: [],
@@ -31,126 +26,191 @@ class Explore extends Component {
         };
     }
     //user click on one type
-    chooseType(type) {
-        if (this.state.type === type) {
+    chooseType( type ) {
+        if ( this.state.type === type ) {
             //empty state
-            this.setState({type: null, initImages: [], loadTimes: 1, moreLocker: false});
+            this.setState({
+                type: null, initImages: [], loadTimes: 1, moreLocker: false
+            });
         } else {
-            this.setState({type: type});
+            this.setState({ type: type });
             //require info
-            if (this.state.nature) {
-                this.setState({refresh: true});
-                fetch(getApiUrl() + "/explore/read?load=0&nature=" + this.state.nature + "&type=" + type, {
+            if ( this.state.nature ) {
+                this.setState({ refresh: true });
+                fetch( apiUrl + "/explore/read?load=0&nature=" + this.state.nature + "&type=" + type, {
                     method: "GET",
                 })
-                .then((response) => {
-                    if (response.ok) {
+                .then( response => {
+                    if ( response.ok ) {
                         return response.json()
                     } else {
-                        processError(response);
+                        processError( response );
                     }
                 })
-                .then((result) => {
-                    this.setState({refresh: false});
+                .then( result => {
+                    this.setState({ refresh: false });
                     //build data with all images
-                    let gallery= processGallery(result);
-                    let moreLocker = (result.length < 20)? true: false;
-                    this.setState({initImages: gallery, moreLocker: moreLocker, loadTimes: 1});
+                    let gallery= processGallery( result );
+                    let moreLocker = result.length < 20 ? true : false;
+                    this.setState({ initImages: gallery, moreLocker: moreLocker, loadTimes: 1 });
                 });
 			}
         }
     }
     //user click on one nature
-    chooseNature(nature) {
-        if (this.state.nature === nature) {
+    chooseNature( nature ) {
+        if ( this.state.nature === nature ) {
             //empty state if already choosed it
-            this.setState({nature: null, initImages: [], loadTimes: 1, moreLocker: false});
+            this.setState(
+                {nature: null, initImages: [], loadTimes: 1, moreLocker: false
+            });
         } else {
-            this.setState({nature: nature});
+            this.setState({ nature: nature });
             //if chosed nature and type do search
-            if (this.state.type) {
-                fetch(getApiUrl() + "/explore/read?load=0&nature=" + nature + "&type=" + this.state.type, {
+            if ( this.state.type ) {
+                fetch( apiUrl + "/explore/read?load=0&nature=" + nature + "&type=" + this.state.type, {
                     method: "GET",
                 })
-                .then((response) => {
-                    if (response.ok) {
+                .then( response => {
+                    if ( response.ok ) {
                         return response.json()
                     } else {
-                        processError(response);
+                        processError( response );
                     }
                 })
-                .then((result) => {
-                    this.setState({refresh: false});
+                .then( result => {
+                    this.setState({ refresh: false });
                     //build data with all images
-                    let gallery= processGallery(result);
-                    let moreLocker = (result.length < 20)? true: false;
-                    this.setState({initImages: gallery, moreLocker: moreLocker, loadTimes: 1});
+                    let gallery= processGallery( result );
+                    let moreLocker = result.length < 20 ? true: false;
+                    this.setState({
+                        initImages: gallery, moreLocker: moreLocker, loadTimes: 1
+                    });
                 });
 			}
         }
     }
     //load more momentCursor
     loadMore() {
-        if (this.state.type && this.state.nature && !this.state.moreLocker) {
-            fetch(getApiUrl() + "/explore/read?load=" + this.state.loadTimes + "&nature=" + this.state.nature + "&type=" + this.state.type, {
+        if ( this.state.type && this.state.nature && !this.state.moreLocker ) {
+            fetch( apiUrl + "/explore/read?load=" + this.state.loadTimes + "&nature=" + this.state.nature + "&type=" + this.state.type, {
                 method: "GET",
             })
-            .then((response) => {
-                if (response.ok) {
+            .then( response => {
+                if ( response.ok ) {
                     return response.json()
                 } else {
-                    processError(response);
+                    processError( response );
                 }
             })
-            .then((result) => {
-                this.setState({refresh: false});
+            .then( result => {
+                this.setState({ refresh: false });
                 //build data with all images
-                let gallery= processGallery(result);
-                let allImages = this.state.initImages.concat(gallery);
-                let moreLocker = (result.length < 20)? true: false;
-                this.setState({initImages: allImages, moreLocker: moreLocker, loadTimes: this.state.loadTimes + 1});
+                let gallery= processGallery( result );
+                let allImages = this.state.initImages.concat( gallery );
+                let moreLocker = result.length < 20 ? true : false;
+                this.setState({
+                    initImages: allImages, moreLocker: moreLocker, loadTimes: this.state.loadTimes + 1
+                });
             });
         }
     }
     //header
     _header = () => {
         return (
-            <View style={styles.containerHeader}>
-                <View style={styles.headerFilter}>
-                    <Image style={styles.filterIcon} source={require("../../image/filter.png")} />
-                    <Text style={styles.filterContent}>
+            <View style={ styles.containerHeader }>
+                <View style={ styles.headerFilter }>
+                    <Image 
+                        style={ styles.filterIcon } 
+                        source={ require( "../../image/filter.png" ) } 
+                    />
+                    <Text style={ styles.filterContent }>
                         Filter
                     </Text>
                 </View>
-                <View style={styles.headerOption}>
-                    <View style={styles.optionType}>
-                        <Text onPress={this.chooseType.bind(this, "0")} style={(this.state.type === "0")?styles.typeChoose:styles.typeSingle}>
+                <View style={ styles.headerOption }>
+                    <View style={ styles.optionType }>
+                        <Text 
+                            onPress={ this.chooseType.bind( this, "0" ) } 
+                            style={ 
+                                this.state.type === "0" 
+                                ? styles.typeChoose : styles.typeSingle
+                            }
+                        >
                             Dog
                         </Text>
-                        <Text onPress={this.chooseType.bind(this, "1")} style={(this.state.type === "1")?styles.typeChoose:styles.typeSingle}>
+                        <Text 
+                            onPress={ this.chooseType.bind( this, "1" ) } 
+                            style={ 
+                                this.state.type === "1" 
+                                ? styles.typeChoose : styles.typeSingle
+                            }
+                        >
                             Cat
                         </Text>
-                        <Text onPress={this.chooseType.bind(this, "2")} style={(this.state.type === "2")?styles.typeChoose:styles.typeSingle}>
+                        <Text 
+                            onPress={ this.chooseType.bind( this, "2" ) } 
+                            style={ 
+                                this.state.type === "2" 
+                                ? styles.typeChoose : styles.typeSingle
+                            }
+                        >
                             Bird
                         </Text>
-                        <Text onPress={this.chooseType.bind(this, "3")} style={(this.state.type === "3")?styles.typeChoose:styles.typeSingle}>
+                        <Text 
+                            onPress={ this.chooseType.bind( this, "3" ) } 
+                            style={ 
+                                this.state.type === "3" 
+                                ? styles.typeChoose : styles.typeSingle
+                            }
+                        >
                             Fish
                         </Text>
-                        <Text onPress={this.chooseType.bind(this, "4")} style={(this.state.type === "4")?styles.typeChoose:styles.typeSingle}>
+                        <Text 
+                            onPress={ this.chooseType.bind( this, "4" ) } 
+                            style={ 
+                                this.state.type === "4" 
+                                ? styles.typeChoose : styles.typeSingle
+                            }
+                        >
                             Other
                         </Text>
                     </View>
-                    <View style={styles.optionType}>
-                        <Text onPress={this.chooseNature.bind(this, "0")} style={(this.state.nature === "0")?styles.typeChoose:styles.typeSingle}>
+                    <View style={ styles.optionType }>
+                        <Text 
+                            onPress={ this.chooseNature.bind( this, "0" ) } 
+                            style={ 
+                                this.state.nature === "0"
+                                    ? styles.typeChoose : styles.typeSingle
+                            }
+                        >
                             Cute
                         </Text>
-                        <Text onPress={this.chooseNature.bind(this, "1")} style={(this.state.nature === "1")?styles.typeChoose:styles.typeSingle}>
+                        <Text 
+                            onPress={ this.chooseNature.bind( this, "1" ) } 
+                            style={ 
+                                this.state.nature === "1"
+                                    ? styles.typeChoose : styles.typeSingle
+                            }
+                        >
                             Strong
                         </Text>
-                        <Text onPress={this.chooseNature.bind(this, "2")} style={(this.state.nature === "2")?styles.typeChoose:styles.typeSingle}>
+                        <Text 
+                            onPress={ this.chooseNature.bind( this, "2" ) } 
+                            style={ 
+                                this.state.nature === "2"
+                                    ? styles.typeChoose : styles.typeSingle
+                            }
+                        >
                             Smart
                         </Text>
-                        <Text onPress={this.chooseNature.bind(this, "3")} style={(this.state.nature === "3")?styles.typeChoose:styles.typeSingle}>
+                        <Text 
+                            onPress={ this.chooseNature.bind( this, "3" ) } 
+                            style={ 
+                                this.state.nature === "3"
+                                    ? styles.typeChoose : styles.typeSingle
+                            }
+                        >
                             Beauty
                         </Text>
                     </View>
@@ -161,24 +221,26 @@ class Explore extends Component {
     render() {
         return (
             <FlatList
-                contentContainerStyle={styles.container}
-                data = {this.state.initImages}
-                ListHeaderComponent={this._header}
-                numColumns={2}
+                contentContainerStyle={ styles.container }
+                data = { this.state.initImages }
+                ListHeaderComponent={ this._header }
+                numColumns={ 2 }
                 columnWrapperStyle={{
                     justifyContent: "space-between",
                 }}
-                renderItem={({item}) =>
-                    <TouchableOpacity onPress={this.props.clickMoment.bind(null, item.id)}>
+                renderItem={ ( { item } ) =>
+                    <TouchableOpacity 
+                        onPress={ this.props.clickMoment.bind( null, item.id ) }
+                    >
                         <CachedImage
-                            source={{uri: item.key}}
-                            style={styles.containerImage}
+                            source={{ uri: item.key }}
+                            style={ styles.containerImage }
                         />
                     </TouchableOpacity>
                 }
-                onEndReached={this.loadMore.bind(this)}
-                onRefresh={()=>{}}
-                refreshing={this.state.refresh}
+                onEndReached={ this.loadMore.bind( this ) }
+                onRefresh={ () => {} }
+                refreshing={ this.state.refresh }
             />
         )
     }

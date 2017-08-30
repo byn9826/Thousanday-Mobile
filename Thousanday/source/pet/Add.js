@@ -1,60 +1,58 @@
 import React, { Component } from "react";
-import {
-    StyleSheet,
-    Text,
-    View,
-    TextInput,
-    TouchableOpacity,
-    Picker,
-    Button,
-    Image,
-    ScrollView
+import { 
+    StyleSheet, Text, View, TextInput, TouchableOpacity, Picker, 
+    Button, Image, ScrollView, RefreshControl
 } from "react-native";
+import { apiUrl } from "../../js/Params.js";
 import processError from "../../js/processError.js";
-import ImagePicker from 'react-native-image-crop-picker';
-//import getApiUrl from "../../js/getApiUrl.js";
+import ImagePicker from "react-native-image-crop-picker";
+
 class AddPet extends Component {
-    constructor(props) {
-        super(props);
+    constructor( props ) {
+        super( props );
         this.state = {
             name: "",
             gender: null,
             type: "choose",
             nature: "choose",
             avatar: null,
-            error: null
+            error: null,
+            refresh: false
         };
     }
     //change pet name
-    changeName(e) {
-        this.setState({name: e.target.value});
+    changeName( e ) {
+        this.setState({ name: e.target.value });
     }
-    //click male
+    //click on male
     clickMale() {
-        if (this.state.gender === 0) {
-            this.setState({gender: null});
+        if ( this.state.gender === 0 ) {
+            this.setState({ gender: null });
         } else {
-            this.setState({gender: 0});
+            this.setState({ gender: 0 });
         }
     }
-    //click female
+    //click on female
     clickFemale() {
-        if (this.state.gender === 1) {
-            this.setState({gender: null});
+        if ( this.state.gender === 1 ) {
+            this.setState({ gender: null });
         } else {
-            this.setState({gender: 1});
+            this.setState({ gender: 1 });
         }
     }
     //pick photo
     pickImg() {
         ImagePicker.openPicker({
-            width: 250,
-            height: 250,
+            width: 500,
+            height: 500,
             mediaType: "photo",
             cropping: true
-        }).then(image => {
+        }).then( image => {
             this.setState({
-                avatar: {uri: image.path, width: image.width, height: image.height, mime: "image/png"}
+                avatar: {
+                    uri: image.path, width: image.width, 
+                    height: image.height, mime: "image/png"
+                }
             });
         });
     }
@@ -65,27 +63,28 @@ class AddPet extends Component {
         let type = this.state.type;
         let nature = this.state.nature;
         let image = this.state.avatar;
-        if (name.length <= 0 || name.length > 10) {
-            this.setState({error: "Length of Pet Name is not correct"});
-        } else if (gender !== 0 && gender !== 1) {
-            this.setState({error: "Please choose your pet's gender"});
-        } else if (type !== 0 && type !== 1 && type !== 2 && type !== 3 && type !== 4) {
-            this.setState({error: "Please choose your pet's type"});
-        } else if (nature !== 0 && nature !== 1 && nature !== 2 && nature !== 3) {
-            this.setState({error: "Please choose your pet's nature"});
-        } else if (!image) {
-            this.setState({error: "Please upload your pet's avatar"});
+        if ( name.length <= 0 || name.length > 10 ) {
+            this.setState({ error: "Length of Pet Name is not correct" });
+        } else if ( gender !== 0 && gender !== 1 ) {
+            this.setState({ error: "Please choose your pet's gender" });
+        } else if ( type !== 0 && type !== 1 && type !== 2 && type !== 3 && type !== 4 ) {
+            this.setState({ error: "Please choose your pet's type" });
+        } else if ( nature !== 0 && nature !== 1 && nature !== 2 && nature !== 3 ) {
+            this.setState({ error: "Please choose your pet's nature" });
+        } else if (!image ) {
+            this.setState({ error: "Please upload your pet's avatar" });
         } else {
-            let file = {uri: image.uri, type: 'multipart/form-data', name:'0.png'};
+            this.setState({ refresh: true });
+            let file = { uri: image.uri, type: 'multipart/form-data', name:'0.png' };
             let data = new FormData();
-            data.append("name", name);
-            data.append("gender", gender);
-            data.append("type", type);
-            data.append("nature", nature);
-            data.append("file", file, ".png");
-            data.append("token", this.props.userToken);
-            data.append("user", this.props.userId);
-            fetch(getApiUrl() + "/upload/add", {
+            data.append( "name", name );
+            data.append( "gender", gender );
+            data.append( "type", type );
+            data.append( "nature", nature );
+            data.append( "file", file, ".png" );
+            data.append( "token", this.props.userToken );
+            data.append( "user", this.props.userId );
+            fetch( apiUrl + "/upload/add", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -93,101 +92,120 @@ class AddPet extends Component {
                 },
                 body: data
             })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
+            .then( response => {
+                console.log(response);
+                if ( response.ok ) {
+                    return true;
                 } else {
-                    processError(response);
+                    processError( response );
                 }
             })
-            .then((result) => {
-                this.props.refreshUser();
+            .then( () => {
+                this.setState({ refresh: false });
+                this.props.backHome( this.props.userId );
             });
         }
     }
     render() {
         let picture;
-        if (this.state.avatar){
-            picture = <Image source={this.state.avatar} style={styles.rootAvatar} />
+        if ( this.state.avatar ) {
+            picture = <Image source={ this.state.avatar } style={ styles.rootAvatar } />
         }
         return (
-            <ScrollView contentContainerStyle={styles.root}>
-                <View style={styles.rootRow}>
-                    <Text style={styles.rowTitle}>
+            <ScrollView 
+                contentContainerStyle={ styles.root }
+                refreshControl={ 
+                    <RefreshControl
+                        refreshing={ this.state.refresh } onRefresh={ () => {} }
+                    />
+                }
+            >
+                <View style={ styles.rootRow }>
+                    <Text style={ styles.rowTitle }>
                         Name:
                     </Text>
                     <TextInput
-                        style={styles.rowInput}
-                        placeholder="Your pets name"
-                        onChangeText={(text) =>
-                            this.setState({name: text.substr(0, 10)})
+                        style={ styles.rowInput }
+                        placeholder="Your pet's name"
+                        onChangeText={ text =>
+                            this.setState({ name: text.substr( 0, 10 ) })
                         }
-                        value={this.state.name}
+                        value={ this.state.name }
                     />
-                    <Text style={styles.rowHint}>
-                        {this.state.name.length} / 10
+                    <Text style={ styles.rowHint }>
+                        { this.state.name.length } / 10
                     </Text>
                 </View>
-                <View style={styles.rootRow}>
-                    <Text style={styles.rowTitle}>
+                <View style={ styles.rootRow }>
+                    <Text style={ styles.rowTitle }>
                         Gender:
                     </Text>
-                    <TouchableOpacity onPress={this.clickMale.bind(this)}>
-                        <Text style={(this.state.gender === 0)?styles.rowChoose:styles.rowGender}>
+                    <TouchableOpacity onPress={ this.clickMale.bind( this ) }>
+                        <Text 
+                            style={
+                                this.state.gender === 0
+                                    ? styles.rowChoose : styles.rowGender
+                            }
+                        >
                             ♂
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={this.clickFemale.bind(this)}>
-                        <Text style={(this.state.gender === 1)?styles.rowChoose:styles.rowGender}>
+                    <TouchableOpacity onPress={ this.clickFemale.bind( this ) }>
+                        <Text 
+                            style={
+                                this.state.gender === 1 
+                                    ?styles.rowChoose:styles.rowGender
+                            }
+                        >
                             ♀
                         </Text>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.rootRow}>
-                    <Text style={styles.rowTitle}>
+                <View style={ styles.rootRow }>
+                    <Text style={ styles.rowTitle }>
                         Type:
                     </Text>
                     <Picker
-                        style={styles.rowPicker}
-                        selectedValue={this.state.type}
-                        onValueChange={(type) => this.setState({type: type})}>
+                        style={ styles.rowPicker }
+                        selectedValue={ this.state.type }
+                        onValueChange={ type => this.setState({ type: type }) }>
                         <Picker.Item label="Choose a type" value="choose" />
-                        <Picker.Item label="dog" value={0} />
-                        <Picker.Item label="cat" value={1} />
-                        <Picker.Item label="bird" value={2} />
-                        <Picker.Item label="fish" value={3} />
-                        <Picker.Item label="other" value={4} />
+                        <Picker.Item label="dog" value={ 0 } />
+                        <Picker.Item label="cat" value={ 1 } />
+                        <Picker.Item label="bird" value={ 2 } />
+                        <Picker.Item label="fish" value={ 3 } />
+                        <Picker.Item label="other" value={ 4 } />
                     </Picker>
                 </View>
-                <View style={styles.rootRow}>
-                    <Text style={styles.rowTitle}>
+                <View style={ styles.rootRow }>
+                    <Text style={ styles.rowTitle }>
                         Nature:
                     </Text>
                     <Picker
-                        style={styles.rowPicker}
-                        selectedValue={this.state.nature}
-                        onValueChange={(nature) => this.setState({nature: nature})}>
+                        style={ styles.rowPicker }
+                        selectedValue={ this.state.nature }
+                        onValueChange={ nature => this.setState({ nature: nature }) }>
                         <Picker.Item label="Choose a nature" value="choose" />
-                        <Picker.Item label="cute" value={0} />
-                        <Picker.Item label="strong" value={1} />
-                        <Picker.Item label="smart" value={2} />
-                        <Picker.Item label="beauty" value={3} />
+                        <Picker.Item label="cute" value={ 0 } />
+                        <Picker.Item label="strong" value={ 1 } />
+                        <Picker.Item label="smart" value={ 2 } />
+                        <Picker.Item label="beauty" value={ 3 } />
                     </Picker>
                 </View>
-                <Text style={styles.rootNotice}>
-                    {"You can't modify gender, type, and nature after creation"}
+                <Text style={ styles.rootNotice }>
+                    You can't modify gender, type, and nature after creation
                 </Text>
                 <Button
-                    onPress={this.pickImg.bind(this)}
+                    onPress={ this.pickImg.bind( this ) }
                     title="Upload Avatar"
                     color="#052456"
                 />
-                {picture}
-                <Text style={styles.rowError}>
-                    {this.state.error}
+                { picture }
+                <Text style={ styles.rowError }>
+                    { this.state.error }
                 </Text>
-                <TouchableOpacity onPress={this.confirmAdd.bind(this)}>
-                    <Text style={styles.rowCreate}>
+                <TouchableOpacity onPress={ this.confirmAdd.bind( this ) }>
+                    <Text style={ styles.rowCreate }>
                         Add Pet
                     </Text>
                 </TouchableOpacity>
@@ -272,7 +290,5 @@ const styles = StyleSheet.create({
         marginBottom: 50
     }
 });
-
-
 
 export default AddPet;

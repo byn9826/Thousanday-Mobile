@@ -1,21 +1,16 @@
 import React, { Component } from "react";
 import {
-    StyleSheet,
-    Text,
-    View,
-    FlatList,
-    Image,
-    TouchableOpacity
+    StyleSheet, Text, View, FlatList, Image, TouchableOpacity
 } from "react-native";
+import { CachedImage } from "react-native-img-cache";
+import { apiUrl } from "../../js/Params.js";
 import processError from "../../js/processError.js";
-import {CachedImage} from "react-native-img-cache";
-//import getApiUrl from "../../js/getApiUrl.js";
 class WatchList extends Component {
-    constructor(props) {
-        super(props);
+    constructor( props ) {
+        super( props );
         this.state = {
             //store watch list
-            lists: this.props.data || [],
+            lists: [],
             //store unwatch lists
             unwatch: [],
             //store load how many times
@@ -24,9 +19,25 @@ class WatchList extends Component {
             //locker: (this.props.data.length === 20)?false:true
         };
     }
-    watchPet(id, action) {
-        if (action === 1) {
-            fetch(getApiUrl() + "/watch/remove", {
+    componentDidMount() {
+        fetch( apiUrl + "/watch/read?id=" + this.props.userId, {
+            method: "GET",
+        })
+        .then( response => {
+            if ( response.ok ) {
+                return response.json();
+            } else {
+                processError( response );
+            }
+        })
+        .then( list => {
+            this.setState({ lists: list[2] });
+        });
+    }
+
+    watchPet( id, action ) {
+        if ( action === 1 ) {
+            fetch( apiUrl + "/watch/remove", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -38,20 +49,19 @@ class WatchList extends Component {
                     "pet": id,
                 })
             })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
+            .then( response => {
+                if ( response.ok ) {
+                    return true;
                 } else {
-                    processError(response);
+                    processError( response );
                 }
             })
-            .then((result) => {
-                this.state.unwatch.push(id);
-                this.setState({unwatch: this.state.unwatch});
-                this.props.refreshPet();
+            .then( result => {
+                this.state.unwatch.push( id );
+                this.setState({ unwatch: this.state.unwatch });
             });
         } else {
-            fetch(getApiUrl() + "/watch/add", {
+            fetch( apiUrl + "/watch/add", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -63,17 +73,16 @@ class WatchList extends Component {
                     "pet": id,
                 })
             })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
+            .then( response => {
+                if ( response.ok ) {
+                    return true;
                 } else {
-                    processError(response);
+                    processError( response );
                 }
             })
-            .then((result) => {
-                this.state.unwatch.splice(this.state.unwatch.indexOf(id), 1);
-                this.setState({unwatch: this.state.unwatch});
-                this.props.refreshPet();
+            .then( result => {
+                this.state.unwatch.splice( this.state.unwatch.indexOf( id ), 1);
+                this.setState({ unwatch: this.state.unwatch });
             });
         }
     }
@@ -101,64 +110,73 @@ class WatchList extends Component {
     }
     */
     render() {
-        let lists = [], i;
-        for (i = 0; i < this.state.lists.length; i++) {
+        let lists = [];
+        this.state.lists.forEach( ( l, i ) => {
             lists.push(
                 {
                     key: i,
-                    id: this.state.lists[i].pet_id,
-                    name: this.state.lists[i].pet_name
+                    id: l.pet_id,
+                    name: l.pet_name
                 }
             )
-        }
+        })
         return (
             <FlatList
-                contentContainerStyle={styles.root}
-                data = {lists}
-                ListHeaderComponent={()=>
-                    <View style={styles.rootHeader}>
+                contentContainerStyle={ styles.root }
+                data = { lists }
+                ListHeaderComponent={ () =>
+                    <View style={ styles.rootHeader} >
                         <Image
-                            source={require("../../image/follow.png")}
-                            style={styles.headerIcon}
+                            source={ require( "../../image/follow.png" ) }
+                            style={ styles.headerIcon }
                         />
-                        <Text style={styles.headerList}>
+                        <Text style={ styles.headerList }>
                             Pets on your watch list
                         </Text>
                     </View>
                 }
-                renderItem={({item}) =>
-                    (this.state.unwatch.indexOf(item.id) === -1)? (
-                        <View key={"privatewatch" + item.key} style={styles.rootRow}>
-                            <TouchableOpacity onPress={this.props.clickPet.bind(null, item.id)}>
+                renderItem={ ( { item } ) =>
+                    this.state.unwatch.indexOf(item.id) === -1 ? (
+                        <View key={ "privatewatch" + item.key } style={ styles.rootRow }>
+                            <TouchableOpacity 
+                                onPress={ this.props.clickPet.bind( null, item.id ) }>
                                 <CachedImage
-                                    source={{uri: getApiUrl() + "/img/pet/" + item.id + "/0.png"}}
-                                    style={styles.rowAvatar}
+                                    source={{
+                                        uri: apiUrl + "/img/pet/" + item.id + "/0.png"
+                                    }}
+                                    style={ styles.rowAvatar }
                                     mutable
                                 />
                             </TouchableOpacity>
-                            <Text style={styles.rowName}>
-                                {item.name}
+                            <Text style={ styles.rowName }>
+                                { item.name }
                             </Text>
-                            <TouchableOpacity onPress={this.watchPet.bind(this, item.id, 1)}>
-                                <Text style={styles.rowWatch}>
+                            <TouchableOpacity 
+                                onPress={ this.watchPet.bind( this, item.id, 1 ) }>
+                                <Text style={ styles.rowWatch }>
                                     unwatch
                                 </Text>
                             </TouchableOpacity>
                         </View>
-                    ):(
-                        <View key={"privatewatch" + item.key} style={styles.rootRow}>
-                            <TouchableOpacity onPress={this.props.clickPet.bind(null, item.id)}>
+                    ) : (
+                        <View key={ "privatewatch" + item.key } style={ styles.rootRow }>
+                            <TouchableOpacity 
+                                onPress={ this.props.clickPet.bind( null, item.id ) }>
                                 <CachedImage
-                                    source={{uri: getApiUrl() + "/img/pet/" + item.id + "/0.png"}}
-                                    style={styles.rowAvatar}
+                                    source={{
+                                        uri: apiUrl + "/img/pet/" + item.id + "/0.png"
+                                    }}
+                                    style={ styles.rowAvatar }
                                     mutable
                                 />
                             </TouchableOpacity>
-                            <Text style={styles.rowName}>
-                                {item.name}
+                            <Text style={ styles.rowName }>
+                                { item.name }
                             </Text>
-                            <TouchableOpacity onPress={this.watchPet.bind(this, item.id, 0)}>
-                                <Text style={styles.rowBack}>
+                            <TouchableOpacity 
+                                onPress={ this.watchPet.bind( this, item.id, 0 ) }
+                            >
+                                <Text style={ styles.rowBack }>
                                     watch
                                 </Text>
                             </TouchableOpacity>
