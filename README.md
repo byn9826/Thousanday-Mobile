@@ -1,5 +1,5 @@
 # Thousanday-Mobile
-Photo sharing social mobile app for your pets and you. <br/>
+Mobile homepage for your pets by React Native  
 
 <b>Please test with real pets images, otherwise I have to delete unrelated photos, thanks!</b>  
 
@@ -10,24 +10,24 @@ Photo sharing social mobile app for your pets and you. <br/>
 Stack
 --
 React Native  
-[Web App by React & Phalcon](https://github.com/byn9826/Thousanday-web)  
+API from [Web App by React & Phalcon](https://github.com/byn9826/Thousanday-web)  
 
 Features
 --
-1. Create Account, show all your pets  
-2. Add pets, every pet has their own page showing all their photos  
-3. Watch pet, follow any pet you love  
-4. Post moments, record your lovely moments with your pets  
-5. Leave comments, comment on any photo makes you laugh  
-6. Love moments, save moments in your personal list  
+1. Create Account, manage pages for all your pets   
+2. Add pet, every single pet will has his / her own homepage  
+3. Watch ,follow, love and pets' images shared by their owners  
+4. Post moments, record your moments with your pets  
+5. Leave comments, comment on any photo makes you laugh   
 
 Test on your localhost
 --
 1. git clone https://github.com/byn9826/Thousanday-Mobile.git  
 2. cd Thousanday-Mobile/Thousanday  
-3. npm intall
-4. react-native run-android  
-Please make sure react-native-fbsdk version to be v0.5.1  
+3. npm intall  
+4. check /Thousanday/js/Params.js, make sure apiUrl is "https://thousanday.com"  
+5. react-native run-android   
+react-native-fbsdk version must be v0.5.1  
 
 Other
 --

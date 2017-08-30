@@ -7,7 +7,7 @@ export default function processError( err ) {
             alert( "Something Wrong, please try later!" );
             break;
         case 403:
-            alert( "Status expired, please login again!" );
+            alert( "Status expired, please logout and login again!" );
             break;
     }
 }
