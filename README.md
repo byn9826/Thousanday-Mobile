@@ -1,4 +1,4 @@
-# Thousanday-Mobile
+# Smilings-Mobile
 Mobile homepage for your pets by React Native  
 
 <b>Please test with real pets images, otherwise I have to delete unrelated photos, thanks!</b>  
@@ -10,7 +10,7 @@ Mobile homepage for your pets by React Native
 Stack
 --
 React Native  
-API from [Web App by React & Phalcon](https://github.com/byn9826/Thousanday-web)  
+API from [Smilings Web](https://github.com/byn9826/Thousanday-web)  
 
 Features
 --
@@ -25,7 +25,7 @@ Test on your localhost
 1. git clone https://github.com/byn9826/Thousanday-Mobile.git  
 2. cd Thousanday-Mobile/Thousanday  
 3. npm intall  
-4. check /Thousanday/js/Params.js, make sure apiUrl is "https://thousanday.com"  
+4. check /Thousanday/js/Params.js, make sure apiUrl is "https://smilings.me"  
 5. react-native run-android   
 react-native-fbsdk version must be v0.5.1  
 

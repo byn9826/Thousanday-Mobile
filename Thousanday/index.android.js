@@ -38,6 +38,8 @@ export default class Thousanday extends Component {
             signupData: null,
             //store signup platform
             signupPlatform: null,
+            //record users view history
+            history: []
         };
     }
     componentDidMount() {
@@ -66,6 +68,11 @@ export default class Thousanday extends Component {
         await AsyncStorage.removeItem( "USER_KEY" );
         await AsyncStorage.removeItem( "Platform_KEY" );
         await AsyncStorage.removeItem( "Token_KEY" );
+    }
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.route !== this.state.route) {
+            this.state.history[this.state.history.length] = [this.state.route, this.state.id];
+        }
     }
     //change to desired view if user click on footer
     changeView( view ) {
@@ -142,6 +149,14 @@ export default class Thousanday extends Component {
         } else {
             this._setUserData( result, "facebook" );
             this.setState({ userId: result[0], userToken: result[1], userPlatform: "facebook", route: "home" });
+        }
+    }
+    //go back button
+    backView() {
+        if (this.state.history.length > 1) {
+            let last = this.state.history[this.state.history.length - 2];
+            this.state.history.pop();
+            this.setState({ route: last[0], id: last[1] });
         }
     }
     //set up login info
@@ -289,7 +304,10 @@ export default class Thousanday extends Component {
         }
         return (
             <View style={ styles.container }>
-                <Header title={ this.state.route } />
+                <Header 
+                    title={ this.state.route } 
+                    backView={ this.backView.bind(this) }
+                />
                 <View style={ styles.main }>
                     { route }
                 </View>

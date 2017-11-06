@@ -1,4 +1,4 @@
-export const apiUrl = "https://thousanday-web-baozier.c9users.io";
+export const apiUrl = "https://smilings.me";
 
 export function getGender( value ) {
     value = parseInt( value );

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 class Header extends Component {
     render() {
         let title;
@@ -49,6 +49,9 @@ class Header extends Component {
         }
         return (
             <View style={ styles.header }>
+                <TouchableOpacity style={styles.headerBack} onPress={this.props.backView.bind(this)}>
+                    <Image source={require("../../image/back.png")} />
+                </TouchableOpacity>
                 <Text style={ styles.headerBrand }>
                     { title }
                 </Text>
@@ -62,7 +65,11 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         flexDirection: "row",
-        backgroundColor: "#ef8513"
+        backgroundColor: "#ef8513",
+        paddingHorizontal: 5
+    },
+    headerBack: {
+        padding: 6
     },
     headerBrand: {
         color: "white",
