@@ -31,26 +31,32 @@ class User extends Component {
         };
     }
     componentWillMount() {
-        fetch( apiUrl + "/user/read?id=" + this.props.id, {
-            method: "GET",
-        })
-        .then( response => {
-            if ( response.ok ) {
-                return response.json();
-            } else {
-                processError( response );
-            }
-        })
-        .then( user => {
-            this.setState({ 
-                images: processGallery( user[ 2 ] ),
-                locker: user[ 2 ].length === 20 ? false : true,
-                belong: user[ 3 ],
-                pets: user[ 1 ],
-                user: user[ 0 ],
-                refresh: false
+        if (this.props.cache.user !== null && this.props.cache.user.id === this.props.id) {
+            this.setState(this.props.cache.user.data);
+        } else {
+            fetch( apiUrl + "/user/read?id=" + this.props.id, {
+                method: "GET",
+            })
+            .then( response => {
+                if ( response.ok ) {
+                    return response.json();
+                } else {
+                    processError( response );
+                }
+            })
+            .then( user => {
+                let data = { 
+                    images: processGallery( user[ 2 ] ),
+                    locker: user[ 2 ].length === 20 ? false : true,
+                    belong: user[ 3 ],
+                    pets: user[ 1 ],
+                    user: user[ 0 ],
+                    refresh: false
+                };
+                this.props.cacheData( 'user', this.props.id, data );
+                this.setState(data);
             });
-        });
+        }
     }
     componentDidMount() {
         this._gSetup();

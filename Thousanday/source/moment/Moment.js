@@ -29,30 +29,40 @@ class Moment extends Component {
         };
     }
     componentWillMount() {
-        fetch( apiUrl + "/moment/read?id=" + this.props.id, {
-            method: "GET",
-        })
-        .then( response => {
-            if ( response.ok ) {
-                return response.json();
-            } else {
-                processError( response );
-            }
-        })
-        .then( moment => {
-            let like = [];
-            moment[ 2 ].forEach( d => {
-                like.push( parseInt( d.user_id ) );
-            });
-            if ( moment[ 3 ].length === 5 ) {
-                this.setState({ data: moment[ 0 ], like: like, list: moment[ 3 ] });
-            } else {
-                this.setState({ 
-                    data: moment[ 0 ], like: like, list: moment[ 3 ], load: false 
+        if (this.props.cache.moment !== null && this.props.cache.moment.id === this.props.id) {
+            this.setState(this.props.cache.moment.data);
+        } else {
+            fetch( apiUrl + "/moment/read?id=" + this.props.id, {
+                method: "GET",
+            })
+            .then( response => {
+                if ( response.ok ) {
+                    return response.json();
+                } else {
+                    processError( response );
+                }
+            })
+            .then( moment => {
+                let like = [];
+                moment[ 2 ].forEach( d => {
+                    like.push( parseInt( d.user_id ) );
                 });
-            }
-            this.setState({ refresh: false });
-        });
+                let data;
+                if ( moment[ 3 ].length === 5 ) {
+                    data = { 
+                        data: moment[ 0 ], like: like, list: moment[ 3 ], refresh: false 
+                    }
+                    this.setState(data);
+                } else {
+                    data = { 
+                        data: moment[ 0 ], like: like, list: moment[ 3 ], 
+                        load: false, refresh: false 
+                    }
+                    this.setState(data);
+                }
+                this.props.cacheData( 'moment', this.props.id, data );
+            });
+        }
     }
     clickLike() {
         if ( !this.props.userId ) {
@@ -92,6 +102,7 @@ class Moment extends Component {
                 this.setState({ like: this.state.like });
             }
         });
+        this.props.cacheData( 'moment', null );
     }
     //send new comment
     sendMessage() {
@@ -129,6 +140,7 @@ class Moment extends Component {
                 list: this.state.list, comment: "", send: this.state.send + 1
             });
         });
+        this.props.cacheData( 'moment', null );
     }
     //load more comment
     loadMore() {

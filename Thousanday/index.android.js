@@ -39,7 +39,13 @@ export default class Thousanday extends Component {
             //store signup platform
             signupPlatform: null,
             //record users view history
-            history: []
+            history: [],
+            //cache result
+            cache: {
+                moment: null,
+                pet: null,
+                user: null
+            }
         };
     }
     componentDidMount() {
@@ -86,6 +92,16 @@ export default class Thousanday extends Component {
             } else {
                 this.setState({ route: view });
             }
+        }
+    }
+    //store data for future use
+    cacheData( route, id, data ) {
+        if (id === null) {
+            this.state.cache[route] = null;
+        } else {
+            this.state.cache[route] = {};
+            this.state.cache[route].id = id;
+            this.state.cache[route].data = data;
         }
     }
     //enter into one moment's view
@@ -181,6 +197,8 @@ export default class Thousanday extends Component {
                     clickPet={ this.clickPet.bind( this ) }
                     userId={ this.state.userId }
                     userToken={ this.state.userToken }
+                    cache={ this.state.cache }
+                    cacheData={ this.cacheData.bind(this) }
                 />
                 break;
             //pet view, show one pet's info
@@ -193,6 +211,8 @@ export default class Thousanday extends Component {
                     clickUser={ this.clickUser.bind( this ) }
                     userId={ this.state.userId }
                     userToken={ this.state.userToken }
+                    cache={ this.state.cache }
+                    cacheData={ this.cacheData.bind(this) }
                 />;
                 break;
             //user view, show other user's info
@@ -204,6 +224,8 @@ export default class Thousanday extends Component {
                     clickMoment={ this.clickMoment.bind( this ) }
                     clickPet={ this.clickPet.bind( this ) }
                     clickUser={ this.clickUser.bind( this ) }
+                    cache={ this.state.cache }
+                    cacheData={ this.cacheData.bind(this) }
                 />;
                 break;
             //home view, show login user's info
@@ -226,6 +248,8 @@ export default class Thousanday extends Component {
                         clickRequestMessage={ this.clickRequestMessage.bind( this ) }
                         clickPostMoment={ this.clickPostMoment.bind( this ) }
                         userLogout={ this.userLogout.bind( this ) }
+                        cache={ this.state.cache }
+                        cacheData={ this.cacheData.bind(this) }
                     />;
                 } else {
                     //require user login

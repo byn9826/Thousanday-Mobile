@@ -28,28 +28,34 @@ class Pet extends Component {
         };
     }
     componentWillMount() {
-        fetch( apiUrl + "/pet/read?id=" + this.props.id, { method: "GET" } )
-        .then( response => {
-            if ( response.ok ) {
-                return response.json();
-            } else {
-                processError( response );
-            }
-        })
-        .then( pet => {
-            let watch = [];
-            pet[ 4 ].forEach( p => {
-                watch.push( parseInt( p.user_id ) );
+        if (this.props.cache.pet !== null && this.props.cache.pet.id === this.props.id) {
+            this.setState(this.props.cache.pet.data);
+        } else {
+            fetch( apiUrl + "/pet/read?id=" + this.props.id, { method: "GET" } )
+            .then( response => {
+                if ( response.ok ) {
+                    return response.json();
+                } else {
+                    processError( response );
+                }
+            })
+            .then( pet => {
+                let watch = [];
+                pet[ 4 ].forEach( p => {
+                    watch.push( parseInt( p.user_id ) );
+                });
+                let data = {
+                    locker: pet[ 3 ].length < 20 ? true : false,
+                    images: processGallery( pet[ 3 ] ),
+                    watch: watch,
+                    pet: pet[ 0 ],
+                    friends: pet[ 2 ],
+                    refresh: false
+                }
+                this.setState(data);
+                this.props.cacheData( 'pet', this.props.id, data );
             });
-            this.setState({
-                locker: pet[ 3 ].length < 20 ? true : false,
-                images: processGallery( pet[ 3 ] ),
-                watch: watch,
-                pet: pet[ 0 ],
-                friends: pet[ 2 ],
-                refresh: false
-            });
-        });
+        }
     }
     //load more moment for current pet
     loadMore() {
@@ -117,14 +123,15 @@ class Pet extends Component {
         .then( () => {
             if ( action === 1 ) {
                 this.state.watch.push( this.props.userId );
-                this.setState({ watch: this.state.watch });
+                //this.setState({ watch: this.state.watch });
             } else {
                 this.state.watch.splice( 
                     this.state.watch.indexOf( this.props.userId ), 1
                 );
-                this.setState({ watch: this.state.watch });
+                //this.setState({ watch: this.state.watch });
             }
         });
+        this.props.cacheData( 'pet', null );
     }
     render() {
         //show second relative if exist
