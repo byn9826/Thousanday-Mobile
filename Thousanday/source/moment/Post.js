@@ -109,6 +109,8 @@ class PostMoment extends Component {
                 }
             })
             .then( result => {
+                this.props.cacheData( 'user', null );
+                this.props.cacheData( 'pet', null );
                 this.props.goMoment( parseInt( result[ 0 ] ) );
             })
         }

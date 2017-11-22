@@ -265,6 +265,7 @@ export default class Thousanday extends Component {
                     userId={ this.state.userId }
                     userToken={ this.state.userToken }
                     backHome={ this.clickUser.bind( this ) }
+                    cacheData={ this.cacheData.bind(this) }
                 />
                 break;
             //edit pet view
@@ -275,6 +276,7 @@ export default class Thousanday extends Component {
                     userId={ this.state.userId }
                     userToken={ this.state.userToken }
                     backHome={ this.clickUser.bind( this ) }
+                    cacheData={ this.cacheData.bind(this) }
                 />
                 break;
             //edit profile view
@@ -284,6 +286,7 @@ export default class Thousanday extends Component {
                     userId={ this.state.userId }
                     userToken={ this.state.userToken }
                     backHome={ this.clickUser.bind( this ) }
+                    cacheData={ this.cacheData.bind(this) }
                 />
                 break;
             //watch list view
@@ -316,6 +319,7 @@ export default class Thousanday extends Component {
                     userId={ this.state.userId }
                     userToken={ this.state.userToken }
                     goMoment={ this.clickMoment.bind( this ) }
+                    cacheData={ this.cacheData.bind(this) }
                 />
                 break;
             case "signup":

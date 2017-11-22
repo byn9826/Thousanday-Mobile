@@ -73,6 +73,8 @@ class EditPet extends Component {
             }
         })
         .then( result => {
+            this.props.cacheData( 'pet', null );
+            this.props.cacheData( 'user', null );
             this.setState({ saveName: "Saved!" });
         });
     }
@@ -148,6 +150,7 @@ class EditPet extends Component {
             }
         })
         .then( result => {
+            this.props.cacheData( 'user', null );
             this.props.backHome( this.props.userId );
         });
     }
@@ -237,6 +240,8 @@ class EditPet extends Component {
             }
         })
         .then( result => {
+            this.props.cacheData( 'user', null );
+            this.props.cacheData( 'pet', null );
             this.setState({ relative: null, remove: false, input: "" });
         });
     }

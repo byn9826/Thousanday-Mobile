@@ -83,6 +83,7 @@ class EditProfile extends Component {
                 }
             })
             .then( result => {
+                this.props.cacheData( 'user', null );
                 this.props.backHome( this.props.userId );
             });
         }

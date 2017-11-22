@@ -123,12 +123,12 @@ class Pet extends Component {
         .then( () => {
             if ( action === 1 ) {
                 this.state.watch.push( this.props.userId );
-                //this.setState({ watch: this.state.watch });
+                this.setState({ watch: this.state.watch });
             } else {
                 this.state.watch.splice( 
                     this.state.watch.indexOf( this.props.userId ), 1
                 );
-                //this.setState({ watch: this.state.watch });
+                this.setState({ watch: this.state.watch });
             }
         });
         this.props.cacheData( 'pet', null );

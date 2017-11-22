@@ -101,6 +101,7 @@ class AddPet extends Component {
                 }
             })
             .then( () => {
+                this.props.cacheData( 'user', null );
                 this.setState({ refresh: false });
                 this.props.backHome( this.props.userId );
             });
