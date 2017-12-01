@@ -54,6 +54,7 @@ class Pet extends Component {
                 }
                 this.setState(data);
                 this.props.cacheData( 'pet', this.props.id, data );
+                console.log(data.pet);
             });
         }
     }
@@ -178,83 +179,101 @@ class Pet extends Component {
         }
         return (
             <FlatList
-                contentContainerStyle={ styles.container }
                 ListHeaderComponent={ () => {
                     return (
-                        <View style={ styles.containerHeader }>
-                            <CachedImage
-                                source={{
-                                    uri: apiUrl + "/img/pet/" + this.state.pet.pet_id + "/0.png"
-                                }}
-                                mutable style={ styles.headerAvatar }
-                            />
-                            <Text style={ styles.headerName }>
-                                { this.state.pet.pet_name}
-                            </Text>
-                            <View style={ styles.headerRow }>
-                                <Text style={ styles.rowGender }>
-                                    { getGender( this.state.pet.pet_gender ) }
+                        <View>
+                            <View style={ styles.headerSkill }>
+                                <Text style={ styles.skillPoint }>
+                                    Attack: { this.state.pet.attack }
                                 </Text>
-                                <Text style={ styles.rowType }>
-                                    { getType( this.state.pet.pet_type ) }
+                                <Text style={ styles.skillPoint }>
+                                    Defend: { this.state.pet.defend }
                                 </Text>
-                                <Text style={ styles.rowType }>
-                                    { getNature( this.state.pet.pet_nature ) }
+                                <Text style={ styles.skillPoint }>
+                                    Health: { this.state.pet.health }
+                                </Text>
+                                <Text style={ styles.skillPoint }>
+                                    Swift: { this.state.pet.swift }
+                                </Text>
+                                <Text style={ styles.skillPoint }>
+                                    Lucky: { this.state.pet.lucky }
                                 </Text>
                             </View>
-                            <View style={ styles.headerTeam }>
-                                <View style={ styles.teamParent }>
-                                    <Text style={ styles.parentTitle }>
-                                        { 
-                                            this.state.pet.pet_gender === 0 
-                                                ? "His ": "Her "
-                                        }
-                                        Family
-                                    </Text>
-                                    <View style={ styles.parentBox }>
-                                        <TouchableOpacity 
-                                            onPress={
-                                                this.props.clickUser.bind(
-                                                    null, 
-                                                    parseInt( this.state.pet.owner_id)
-                                                )
-                                            }>
-                                            <CachedImage
-                                                style={ styles.boxRound }
-                                                source={{
-                                                    uri: apiUrl + "/img/user/" + this.state.pet.owner_id + ".jpg"
-                                                }}
-                                                mutable
-                                            />
-                                        </TouchableOpacity>
-                                        { relative }
-                                    </View>
-                                </View>
-                                <View style={ styles.teamFriend }>
-                                    <Text style={ styles.parentTitle }>
-                                        Best Friends
-                                    </Text>
-                                    <View style={ styles.parentBox }>
-                                        { friends }
-                                    </View>
-                                </View>
-                            </View>
-                            <TouchableOpacity onPress={ this.petWatch.bind( this ) }>
-                                <Text style={ styles.headerWatch }>
-                                    { 
-                                        this.state.watch.indexOf( this.props.userId ) === -1
-                                            ? "+ Watch" : "Watched"
-                                    } | by { this.state.watch.length }
-                                </Text>
-                            </TouchableOpacity>
-                            <View style={ styles.headerHolder }>
-                                <Image 
-                                    style={ styles.holderIcon } 
-                                    source={ require( "../../image/moment.png" ) } 
+                            <View style={ styles.containerHeader }>
+                                <CachedImage
+                                    source={{
+                                        uri: apiUrl + "/img/pet/" + this.state.pet.pet_id + "/0.png"
+                                    }}
+                                    mutable style={ styles.headerAvatar }
                                 />
-                                <Text style={ styles.holderTitle }>
-                                    { this.state.pet.pet_name + "'s"} Moments
+                                <Text style={ styles.headerName }>
+                                    { this.state.pet.pet_name}
                                 </Text>
+                                <View style={ styles.headerRow }>
+                                    <Text style={ styles.rowGender }>
+                                        { getGender( this.state.pet.pet_gender ) }
+                                    </Text>
+                                    <Text style={ styles.rowType }>
+                                        { getType( this.state.pet.pet_type ) }
+                                    </Text>
+                                    <Text style={ styles.rowType }>
+                                        { getNature( this.state.pet.pet_nature ) }
+                                    </Text>
+                                </View>
+                                <View style={ styles.headerTeam }>
+                                    <View style={ styles.teamParent }>
+                                        <Text style={ styles.parentTitle }>
+                                            { 
+                                                this.state.pet.pet_gender === '0'
+                                                    ? "His ": "Her "
+                                            }
+                                            Family
+                                        </Text>
+                                        <View style={ styles.parentBox }>
+                                            <TouchableOpacity 
+                                                onPress={
+                                                    this.props.clickUser.bind(
+                                                        null, 
+                                                        parseInt( this.state.pet.owner_id)
+                                                    )
+                                                }>
+                                                <CachedImage
+                                                    style={ styles.boxRound }
+                                                    source={{
+                                                        uri: apiUrl + "/img/user/" + this.state.pet.owner_id + ".jpg"
+                                                    }}
+                                                    mutable
+                                                />
+                                            </TouchableOpacity>
+                                            { relative }
+                                        </View>
+                                    </View>
+                                    <View style={ styles.teamFriend }>
+                                        <Text style={ styles.parentTitle }>
+                                            Best Friends
+                                        </Text>
+                                        <View style={ styles.parentBox }>
+                                            { friends }
+                                        </View>
+                                    </View>
+                                </View>
+                                <TouchableOpacity onPress={ this.petWatch.bind( this ) }>
+                                    <Text style={ styles.headerWatch }>
+                                        { 
+                                            this.state.watch.indexOf( this.props.userId ) === -1
+                                                ? "+ Watch" : "Watched"
+                                        } | by { this.state.watch.length }
+                                    </Text>
+                                </TouchableOpacity>
+                                <View style={ styles.headerHolder }>
+                                    <Image 
+                                        style={ styles.holderIcon } 
+                                        source={ require( "../../image/moment.png" ) } 
+                                    />
+                                    <Text style={ styles.holderTitle }>
+                                        { this.state.pet.pet_name }'s Moments
+                                    </Text>
+                                </View>
                             </View>
                         </View>
                     )
@@ -262,6 +281,7 @@ class Pet extends Component {
                 data = { this.state.images }
                 numColumns={ 2 }
                 columnWrapperStyle={{
+                    paddingHorizontal: 10,
                     justifyContent: "space-between",
                 }}
                 onRefresh={ () => {} }
@@ -283,9 +303,19 @@ class Pet extends Component {
 
 
 const styles = StyleSheet.create({
-    container: {
-        marginHorizontal: 10,
-        marginTop: 20,
+    headerSkill: {
+        flexDirection: "row",
+        marginBottom: 30,
+        backgroundColor: "#E9967A",
+        paddingVertical: 5,
+        flex: 1
+    },
+    skillPoint: {
+        paddingVertical: 5,
+        fontSize: 12,
+        paddingHorizontal: 10,
+        fontWeight: "bold",
+        color: "white"
     },
     containerHeader: {
         alignItems: "center"
