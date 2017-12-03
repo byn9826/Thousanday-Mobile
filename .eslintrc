@@ -1,0 +1,19 @@
+{
+    "env": {
+        "browser": true,
+        "node": true
+    },
+    "extends": "eslint-config-airbnb",
+    "rules": {
+        "linebreak-style": 0,
+        "react/prop-types": 0,
+        "react/jsx-filename-extension": 0,
+        "no-use-before-define": 0,
+        "react/jsx-no-bind": 0,
+        "function-paren-newline": 0,
+        "global-require": 0,
+        "arrow-body-style": 0,
+        "no-alert": 0,
+        "no-console": 0
+    }
+}
