@@ -1,295 +1,291 @@
-import React, { Component } from "react";
-import { 
-    StyleSheet, Text, View, TextInput, TouchableOpacity, Picker, 
-    Button, Image, ScrollView, RefreshControl
-} from "react-native";
-import { apiUrl } from "../../js/Params.js";
-import processError from "../../js/processError.js";
-import ImagePicker from "react-native-image-crop-picker";
+import React, { Component } from 'react';
+import {
+  StyleSheet, Text, View, TextInput, TouchableOpacity, Picker,
+  Button, Image, ScrollView, RefreshControl
+} from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
+import { apiUrl } from '../../js/Params';
+import processError from '../../js/processError';
 
 class AddPet extends Component {
-    constructor( props ) {
-        super( props );
-        this.state = {
-            name: "",
-            gender: null,
-            type: "choose",
-            nature: "choose",
-            avatar: null,
-            error: null,
-            refresh: false
-        };
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '',
+      gender: null,
+      type: 'choose',
+      nature: 'choose',
+      avatar: null,
+      error: null,
+      refresh: false
+    };
+  }
+  // change pet name
+  changeName(e) {
+    this.setState({ name: e.target.value });
+  }
+  // click on male
+  clickMale() {
+    if (this.state.gender === 0) {
+      this.setState({ gender: null });
+    } else {
+      this.setState({ gender: 0 });
     }
-    //change pet name
-    changeName( e ) {
-        this.setState({ name: e.target.value });
+  }
+  // click on female
+  clickFemale() {
+    if (this.state.gender === 1) {
+      this.setState({ gender: null });
+    } else {
+      this.setState({ gender: 1 });
     }
-    //click on male
-    clickMale() {
-        if ( this.state.gender === 0 ) {
-            this.setState({ gender: null });
-        } else {
-            this.setState({ gender: 0 });
+  }
+  // pick photo
+  pickImg() {
+    ImagePicker.openPicker({
+      width: 500,
+      height: 500,
+      mediaType: 'photo',
+      cropping: true
+    }).then((image) => {
+      this.setState({
+        avatar: {
+          uri: image.path, width: image.width, height: image.height, mime: 'image/png'
         }
-    }
-    //click on female
-    clickFemale() {
-        if ( this.state.gender === 1 ) {
-            this.setState({ gender: null });
-        } else {
-            this.setState({ gender: 1 });
-        }
-    }
-    //pick photo
-    pickImg() {
-        ImagePicker.openPicker({
-            width: 500,
-            height: 500,
-            mediaType: "photo",
-            cropping: true
-        }).then( image => {
-            this.setState({
-                avatar: {
-                    uri: image.path, width: image.width, 
-                    height: image.height, mime: "image/png"
-                }
-            });
+      });
+    });
+  }
+  // confirm add pet
+  confirmAdd() {
+    const name = this.state.name.trim();
+    const gender = this.state.gender;
+    const type = this.state.type;
+    const nature = this.state.nature;
+    const image = this.state.avatar;
+    if (name.length <= 0 || name.length > 10) {
+      this.setState({ error: 'Length of Pet Name is not correct' });
+    } else if (gender !== 0 && gender !== 1) {
+      this.setState({ error: 'Please choose your pet′s gender' });
+    } else if (type !== 0 && type !== 1 && type !== 2 && type !== 3 && type !== 4) {
+      this.setState({ error: 'Please choose your pet′s type' });
+    } else if (nature !== 0 && nature !== 1 && nature !== 2 && nature !== 3) {
+      this.setState({ error: 'Please choose your pet′s nature' });
+    } else if (!image) {
+      this.setState({ error: 'Please upload your pet′s avatar' });
+    } else {
+      this.setState({ refresh: true });
+      const file = { uri: image.uri, type: 'multipart/form-data', name: '0.png' };
+      const data = new FormData();
+      data.append('name', name);
+      data.append('gender', gender);
+      data.append('type', type);
+      data.append('nature', nature);
+      data.append('file', file, '.png');
+      data.append('token', this.props.userToken);
+      data.append('user', this.props.userId);
+      fetch(`${apiUrl}/upload/add`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data'
+        },
+        body: data
+      })
+        .then((response) => {
+          if (response.ok) {
+            return true;
+          }
+          processError(response);
+          return false;
+        })
+        .then(() => {
+          this.props.cacheData('user', null);
+          this.setState({ refresh: false });
+          this.props.backHome(this.props.userId);
         });
     }
-    //confirm add pet
-    confirmAdd() {
-        let name = this.state.name.trim();
-        let gender = this.state.gender;
-        let type = this.state.type;
-        let nature = this.state.nature;
-        let image = this.state.avatar;
-        if ( name.length <= 0 || name.length > 10 ) {
-            this.setState({ error: "Length of Pet Name is not correct" });
-        } else if ( gender !== 0 && gender !== 1 ) {
-            this.setState({ error: "Please choose your pet's gender" });
-        } else if ( type !== 0 && type !== 1 && type !== 2 && type !== 3 && type !== 4 ) {
-            this.setState({ error: "Please choose your pet's type" });
-        } else if ( nature !== 0 && nature !== 1 && nature !== 2 && nature !== 3 ) {
-            this.setState({ error: "Please choose your pet's nature" });
-        } else if (!image ) {
-            this.setState({ error: "Please upload your pet's avatar" });
-        } else {
-            this.setState({ refresh: true });
-            let file = { uri: image.uri, type: 'multipart/form-data', name:'0.png' };
-            let data = new FormData();
-            data.append( "name", name );
-            data.append( "gender", gender );
-            data.append( "type", type );
-            data.append( "nature", nature );
-            data.append( "file", file, ".png" );
-            data.append( "token", this.props.userToken );
-            data.append( "user", this.props.userId );
-            fetch( apiUrl + "/upload/add", {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "multipart/form-data",
-                },
-                body: data
-            })
-            .then( response => {
-                console.log(response);
-                if ( response.ok ) {
-                    return true;
-                } else {
-                    processError( response );
-                }
-            })
-            .then( () => {
-                this.props.cacheData( 'user', null );
-                this.setState({ refresh: false });
-                this.props.backHome( this.props.userId );
-            });
-        }
+  }
+  render() {
+    let picture;
+    if (this.state.avatar) {
+      picture = <Image source={this.state.avatar} style={styles.rootAvatar} />;
     }
-    render() {
-        let picture;
-        if ( this.state.avatar ) {
-            picture = <Image source={ this.state.avatar } style={ styles.rootAvatar } />
+    return (
+      <ScrollView
+        contentContainerStyle={styles.root}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refresh}
+            onRefresh={() => {}}
+          />
         }
-        return (
-            <ScrollView 
-                contentContainerStyle={ styles.root }
-                refreshControl={ 
-                    <RefreshControl
-                        refreshing={ this.state.refresh } onRefresh={ () => {} }
-                    />
-                }
+      >
+        <View style={styles.rootRow}>
+          <Text style={styles.rowTitle}>
+            Name:
+          </Text>
+          <TextInput
+            style={styles.rowInput}
+            placeholder="Your pet′s name"
+            onChangeText={text => this.setState({ name: text.substr(0, 10) })
+            }
+            value={this.state.name}
+          />
+          <Text style={styles.rowHint}>
+            { this.state.name.length } / 10
+          </Text>
+        </View>
+        <View style={styles.rootRow}>
+          <Text style={styles.rowTitle}>
+            Gender:
+          </Text>
+          <TouchableOpacity onPress={this.clickMale.bind(this)}>
+            <Text
+              style={
+                this.state.gender === 0 ? styles.rowChoose : styles.rowGender
+              }
             >
-                <View style={ styles.rootRow }>
-                    <Text style={ styles.rowTitle }>
-                        Name:
-                    </Text>
-                    <TextInput
-                        style={ styles.rowInput }
-                        placeholder="Your pet's name"
-                        onChangeText={ text =>
-                            this.setState({ name: text.substr( 0, 10 ) })
-                        }
-                        value={ this.state.name }
-                    />
-                    <Text style={ styles.rowHint }>
-                        { this.state.name.length } / 10
-                    </Text>
-                </View>
-                <View style={ styles.rootRow }>
-                    <Text style={ styles.rowTitle }>
-                        Gender:
-                    </Text>
-                    <TouchableOpacity onPress={ this.clickMale.bind( this ) }>
-                        <Text 
-                            style={
-                                this.state.gender === 0
-                                    ? styles.rowChoose : styles.rowGender
-                            }
-                        >
-                            ♂
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={ this.clickFemale.bind( this ) }>
-                        <Text 
-                            style={
-                                this.state.gender === 1 
-                                    ?styles.rowChoose:styles.rowGender
-                            }
-                        >
-                            ♀
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={ styles.rootRow }>
-                    <Text style={ styles.rowTitle }>
-                        Type:
-                    </Text>
-                    <Picker
-                        style={ styles.rowPicker }
-                        selectedValue={ this.state.type }
-                        onValueChange={ type => this.setState({ type: type }) }>
-                        <Picker.Item label="Choose a type" value="choose" />
-                        <Picker.Item label="dog" value={ 0 } />
-                        <Picker.Item label="cat" value={ 1 } />
-                        <Picker.Item label="bird" value={ 2 } />
-                        <Picker.Item label="fish" value={ 3 } />
-                        <Picker.Item label="other" value={ 4 } />
-                    </Picker>
-                </View>
-                <View style={ styles.rootRow }>
-                    <Text style={ styles.rowTitle }>
-                        Nature:
-                    </Text>
-                    <Picker
-                        style={ styles.rowPicker }
-                        selectedValue={ this.state.nature }
-                        onValueChange={ nature => this.setState({ nature: nature }) }>
-                        <Picker.Item label="Choose a nature" value="choose" />
-                        <Picker.Item label="cute" value={ 0 } />
-                        <Picker.Item label="strong" value={ 1 } />
-                        <Picker.Item label="smart" value={ 2 } />
-                        <Picker.Item label="beauty" value={ 3 } />
-                    </Picker>
-                </View>
-                <Text style={ styles.rootNotice }>
-                    You can't modify gender, type, and nature after creation
-                </Text>
-                <Button
-                    onPress={ this.pickImg.bind( this ) }
-                    title="Upload Avatar"
-                    color="#052456"
-                />
-                { picture }
-                <Text style={ styles.rowError }>
-                    { this.state.error }
-                </Text>
-                <TouchableOpacity onPress={ this.confirmAdd.bind( this ) }>
-                    <Text style={ styles.rowCreate }>
-                        Add Pet
-                    </Text>
-                </TouchableOpacity>
-            </ScrollView>
-        )
-    }
+              ♂
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.clickFemale.bind(this)}>
+            <Text
+              style={this.state.gender === 1 ? styles.rowChoose : styles.rowGender}
+            >
+              ♀
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.rootRow}>
+          <Text style={styles.rowTitle}>
+            Type:
+          </Text>
+          <Picker
+            style={styles.rowPicker}
+            selectedValue={this.state.type}
+            onValueChange={type => this.setState({ type })}
+          >
+            <Picker.Item label="Choose a type" value="choose" />
+            <Picker.Item label="dog" value={0} />
+            <Picker.Item label="cat" value={1} />
+            <Picker.Item label="bird" value={2} />
+            <Picker.Item label="fish" value={3} />
+            <Picker.Item label="other" value={4} />
+          </Picker>
+        </View>
+        <View style={styles.rootRow}>
+          <Text style={styles.rowTitle}>
+            Nature:
+          </Text>
+          <Picker
+            style={styles.rowPicker}
+            selectedValue={this.state.nature}
+            onValueChange={nature => this.setState({ nature })}
+          >
+            <Picker.Item label="Choose a nature" value="choose" />
+            <Picker.Item label="cute" value={0} />
+            <Picker.Item label="strong" value={1} />
+            <Picker.Item label="smart" value={2} />
+            <Picker.Item label="beauty" value={3} />
+          </Picker>
+        </View>
+        <Text style={styles.rootNotice}>
+            You can′t modify gender, type, and nature after creation
+        </Text>
+        <Button
+          onPress={this.pickImg.bind(this)}
+          title="Upload Avatar"
+          color="#052456"
+        />
+        { picture }
+        <Text style={styles.rowError}>
+          { this.state.error }
+        </Text>
+        <TouchableOpacity onPress={this.confirmAdd.bind(this)}>
+          <Text style={styles.rowCreate}>
+            Add Pet
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-    root: {
-        marginTop: 20,
-        marginHorizontal: 20
-    },
-    rootRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#f7d7b4",
-        paddingHorizontal: 10,
-        paddingVertical: 10,
-        borderRadius: 5,
-        marginBottom: 20
-    },
-    rowTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginRight: 15
-    },
-    rowInput: {
-        width: 170,
-    },
-    rowHint: {
-        marginLeft: 10,
-        fontSize: 12
-    },
-    rowChoose: {
-        fontSize: 25,
-        marginRight: 15,
-        backgroundColor: "#ef8513",
-        color: "white",
-        width: 32,
-        borderRadius: 15,
-        textAlign: "center"
-    },
-    rowGender: {
-        fontSize: 25,
-        marginRight: 15,
-        backgroundColor: "white",
-        width: 32,
-        borderRadius: 15,
-        textAlign: "center"
-    },
-    rowPicker: {
-        width: 220,
-    },
-    rootNotice:{
-        fontSize: 14,
-        marginBottom: 20
-    },
-    rootAvatar: {
-        width: 250,
-        height: 250,
-        alignSelf: "center",
-        marginTop: 40
-    },
-    rowError: {
-        color: "red",
-        alignSelf: "center",
-        fontSize: 16,
-        marginTop: 25,
-        marginBottom: 15
-    },
-    rowCreate: {
-        backgroundColor: "#ef8513",
-        color: "white",
-        width: 180,
-        textAlign: "center",
-        paddingVertical: 6,
-        fontSize: 18,
-        fontWeight: "bold",
-        alignSelf: "center",
-        borderRadius: 5,
-        marginBottom: 50
-    }
+  root: {
+    marginTop: 20,
+    marginHorizontal: 20
+  },
+  rootRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f7d7b4',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginBottom: 20
+  },
+  rowTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginRight: 15
+  },
+  rowInput: {
+    width: 170
+  },
+  rowHint: {
+    marginLeft: 10,
+    fontSize: 12
+  },
+  rowChoose: {
+    fontSize: 25,
+    marginRight: 15,
+    backgroundColor: '#ef8513',
+    color: 'white',
+    width: 32,
+    borderRadius: 15,
+    textAlign: 'center'
+  },
+  rowGender: {
+    fontSize: 25,
+    marginRight: 15,
+    backgroundColor: 'white',
+    width: 32,
+    borderRadius: 15,
+    textAlign: 'center'
+  },
+  rowPicker: {
+    width: 220
+  },
+  rootNotice: {
+    fontSize: 14,
+    marginBottom: 20
+  },
+  rootAvatar: {
+    width: 250,
+    height: 250,
+    alignSelf: 'center',
+    marginTop: 40
+  },
+  rowError: {
+    color: 'red',
+    alignSelf: 'center',
+    fontSize: 16,
+    marginTop: 25,
+    marginBottom: 15
+  },
+  rowCreate: {
+    backgroundColor: '#ef8513',
+    color: 'white',
+    width: 180,
+    textAlign: 'center',
+    paddingVertical: 6,
+    fontSize: 18,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    borderRadius: 5,
+    marginBottom: 50
+  }
 });
 
 export default AddPet;

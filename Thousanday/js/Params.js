@@ -1,47 +1,37 @@
-export const apiUrl = "https://smilings.me";
+export const apiUrl = 'https://smilings.me';
 
-export function getGender( value ) {
-    value = parseInt( value );
-    if ( value === 0 ) {
-        return "♂";
-    } else {
-        return "♀";
-    }
+export function getGender(value) {
+  return parseInt(value, 10) === 0 ? '♂' : '♀';
 }
 
-export function getType( value ) {
-    value = parseInt( value );
-    switch ( value ) {
-        case 0:
-            return "dog";
-            break;
-        case 1:
-            return "cat";
-            break;
-        case 2:
-            return "bird";
-            break;
-        case 3:
-            return "fish";
-            break;
-        case 4:
-            return "other";
-            break;
-    }
+export function getType(value) {
+  switch (parseInt(value, 10)) {
+    case 0:
+      return 'dog';
+    case 1:
+      return 'cat';
+    case 2:
+      return 'bird';
+    case 3:
+      return 'fish';
+    case 4:
+      return 'other';
+    default:
+      return false;
+  }
 }
 
-export function getNature( value ) {
-    value = parseInt( value );
-    switch ( value ) {
-        case 0:
-            return "cute";
-            break;
-        case 1:
-            return "strong";
-            break;
-        case 2:
-            return "smart";
-        case 3:
-            return "beauty";
-    }
+export function getNature(value) {
+  switch (parseInt(value, 10)) {
+    case 0:
+      return 'cute';
+    case 1:
+      return 'strong';
+    case 2:
+      return 'smart';
+    case 3:
+      return 'beauty';
+    default:
+      return false;
+  }
 }

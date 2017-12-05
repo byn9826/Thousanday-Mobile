@@ -24,7 +24,7 @@ class Pet extends Component {
       // store friends info
       friends: [],
       // store skills info
-      skills: [],
+      skills: []
     };
   }
   componentWillMount() {
@@ -48,7 +48,7 @@ class Pet extends Component {
               skills.push({
                 index: pet[0][`skill${i}_index`],
                 name: pet[0][`skill${i}_name`],
-                image: pet[0][`skill${i}_image`],
+                image: pet[0][`skill${i}_image`]
               });
             }
           }
@@ -59,7 +59,7 @@ class Pet extends Component {
             pet: pet[0],
             friends: pet[2],
             refresh: false,
-            skills,
+            skills
           };
           this.setState(data);
           this.props.cacheData('pet', this.props.id, data);
@@ -71,7 +71,7 @@ class Pet extends Component {
   loadMore() {
     if (!this.state.locker) {
       fetch(`${apiUrl}/pet/load?add=0&load=${this.state.pin}&pet=${this.state.pet.pet_id}`, {
-        method: 'GET',
+        method: 'GET'
       })
         .then((response) => {
           if (response.ok) {
@@ -86,13 +86,13 @@ class Pet extends Component {
             if (result.length === 20) {
               this.setState({
                 images: this.state.images.concat(more),
-                pin: this.state.pin + 1,
+                pin: this.state.pin + 1
               });
             } else {
               this.setState({
                 images: this.state.images.concat(more),
                 pin: this.state.pin + 1,
-                locker: true,
+                locker: true
               });
             }
           } else {
@@ -112,14 +112,14 @@ class Pet extends Component {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         action,
         user: this.props.userId,
         pet: this.props.id,
-        token: this.props.userToken,
-      }),
+        token: this.props.userToken
+      })
     })
       .then((response) => {
         if (response.ok) {
@@ -162,7 +162,7 @@ class Pet extends Component {
     const friends = [];
     for (i; i < 2; i += 1) {
       if (this.state.friends[i]) {
-        friends.push(
+        friends.push((
           <TouchableOpacity
             key={`friend${i}`}
             onPress={
@@ -173,134 +173,150 @@ class Pet extends Component {
               mutable
               style={styles.boxImage}
               source={{
-                  uri: `${apiUrl}/img/pet/${this.state.friends[i].pet_id}/0.png`,
+                  uri: `${apiUrl}/img/pet/${this.state.friends[i].pet_id}/0.png`
               }}
             />
-          </TouchableOpacity>,
-        );
+          </TouchableOpacity>
+        ));
       }
     }
     // show pet skills
-    let skills;
-    if (this.state.skills.length !== 0) {
-      if (
-        this.props.userId !== null &&
-        (
-          this.props.userId.toString() === this.state.pet.owner_id ||
-          this.props.userId === this.state.pet.relative_id
-        )
-      ) {
-        skills = (
-          <View style={styles.headerSkill}>
-            123
-          </View>
-        );
-      } else {
-        skills = <Text>234</Text>;
+    const skills = [];
+    if (
+      this.props.userId !== null &&
+      (
+        this.props.userId.toString() === this.state.pet.owner_id ||
+        this.props.userId === this.state.pet.relative_id
+      )
+    ) {
+      for (let j = 0; j < 4; j += 1) {
+        if (this.state.skills[j] !== undefined) {
+          skills.push((
+            <View key={`Skill${this.propsid}_${j}`} style={styles.skillContainer}>
+              {this.state.pet[`skill${j}_name`]}
+            </View>
+          ));
+        } else {
+          skills.push((
+            <View key={`Skill${this.propsid}_${j}`} style={styles.skillContainer}>
+              <Text>
+                + Skill
+              </Text>
+            </View>
+          ));
+        }
+      }
+    } else {
+      for (let j = 0; j < 4; j += 1) {
+        if (this.state.skills[j] !== undefined) {
+          skills.push((
+            <View key={`Skill${this.propsid}_${j}`} style={styles.skillContainer}>
+              123
+            </View>
+          ));
+        }
       }
     }
     return (
       <FlatList
-        ListHeaderComponent={() => {
-          return (
-            <View>
-              <View style={styles.headerAbility}>
-                <Text style={styles.abilityPoint}>
-                  Attack: {this.state.pet.attack}
+        ListHeaderComponent={() => (
+          <View>
+            <View style={styles.headerAbility}>
+              <Text style={styles.abilityPoint}>
+                Attack: {this.state.pet.attack}
+              </Text>
+              <Text style={styles.abilityPoint}>
+                Defend: {this.state.pet.defend}
+              </Text>
+              <Text style={styles.abilityPoint}>
+                Health: {this.state.pet.health}
+              </Text>
+              <Text style={styles.abilityPoint}>
+                Swift: {this.state.pet.swift}
+              </Text>
+              <Text style={styles.abilityPoint}>
+                Lucky: {this.state.pet.lucky}
+              </Text>
+            </View>
+            <View style={styles.headerSkill}>
+              {/* {skills} */}
+            </View>
+            <View style={styles.containerHeader}>
+              <CachedImage
+                source={{ uri: `${apiUrl}/img/pet/${this.state.pet.pet_id}/0.png` }}
+                mutable
+                style={styles.headerAvatar}
+              />
+              <Text style={styles.headerName}>
+                {this.state.pet.pet_name}
+              </Text>
+              <View style={styles.headerRow}>
+                <Text style={styles.rowGender}>
+                  {getGender(this.state.pet.pet_gender)}
                 </Text>
-                <Text style={styles.abilityPoint}>
-                  Defend: {this.state.pet.defend}
+                <Text style={styles.rowType}>
+                  {getType(this.state.pet.pet_type)}
                 </Text>
-                <Text style={styles.abilityPoint}>
-                  Health: {this.state.pet.health}
-                </Text>
-                <Text style={styles.abilityPoint}>
-                  Swift: {this.state.pet.swift}
-                </Text>
-                <Text style={styles.abilityPoint}>
-                  Lucky: {this.state.pet.lucky}
+                <Text style={styles.rowType}>
+                  {getNature(this.state.pet.pet_nature)}
                 </Text>
               </View>
-              {skills}
-              <View style={styles.containerHeader}>
-                <CachedImage
-                  source={{ uri: `${apiUrl}/img/pet/${this.state.pet.pet_id}/0.png` }}
-                  mutable
-                  style={styles.headerAvatar}
-                />
-                <Text style={styles.headerName}>
-                  {this.state.pet.pet_name}
+              <View style={styles.headerTeam}>
+                <View style={styles.teamParent}>
+                  <Text style={styles.parentTitle}>
+                    {this.state.pet.pet_gender === '0' ? 'His ' : 'Her '}Family
+                  </Text>
+                  <View style={styles.parentBox}>
+                    <TouchableOpacity
+                      onPress={
+                        this.props.clickUser.bind(null, parseInt(this.state.pet.owner_id, 10))
+                      }
+                    >
+                      <CachedImage
+                        style={styles.boxRound}
+                        source={{
+                            uri: `${apiUrl}/img/user/${this.state.pet.owner_id}.jpg`
+                        }}
+                        mutable
+                      />
+                    </TouchableOpacity>
+                    {relative}
+                  </View>
+                </View>
+                <View style={styles.teamFriend}>
+                  <Text style={styles.parentTitle}>
+                    Best Friends
+                  </Text>
+                  <View style={styles.parentBox}>
+                    {friends}
+                  </View>
+                </View>
+              </View>
+              <TouchableOpacity onPress={this.petWatch.bind(this)}>
+                <Text style={styles.headerWatch}>
+                  {
+                    this.state.watch.indexOf(this.props.userId) === -1
+                      ? '+ Watch' : 'Watched'
+                  } | by {this.state.watch.length}
                 </Text>
-                <View style={styles.headerRow}>
-                  <Text style={styles.rowGender}>
-                    {getGender(this.state.pet.pet_gender)}
-                  </Text>
-                  <Text style={styles.rowType}>
-                    {getType(this.state.pet.pet_type)}
-                  </Text>
-                  <Text style={styles.rowType}>
-                    {getNature(this.state.pet.pet_nature)}
-                  </Text>
-                </View>
-                <View style={styles.headerTeam}>
-                  <View style={styles.teamParent}>
-                    <Text style={styles.parentTitle}>
-                      {this.state.pet.pet_gender === '0' ? 'His ' : 'Her '}Family
-                    </Text>
-                    <View style={styles.parentBox}>
-                      <TouchableOpacity
-                        onPress={
-                          this.props.clickUser.bind(
-                            null, parseInt(this.state.pet.owner_id, 10),
-                          )
-                        }
-                      >
-                        <CachedImage
-                          style={styles.boxRound}
-                          source={{
-                              uri: `${apiUrl}/img/user/${this.state.pet.owner_id}.jpg`,
-                          }}
-                          mutable
-                        />
-                      </TouchableOpacity>
-                      {relative}
-                    </View>
-                  </View>
-                  <View style={styles.teamFriend}>
-                    <Text style={styles.parentTitle}>
-                      Best Friends
-                    </Text>
-                    <View style={styles.parentBox}>
-                      {friends}
-                    </View>
-                  </View>
-                </View>
-                <TouchableOpacity onPress={this.petWatch.bind(this)}>
-                  <Text style={styles.headerWatch}>
-                    {
-                      this.state.watch.indexOf(this.props.userId) === -1
-                        ? '+ Watch' : 'Watched'
-                    } | by {this.state.watch.length}
-                  </Text>
-                </TouchableOpacity>
-                <View style={styles.headerHolder}>
-                  <Image
-                    style={styles.holderIcon}
-                    source={require('../../image/moment.png')}
-                  />
-                  <Text style={styles.holderTitle}>
-                    {this.state.pet.pet_name}′s Moments
-                  </Text>
-                </View>
+              </TouchableOpacity>
+              <View style={styles.headerHolder}>
+                <Image
+                  style={styles.holderIcon}
+                  source={require('../../image/moment.png')}
+                />
+                <Text style={styles.holderTitle}>
+                  {this.state.pet.pet_name}′s Moments
+                </Text>
               </View>
             </View>
-          );
-        }}
+          </View>
+        )}
         data={this.state.images}
         numColumns={2}
         columnWrapperStyle={{
             paddingHorizontal: 10,
-            justifyContent: 'space-between',
+            justifyContent: 'space-between'
         }}
         onRefresh={() => {}}
         refreshing={this.state.refresh}
@@ -324,45 +340,50 @@ const styles = StyleSheet.create({
   headerAbility: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 15,
     backgroundColor: '#E9967A',
     paddingVertical: 5,
-    flex: 1,
+    flex: 1
   },
   abilityPoint: {
     paddingVertical: 5,
     fontSize: 12,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'white'
   },
   headerSkill: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     marginBottom: 15,
-    paddingVertical: 5,
+    paddingBottom: 10,
+    backgroundColor: '#E9967A'
+  },
+  skillContainer: {
+    backgroundColor: '#f2e8da',
+    padding: 5,
+    borderRadius: 3
   },
   containerHeader: {
-    alignItems: 'center',
+    alignItems: 'center'
   },
   headerAvatar: {
     width: 100,
     height: 100,
-    borderRadius: 5,
+    borderRadius: 5
   },
   headerName: {
     fontSize: 24,
     marginTop: 5,
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   headerRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   rowGender: {
     fontSize: 28,
     marginRight: 15,
-    marginBottom: 5,
+    marginBottom: 5
   },
   rowType: {
     backgroundColor: 'orange',
@@ -370,10 +391,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 1,
     borderRadius: 5,
-    marginRight: 15,
+    marginRight: 15
   },
   headerTeam: {
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   teamParent: {
     paddingLeft: 20,
@@ -384,7 +405,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     backgroundColor: '#f7d7b4',
     borderTopLeftRadius: 5,
-    borderBottomLeftRadius: 5,
+    borderBottomLeftRadius: 5
   },
   teamFriend: {
     paddingLeft: 20,
@@ -395,7 +416,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     backgroundColor: '#f7d7b4',
     borderTopRightRadius: 5,
-    borderBottomRightRadius: 5,
+    borderBottomRightRadius: 5
   },
   parentTitle: {
     color: '#052456',
@@ -405,24 +426,24 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontWeight: 'bold',
     fontSize: 14,
-    marginBottom: 10,
+    marginBottom: 10
   },
   parentBox: {
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   boxRound: {
     width: 50,
     height: 50,
     marginHorizontal: 6,
     borderRadius: 25,
-    resizeMode: 'contain',
+    resizeMode: 'contain'
   },
   boxImage: {
     width: 50,
     height: 50,
     marginHorizontal: 6,
     borderRadius: 5,
-    resizeMode: 'contain',
+    resizeMode: 'contain'
   },
   headerWatch: {
     backgroundColor: '#052456',
@@ -433,32 +454,32 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 20,
     marginBottom: 30,
-    fontSize: 16,
+    fontSize: 16
   },
   headerHolder: {
     flexDirection: 'row',
     alignSelf: 'flex-start',
     marginBottom: 15,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   holderIcon: {
     marginLeft: 5,
     resizeMode: 'contain',
     width: 35,
-    height: 35,
+    height: 35
   },
   holderTitle: {
     marginLeft: 15,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   containerImage: {
     width: (Dimensions.get('window').width / 2) - 12,
     height: (Dimensions.get('window').width / 2) - 12,
     resizeMode: 'cover',
     marginBottom: 4,
-    borderRadius: 5,
-  },
+    borderRadius: 5
+  }
 });
 
 export default Pet;
