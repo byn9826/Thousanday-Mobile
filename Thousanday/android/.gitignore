@@ -2,3 +2,4 @@
 /app/thousanday.keystore
 gradle.properties
 .gradle
+/build/generated/*

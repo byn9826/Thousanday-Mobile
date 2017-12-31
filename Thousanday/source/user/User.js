@@ -237,16 +237,6 @@ class User extends Component {
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.props.clickPostMoment.bind(this)}>
-            <View style={styles.actionCircle}>
-              <Text style={styles.circleContent}>
-                Post
-              </Text>
-              <Text style={styles.circleContent}>
-                Moment
-              </Text>
-            </View>
-          </TouchableOpacity>
           <TouchableOpacity onPress={this.props.clickWatchList.bind(this)}>
             <View style={styles.actionCircle}>
               <Text style={styles.circleContent}>

@@ -11,6 +11,7 @@ import Moment from './source/moment/Moment';
 import PostMoment from './source/moment/Post';
 import EditProfile from './source/user/Change';
 import EditPet from './source/pet/Edit';
+import LearnSkill from './source/pet/Learn';
 import WatchList from './source/watch/Private';
 import Love from './source/love/Love';
 import Login from './source/login/Login';
@@ -140,8 +141,12 @@ export default class Thousanday extends Component {
     this.setState({ route: 'addPet' });
   }
   // if user click on post moment
-  clickPostMoment() {
-    this.setState({ route: 'postMoment' });
+  // clickPostMoment() {
+  //   this.setState({ route: 'postMoment' });
+  // }
+  // if user click learn skill
+  clickLearnSkill(id) {
+    this.setState({ route: 'learnSkill', id });
   }
   // if user click on edit pet
   clickEditPet(id) {
@@ -211,6 +216,7 @@ export default class Thousanday extends Component {
           key={`pet${this.state.id}`}
           id={this.state.id}
           clickMoment={this.clickMoment.bind(this)}
+          clickLearnSkill={this.clickLearnSkill.bind(this)}
           clickPet={this.clickPet.bind(this)}
           clickUser={this.clickUser.bind(this)}
           userId={this.state.userId}
@@ -250,7 +256,6 @@ export default class Thousanday extends Component {
             clickEditProfile={this.clickEditProfile.bind(this)}
             clickWatchList={this.clickWatchList.bind(this)}
             clickRequestMessage={this.clickRequestMessage.bind(this)}
-            clickPostMoment={this.clickPostMoment.bind(this)}
             userLogout={this.userLogout.bind(this)}
             cache={this.state.cache}
             cacheData={this.cacheData.bind(this)}
@@ -281,6 +286,15 @@ export default class Thousanday extends Component {
           userToken={this.state.userToken}
           backHome={this.clickUser.bind(this)}
           cacheData={this.cacheData.bind(this)}
+        />);
+        break;
+      // click learn skill
+      case 'learnSkill':
+        route = (<LearnSkill
+          key={`learnskill${this.state.id}`}
+          id={this.state.id}
+          userId={this.state.userId}
+          userToken={this.state.userToken}
         />);
         break;
       // edit profile view

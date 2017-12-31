@@ -63,7 +63,6 @@ class Pet extends Component {
           };
           this.setState(data);
           this.props.cacheData('pet', this.props.id, data);
-          console.log(data);
         });
     }
   }
@@ -182,41 +181,47 @@ class Pet extends Component {
     }
     // show pet skills
     const skills = [];
-    if (
-      this.props.userId !== null &&
-      (
-        this.props.userId.toString() === this.state.pet.owner_id ||
-        this.props.userId === this.state.pet.relative_id
-      )
-    ) {
-      for (let j = 0; j < 4; j += 1) {
-        if (this.state.skills[j] !== undefined) {
-          skills.push((
-            <View key={`Skill${this.propsid}_${j}`} style={styles.skillContainer}>
-              {this.state.pet[`skill${j}_name`]}
-            </View>
-          ));
-        } else {
-          skills.push((
-            <View key={`Skill${this.propsid}_${j}`} style={styles.skillContainer}>
-              <Text>
-                + Skill
-              </Text>
-            </View>
-          ));
+    // if (
+    //   this.props.userId !== null &&
+    //   (
+    //     this.props.userId.toString() === this.state.pet.owner_id ||
+    //     this.props.userId.toString() === this.state.pet.relative_id
+    //   )
+    // ) {
+    //   for (let j = 0; j < 4; j += 1) {
+    //     if (this.state.skills[j] !== undefined) {
+    //       skills.push((
+    //         <View key={`Skill${this.propsid}_${j}`} style={styles.skillContainer}>
+    //           {this.state.pet[`skill${j}_name`]}
+    //         </View>
+    //       ));
+    //     }
+    //   }
+    // } else {
+    //   for (let j = 0; j < 4; j += 1) {
+    //     if (this.state.skills[j] !== undefined) {
+    //       skills.push((
+    //         <View key={`Skill${this.propsid}_${j}`} style={styles.skillContainer}>
+    //           123
+    //         </View>
+    //       ));
+    //     }
+    //   }
+    // }
+    skills.push((
+      <TouchableOpacity
+        key="addButton"
+        onPress={
+          this.props.clickLearnSkill.bind(null, this.state.pet.pet_id)
         }
-      }
-    } else {
-      for (let j = 0; j < 4; j += 1) {
-        if (this.state.skills[j] !== undefined) {
-          skills.push((
-            <View key={`Skill${this.propsid}_${j}`} style={styles.skillContainer}>
-              123
-            </View>
-          ));
-        }
-      }
-    }
+      >
+        <View style={styles.skillContainer}>
+          <Text>
+            + Skill
+          </Text>
+        </View>
+      </TouchableOpacity>
+    ));
     return (
       <FlatList
         ListHeaderComponent={() => (
@@ -239,7 +244,7 @@ class Pet extends Component {
               </Text>
             </View>
             <View style={styles.headerSkill}>
-              {/* {skills} */}
+              {skills}
             </View>
             <View style={styles.containerHeader}>
               <CachedImage
