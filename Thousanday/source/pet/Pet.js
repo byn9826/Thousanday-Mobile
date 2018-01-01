@@ -23,8 +23,8 @@ class Pet extends Component {
       pet: {},
       // store friends info
       friends: [],
-      // store skills info
-      skills: []
+      // store all skill name
+      skills: null
     };
   }
   componentWillMount() {
@@ -42,16 +42,6 @@ class Pet extends Component {
         .then((pet) => {
           const watch = [];
           pet[4].forEach(p => watch.push(parseInt(p.user_id, 10)));
-          const skills = [];
-          for (let i = 0; i < 4; i += 1) {
-            if (pet[0][`skill${i}_index`] !== null) {
-              skills.push({
-                index: pet[0][`skill${i}_index`],
-                name: pet[0][`skill${i}_name`],
-                image: pet[0][`skill${i}_image`]
-              });
-            }
-          }
           const data = {
             locker: pet[3].length < 20,
             images: processGallery(pet[3]),
@@ -59,7 +49,7 @@ class Pet extends Component {
             pet: pet[0],
             friends: pet[2],
             refresh: false,
-            skills
+            skills: pet[5]
           };
           this.setState(data);
           this.props.cacheData('pet', this.props.id, data);
@@ -172,7 +162,7 @@ class Pet extends Component {
               mutable
               style={styles.boxImage}
               source={{
-                  uri: `${apiUrl}/img/pet/${this.state.friends[i].pet_id}/0.png`
+                uri: `${apiUrl}/img/pet/${this.state.friends[i].pet_id}/0.png`
               }}
             />
           </TouchableOpacity>
@@ -181,47 +171,45 @@ class Pet extends Component {
     }
     // show pet skills
     const skills = [];
-    // if (
-    //   this.props.userId !== null &&
-    //   (
-    //     this.props.userId.toString() === this.state.pet.owner_id ||
-    //     this.props.userId.toString() === this.state.pet.relative_id
-    //   )
-    // ) {
-    //   for (let j = 0; j < 4; j += 1) {
-    //     if (this.state.skills[j] !== undefined) {
-    //       skills.push((
-    //         <View key={`Skill${this.propsid}_${j}`} style={styles.skillContainer}>
-    //           {this.state.pet[`skill${j}_name`]}
-    //         </View>
-    //       ));
-    //     }
-    //   }
-    // } else {
-    //   for (let j = 0; j < 4; j += 1) {
-    //     if (this.state.skills[j] !== undefined) {
-    //       skills.push((
-    //         <View key={`Skill${this.propsid}_${j}`} style={styles.skillContainer}>
-    //           123
-    //         </View>
-    //       ));
-    //     }
-    //   }
-    // }
-    skills.push((
-      <TouchableOpacity
-        key="addButton"
-        onPress={
-          this.props.clickLearnSkill.bind(null, this.state.pet.pet_id)
-        }
-      >
-        <View style={styles.skillContainer}>
-          <Text>
-            + Skill
-          </Text>
-        </View>
-      </TouchableOpacity>
-    ));
+    for (let j = 0; j < 4; j += 1) {
+      if (
+        this.state.pet[`skill${j}_index`] !== null &&
+        typeof this.state.pet[`skill${j}_index`] !== 'undefined'
+      ) {
+        skills.push((
+          <View key={`skilllist${j}`} style={styles.skillContainer}>
+            <Image
+              style={styles.boxImage}
+              source={{ uri: `${apiUrl}/img/pet/${this.props.id}/${j + 1}.png?id=${Math.random()}` }}
+            />
+            <Text>
+              {this.state.skills[parseInt(this.state.pet[`skill${j}_index`], 10)][0]}
+            </Text>
+          </View>
+        ));
+      }
+    }
+    if (
+      this.props.userId !== null && (
+        this.props.userId.toString() === this.state.pet.owner_id ||
+        this.props.userId.toString() === this.state.pet.relative_id
+      )
+    ) {
+      skills.push((
+        <TouchableOpacity
+          key="addButton"
+          onPress={
+            this.props.clickLearnSkill.bind(null, this.state.pet.pet_id)
+          }
+        >
+          <View style={styles.skillContainer}>
+            <Text>
+              + Skill
+            </Text>
+          </View>
+        </TouchableOpacity>
+      ));
+    }
     return (
       <FlatList
         ListHeaderComponent={() => (
@@ -366,7 +354,8 @@ const styles = StyleSheet.create({
   skillContainer: {
     backgroundColor: '#f2e8da',
     padding: 5,
-    borderRadius: 3
+    borderRadius: 3,
+    alignItems: 'center'
   },
   containerHeader: {
     alignItems: 'center'

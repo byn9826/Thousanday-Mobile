@@ -295,6 +295,7 @@ export default class Thousanday extends Component {
           id={this.state.id}
           userId={this.state.userId}
           userToken={this.state.userToken}
+          cacheData={this.cacheData.bind(this)}
         />);
         break;
       // edit profile view
