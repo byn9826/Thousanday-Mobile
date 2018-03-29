@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet, Text, View, ScrollView, Image, TouchableOpacity
-} from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
 import processError from '../../js/processError';
-import { apiUrl } from '../../js/Params';
+import { apiUrl, resourceUrl } from '../../js/Params';
 
 class Request extends Component {
   constructor(props) {
@@ -90,7 +88,7 @@ class Request extends Component {
         <View style={styles.rootRow}>
           <Image
             style={styles.rowImage}
-            source={{ uri: `${apiUrl}/img/user/${request.sender_id}.jpg` }}
+            source={{ uri: `${resourceUrl}/public/user/${request.sender_id}.jpg` }}
           />
           <Text style={styles.rowWant}>
             wants to add you as
@@ -98,7 +96,7 @@ class Request extends Component {
           <Image
             style={styles.rowPet}
             source={{
-              uri: `${apiUrl}/img/pet/${request.pet_id}/0.png`
+              uri: `${resourceUrl}/public/pet/${request.pet_id}/0.png`
             }}
           />
           <Text style={styles.rowWant}>

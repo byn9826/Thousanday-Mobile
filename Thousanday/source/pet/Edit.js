@@ -5,7 +5,7 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import { ImageCache, CachedImage } from 'react-native-img-cache';
 import processError from '../../js/processError';
-import { apiUrl } from '../../js/Params';
+import { apiUrl, resourceUrl } from '../../js/Params';
 
 class EditPet extends Component {
   constructor(props) {
@@ -117,7 +117,7 @@ class EditPet extends Component {
         return false;
       })
       .then(() => {
-        ImageCache.get().bust(`${apiUrl}/img/pet/${this.props.id}/0.png`);
+        ImageCache.get().bust(`${resourceUrl}/public/pet/${this.props.id}/0.png`);
         this.setState({ button: 'Update Success!' });
       });
   }
@@ -352,7 +352,7 @@ class EditPet extends Component {
                 <View style={styles.confirmInfo}>
                   <Image
                     source={{
-                      uri: `${apiUrl}/img/user/${this.state.search}.jpg`
+                      uri: `${resourceUrl}/public/user/${this.state.search}.jpg`
                     }}
                     style={styles.infoImage}
                   />
@@ -473,7 +473,7 @@ class EditPet extends Component {
               <CachedImage
                 style={styles.pictureProfile}
                 source={{
-                    uri: `${apiUrl}/img/pet/${this.props.id}/0.png`
+                    uri: `${resourceUrl}/public/pet/${this.props.id}/0.png`
                 }}
                 mutable
               />

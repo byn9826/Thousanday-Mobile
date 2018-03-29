@@ -17,6 +17,7 @@ import Love from './source/love/Love';
 import Login from './source/login/Login';
 import Signup from './source/login/Signup';
 import Request from './source/request/Request';
+import Hub from './source/game/Hub';
 
 export default class Thousanday extends Component {
   constructor(props) {
@@ -164,6 +165,10 @@ export default class Thousanday extends Component {
   clickRequestMessage() {
     this.setState({ route: 'requestMessage' });
   }
+  // click game hub
+  clickGameHub() {
+    this.setState({ route: 'hub' });
+  }
   // signup feature
   goSignup(data, platform) {
     this.setState({ signupData: data, signupPlatform: platform, route: 'signup' });
@@ -238,6 +243,10 @@ export default class Thousanday extends Component {
           cacheData={this.cacheData.bind(this)}
         />);
         break;
+      case 'hub':
+        route = (<Hub
+        />);
+        break;
       // home view, show login user's info
       case 'home':
         if (this.state.userId) {
@@ -256,6 +265,7 @@ export default class Thousanday extends Component {
             clickEditProfile={this.clickEditProfile.bind(this)}
             clickWatchList={this.clickWatchList.bind(this)}
             clickRequestMessage={this.clickRequestMessage.bind(this)}
+            clickGameHub={this.clickGameHub.bind(this)}
             userLogout={this.userLogout.bind(this)}
             cache={this.state.cache}
             cacheData={this.cacheData.bind(this)}

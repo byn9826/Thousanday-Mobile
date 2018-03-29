@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet, Text, View, FlatList, Dimensions, TouchableOpacity
-} from 'react-native';
+import { StyleSheet, Text, View, FlatList, Dimensions, TouchableOpacity } from 'react-native';
 import { GoogleSignin } from 'react-native-google-signin';
 import { CachedImage } from 'react-native-img-cache';
-import { apiUrl, getGender, getType } from '../../js/Params';
+import { apiUrl, resourceUrl, getGender, getType } from '../../js/Params';
 import processGallery from '../../js/processGallery';
 import processError from '../../js/processError';
 
@@ -144,7 +142,7 @@ class User extends Component {
       <View key={`pets${pet.pet_id}`} style={styles.petHub}>
         <TouchableOpacity onPress={this.props.clickPet.bind(null, pet.pet_id)}>
           <CachedImage
-            source={{ uri: `${apiUrl}/img/pet/${pet.pet_id}/0.png` }}
+            source={{ uri: `${resourceUrl}/public/pet/${pet.pet_id}/0.png` }}
             mutable
             style={styles.hubPet}
           />
@@ -201,7 +199,7 @@ class User extends Component {
         onPress={this.props.clickUser.bind(null, parseInt(relative.rel, 10))}
       >
         <CachedImage
-          source={{ uri: `${apiUrl}/img/user/${relative.rel}.jpg` }}
+          source={{ uri: `${resourceUrl}/public/user/${relative.rel}.jpg` }}
           mutable
           style={styles.userImg}
         />
@@ -257,6 +255,16 @@ class User extends Component {
               </Text>
             </View>
           </TouchableOpacity>
+          {/* <TouchableOpacity onPress={this.props.clickGameHub.bind(this)}>
+            <View style={styles.actionCircle}>
+              <Text style={styles.circleContent}>
+                Game
+              </Text>
+              <Text style={styles.circleContent}>
+                Hub
+              </Text>
+            </View>
+          </TouchableOpacity> */}
         </View>
       );
       if (this.props.platform === 'facebook') {
@@ -303,7 +311,7 @@ class User extends Component {
           <View style={styles.mainHeader}>
             <View style={styles.headerRow}>
               <CachedImage
-                source={{ uri: `${apiUrl}/img/user/${this.props.id}.jpg` }}
+                source={{ uri: `${resourceUrl}/public/user/${this.props.id}.jpg` }}
                 mutable
                 style={styles.headerAvatar}
               />

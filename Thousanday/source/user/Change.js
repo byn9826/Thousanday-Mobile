@@ -5,7 +5,7 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import { ImageCache, CachedImage } from 'react-native-img-cache';
 import processError from '../../js/processError';
-import { apiUrl } from '../../js/Params';
+import { apiUrl, resourceUrl } from '../../js/Params';
 
 class EditProfile extends Component {
   constructor(props) {
@@ -59,7 +59,7 @@ class EditProfile extends Component {
         return false;
       })
       .then(() => {
-        ImageCache.get().bust(`${apiUrl}/img/user/${this.props.userId}.jpg`);
+        ImageCache.get().bust(`${resourceUrl}/public/user/${this.props.userId}.jpg`);
         this.props.backHome(this.props.userId);
       });
   }
@@ -125,7 +125,7 @@ class EditProfile extends Component {
               <CachedImage
                 style={styles.pictureProfile}
                 source={{
-                  uri: `${apiUrl}/img/user/${this.props.userId}.jpg`
+                  uri: `${resourceUrl}/public/user/${this.props.userId}.jpg`
                 }}
                 mutable
               />

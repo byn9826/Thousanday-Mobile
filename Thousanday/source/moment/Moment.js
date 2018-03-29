@@ -4,7 +4,7 @@ import {
   TextInput, Button, Share, RefreshControl
 } from 'react-native';
 import { CachedImage } from 'react-native-img-cache';
-import { apiUrl } from '../../js/Params';
+import { apiUrl, resourceUrl } from '../../js/Params';
 import processError from '../../js/processError';
 
 class Moment extends Component {
@@ -175,7 +175,7 @@ class Moment extends Component {
     const comments = this.state.list.map(comment => (
       <View key={`comments${comment.comment_id}`} style={styles.commentLine}>
         <CachedImage
-          source={{ uri: `${apiUrl}/img/user/${comment.user_id}.jpg` }}
+          source={{ uri: `${resourceUrl}/public/user/${comment.user_id}.jpg` }}
           style={styles.lineAvatar}
         />
         <Text style={styles.lineContent}>
@@ -202,7 +202,7 @@ class Moment extends Component {
           >
             <CachedImage
               source={{
-                uri: `${apiUrl}/img/pet/${this.state.data.pet_id}/0.png`
+                uri: `${resourceUrl}/public/pet/${this.state.data.pet_id}/0.png`
               }}
               style={styles.topAvatar}
             />
@@ -222,7 +222,7 @@ class Moment extends Component {
         </View>
         <CachedImage
           source={{
-            uri: `${apiUrl}/img/pet/${this.state.data.pet_id}/moment/${this.state.data.image_name}`
+            uri: `${resourceUrl}/public/pet/${this.state.data.pet_id}/moment/${this.state.data.image_name}`
           }}
           style={styles.rootImg}
         />

@@ -25,7 +25,7 @@ Test on your localhost
 1. git clone https://github.com/byn9826/Thousanday-Mobile.git  
 2. cd Thousanday-Mobile/Thousanday  
 3. npm intall  
-4. check /Thousanday/js/Params.js, make sure apiUrl is "https://smilings.me"  
+4. check /Thousanday/js/Params.js, make sure apiUrl is "https://smilings.me/api"  
 5. react-native run-android   
 react-native-fbsdk version must be v0.5.1  
 

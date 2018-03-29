@@ -3,7 +3,7 @@ import {
   StyleSheet, Text, View, FlatList, Image, TouchableOpacity
 } from 'react-native';
 import { CachedImage } from 'react-native-img-cache';
-import { apiUrl } from '../../js/Params';
+import { apiUrl, resourceUrl } from '../../js/Params';
 import processError from '../../js/processError';
 
 class WatchList extends Component {
@@ -114,7 +114,7 @@ class WatchList extends Component {
               >
                 <CachedImage
                   source={{
-                    uri: `${apiUrl}/img/pet/${item.id}/0.png`
+                    uri: `${resourceUrl}/public/pet/${item.id}/0.png`
                   }}
                   style={styles.rowAvatar}
                   mutable
@@ -138,7 +138,7 @@ class WatchList extends Component {
               >
                 <CachedImage
                   source={{
-                    uri: `${apiUrl}/img/pet/${item.id}/0.png`
+                    uri: `${resourceUrl}/public/pet/${item.id}/0.png`
                   }}
                   style={styles.rowAvatar}
                   mutable

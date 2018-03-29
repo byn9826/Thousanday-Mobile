@@ -6,7 +6,7 @@ import {
 import { CachedImage } from 'react-native-img-cache';
 import ImagePicker from 'react-native-image-crop-picker';
 import processError from '../../js/processError';
-import { apiUrl } from '../../js/Params';
+import { apiUrl, resourceUrl } from '../../js/Params';
 
 class PostMoment extends Component {
   constructor(props) {
@@ -135,7 +135,7 @@ class PostMoment extends Component {
         onPress={this.choosePet.bind(this, pet.pet_id)}
       >
         <CachedImage
-          source={{ uri: `${apiUrl}/img/pet/${pet.pet_id}/0.png` }}
+          source={{ uri: `${resourceUrl}/public/pet/${pet.pet_id}/0.png` }}
           style={styles.petOption}
           mutable
         />

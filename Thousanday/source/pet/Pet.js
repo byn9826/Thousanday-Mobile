@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, Dimensions, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet, Text, View, Image, FlatList, Dimensions, TouchableOpacity
+} from 'react-native';
 import { CachedImage } from 'react-native-img-cache';
-import { apiUrl, getGender, getType, getNature } from '../../js/Params';
+import { apiUrl, resourceUrl, getGender, getType, getNature } from '../../js/Params';
 import processGallery from '../../js/processGallery';
 import processError from '../../js/processError';
 
@@ -141,7 +143,7 @@ class Pet extends Component {
           <CachedImage
             mutable
             style={styles.boxRound}
-            source={{ uri: `${apiUrl}/img/user/${this.state.pet.relative_id}.jpg` }}
+            source={{ uri: `${resourceUrl}/public/user/${this.state.pet.relative_id}.jpg` }}
           />
         </TouchableOpacity>
       );
@@ -162,7 +164,7 @@ class Pet extends Component {
               mutable
               style={styles.boxImage}
               source={{
-                uri: `${apiUrl}/img/pet/${this.state.friends[i].pet_id}/0.png`
+                uri: `${resourceUrl}/public/pet/${this.state.friends[i].pet_id}/0.png`
               }}
             />
           </TouchableOpacity>
@@ -180,7 +182,9 @@ class Pet extends Component {
           <View key={`skilllist${j}`} style={styles.skillContainer}>
             <Image
               style={styles.boxImage}
-              source={{ uri: `${apiUrl}/img/pet/${this.props.id}/${j + 1}.png?id=${Math.random()}` }}
+              source={{
+                uri: `${resourceUrl}/public/pet/${this.props.id}/${j + 1}.png?id=${Math.random()}`
+              }}
             />
             <Text>
               {this.state.skills[parseInt(this.state.pet[`skill${j}_index`], 10)][0]}
@@ -236,7 +240,7 @@ class Pet extends Component {
             </View>
             <View style={styles.containerHeader}>
               <CachedImage
-                source={{ uri: `${apiUrl}/img/pet/${this.state.pet.pet_id}/0.png` }}
+                source={{ uri: `${resourceUrl}/public/pet/${this.state.pet.pet_id}/0.png` }}
                 mutable
                 style={styles.headerAvatar}
               />
@@ -268,7 +272,7 @@ class Pet extends Component {
                       <CachedImage
                         style={styles.boxRound}
                         source={{
-                            uri: `${apiUrl}/img/user/${this.state.pet.owner_id}.jpg`
+                            uri: `${resourceUrl}/public/user/${this.state.pet.owner_id}.jpg`
                         }}
                         mutable
                       />

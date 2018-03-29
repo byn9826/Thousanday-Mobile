@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { CachedImage } from 'react-native-img-cache';
 import processError from '../../js/processError';
-import { apiUrl } from '../../js/Params';
+import { apiUrl, resourceUrl } from '../../js/Params';
 
 class Love extends Component {
   constructor(props) {
@@ -260,21 +260,21 @@ class Love extends Component {
       this.state.watchData.forEach((w) => {
         data.push({
           key: w.moment_id,
-          image: `${apiUrl}/img/pet/${w.pet_id}/moment/${w.image_name}`
+          image: `${resourceUrl}/public/pet/${w.pet_id}/moment/${w.image_name}`
         });
       });
     } else if (this.state.list === 'love') {
       this.state.loveData.forEach((l) => {
         data.push({
           key: l.moment_id,
-          image: `${apiUrl}/img/pet/${l.pet_id}/moment/${l.image_name}`
+          image: `${resourceUrl}/public/pet/${l.pet_id}/moment/${l.image_name}`
         });
       });
     } else if (this.state.list === 'comment') {
       this.state.commentData.forEach((c) => {
         data.push({
           key: c.moment_id,
-          image: `${apiUrl}/img/pet/${c.pet_id}/moment/${c.image_name}`
+          image: `${resourceUrl}/public/pet/${c.pet_id}/moment/${c.image_name}`
         });
       });
     }
