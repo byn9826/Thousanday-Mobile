@@ -3,7 +3,7 @@
   <component name="FacetManager">
     <facet type="java-gradle" name="Java-Gradle">
       <configuration>
-        <option name="BUILD_FOLDER_PATH" value="C:/tmp/Thousanday/Thousanday" />
+        <option name="BUILD_FOLDER_PATH" value="/tmp/Thousanday/Thousanday" />
         <option name="BUILDABLE" value="false" />
       </configuration>
     </facet>

@@ -14,7 +14,7 @@ buildscript {
 }
 
 allprojects {
-    buildDir = "C:/tmp/${rootProject.name}/${project.name}"
+    buildDir = "/tmp/${rootProject.name}/${project.name}"
     repositories {
         mavenLocal()
         jcenter()
