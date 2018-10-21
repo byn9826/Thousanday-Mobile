@@ -1,5 +1,5 @@
-export const apiUrl = 'https://smilings.me/api';
-export const resourceUrl = 'https://smilings.me';
+export const apiUrl = 'http://pet.nextvisioner.com/api';
+export const resourceUrl = 'http://pet.nextvisioner.com';
 
 export function getGender(value) {
   return parseInt(value, 10) === 0 ? '♂' : '♀';

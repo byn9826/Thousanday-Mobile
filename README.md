@@ -1,16 +1,16 @@
 # Smilings-Mobile
 Mobile homepage for your pets by React Native  
-
+Not updated anymore, no support for Google Login anymore  
 <b>Please test with real pets images, otherwise I have to delete unrelated photos, thanks!</b>  
 
-[Google Play](https://play.google.com/store/apps/details?id=com.thousanday)  
+[APK](https://github.com/byn9826/Thousanday-Mobile/releases/download/x/app-release.apk)  
 
 <img src="https://github.com/byn9826/Thousanday-Mobile/blob/master/example.gif?raw=true" width="200px" />  
 
 Stack
 --
 React Native  
-API from [Smilings Web](https://github.com/byn9826/Thousanday-web)  
+API from [Web for Pet](https://github.com/byn9826/Thousanday-web)  
 
 Features
 --
@@ -25,8 +25,7 @@ Test on your localhost
 1. git clone https://github.com/byn9826/Thousanday-Mobile.git  
 2. cd Thousanday-Mobile/Thousanday  
 3. npm intall  
-4. check /Thousanday/js/Params.js, make sure apiUrl is "https://smilings.me/api"  
-5. react-native run-android   
+4. react-native run-android   
 react-native-fbsdk version must be v0.5.1  
 
 Other
