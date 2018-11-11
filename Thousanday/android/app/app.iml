@@ -111,7 +111,7 @@
       <excludeFolder url="file:///tmp/Thousanday/app/outputs" />
       <excludeFolder url="file:///tmp/Thousanday/app/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 27 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Gradle: com.facebook.fresco:drawee-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.android.support:support-fragment-25.2.0" level="project" />

@@ -1,42 +1,30 @@
-# Smilings-Mobile
-Mobile homepage for your pets by React Native  
-Not updated anymore, no support for Google Login anymore  
-<b>Please test with real pets images, otherwise I have to delete unrelated photos, thanks!</b>  
+# Mobile for Pets
+Mobile App for Pets by React Native    
 
-[APK](https://github.com/byn9826/Thousanday-Mobile/releases/download/x/app-release.apk)  
-
+[Get it from Google Play](https://play.google.com/store/apps/details?id=com.smilings)  
+[Web for Pets](http://pet.nextvisioner.com)
+  
 <img src="https://github.com/byn9826/Thousanday-Mobile/blob/master/example.gif?raw=true" width="200px" />  
 
-Stack
+Notes
 --
-React Native  
-API from [Web for Pet](https://github.com/byn9826/Thousanday-web)  
+Google Login not supported right now  
 
 Features
 --
-1. Create Account, manage pages for all your pets   
-2. Add pet, every single pet will has his / her own homepage  
-3. Watch ,follow, love and pets' images shared by their owners  
-4. Post moments, record your moments with your pets  
-5. Leave comments, comment on any photo makes you laugh   
+1. Create accounts and login by Facebook   
+2. View and explore pets images by categories and types  
+3. Follow pets and love pets' images  
+4. Upload pets' images  
+5. Leave comments on pet's images   
 
-Test on your localhost
+Test on local
 --
 1. git clone https://github.com/byn9826/Thousanday-Mobile.git  
 2. cd Thousanday-Mobile/Thousanday  
 3. npm intall  
 4. react-native run-android   
-react-native-fbsdk version must be v0.5.1  
 
-Other
+Resources
 --
-[A list of reusable React UI components](https://github.com/byn9826/Thousanday-React)  
-
-Author
---
-Baozier
-
-License
---
-BSD-3   
 Icons from glyphicons.com

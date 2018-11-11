@@ -17,10 +17,11 @@ allprojects {
     buildDir = "/tmp/${rootProject.name}/${project.name}"
     repositories {
         mavenLocal()
-        jcenter()
+        maven {url "https://maven.google.com"}
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url "$rootDir/../node_modules/react-native/android"
         }
+        jcenter()
     }
 }
