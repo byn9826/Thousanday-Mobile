@@ -6,10 +6,6 @@ Mobile App for Pets by React Native
   
 <img src="https://github.com/byn9826/Thousanday-Mobile/blob/master/example.gif?raw=true" width="200px" />  
 
-Notes
---
-Google Login not supported right now  
-
 Features
 --
 1. Create accounts and login by Facebook   

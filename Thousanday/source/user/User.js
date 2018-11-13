@@ -64,7 +64,7 @@ class User extends Component {
   async gSetup() {
     await GoogleSignin.hasPlayServices({ autoResolve: true });
     await GoogleSignin.configure({
-      webClientId: '835652983909-6if3h222alkttk9oas3hr3tl15sq1u7m.apps.googleusercontent.com',
+      webClientId: '824184598797-r7187jnt2pkd7i0nukks3id5f9onpqvd.apps.googleusercontent.com',
       offlineAccess: false
     });
     await GoogleSignin.currentUserAsync();

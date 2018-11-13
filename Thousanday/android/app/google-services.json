@@ -1,29 +1,29 @@
 {
   "project_info": {
-    "project_number": "835652983909",
-    "firebase_url": "https://fir-thousanday.firebaseio.com",
-    "project_id": "firebase-thousanday",
-    "storage_bucket": "firebase-thousanday.appspot.com"
+    "project_number": "824184598797",
+    "firebase_url": "https://pets-smiling.firebaseio.com",
+    "project_id": "pets-smiling",
+    "storage_bucket": "pets-smiling.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:835652983909:android:eed2b40a736609ae",
+        "mobilesdk_app_id": "1:824184598797:android:eed2b40a736609ae",
         "android_client_info": {
           "package_name": "com.smilings"
         }
       },
       "oauth_client": [
         {
-          "client_id": "835652983909-nm6ec3m8a0bruq65p3a8dkrtt68f6j3h.apps.googleusercontent.com",
+          "client_id": "824184598797-3nhq87i271qarjoau2hpjcob6qfpbta1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.smilings",
-            "certificate_hash": "dd736565d7b477073a8493460fa87897a1127122"
+            "certificate_hash": "2ee68a35e4026c5f358a5129391e6383a0c64688"
           }
         },
         {
-          "client_id": "835652983909-7itk8l4k4knts66gsnsicluvd2ac5ak0.apps.googleusercontent.com",
+          "client_id": "824184598797-bhkdujrfanhlp8mi7mqj7tsdbe27q2d0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.smilings",
@@ -31,13 +31,13 @@
           }
         },
         {
-          "client_id": "835652983909-mbe6s38aa7o3nu2ie1hvovmed3gdvnpp.apps.googleusercontent.com",
+          "client_id": "824184598797-r7187jnt2pkd7i0nukks3id5f9onpqvd.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAczCEWyErxYH3oAK-ZZFbjVAPt43X9Mtw"
+          "current_key": "AIzaSyBljxECb0GPEkOYsoeTGsbtvl5-TwOfQ8c"
         }
       ],
       "services": {
@@ -48,90 +48,8 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "835652983909-mbe6s38aa7o3nu2ie1hvovmed3gdvnpp.apps.googleusercontent.com",
+              "client_id": "824184598797-r7187jnt2pkd7i0nukks3id5f9onpqvd.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "835652983909-a7bc8plrgfni8opgaopph7rbi8utt4fq.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "org.reactjs.native.example.Thousanday"
-              }
-            }
-          ]
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:835652983909:android:fbd8fc2ff87cb57a",
-        "android_client_info": {
-          "package_name": "com.thousanday"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "835652983909-690dd8t1qja03lo8nang4ev1f379qumd.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.thousanday",
-            "certificate_hash": "296067809768aa3025746fa8a88826dee6aeac7d"
-          }
-        },
-        {
-          "client_id": "835652983909-3v65iuk3j1s23b8l9r0tbom064f69sq8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.thousanday",
-            "certificate_hash": "1112e8116369c2cefee22103534b5ee95ae94f93"
-          }
-        },
-        {
-          "client_id": "835652983909-dht6tvlscb82a688sgpm2j7qk9orsn5s.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.thousanday",
-            "certificate_hash": "1ce04acf61477913e519bcb0237e522bed0b3d91"
-          }
-        },
-        {
-          "client_id": "835652983909-lln2pv6v9noptldv3fuo7ttmch38r0ku.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.thousanday",
-            "certificate_hash": "dd736565d7b477073a8493460fa87897a1127122"
-          }
-        },
-        {
-          "client_id": "835652983909-mbe6s38aa7o3nu2ie1hvovmed3gdvnpp.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAczCEWyErxYH3oAK-ZZFbjVAPt43X9Mtw"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "835652983909-mbe6s38aa7o3nu2ie1hvovmed3gdvnpp.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "835652983909-a7bc8plrgfni8opgaopph7rbi8utt4fq.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "org.reactjs.native.example.Thousanday"
-              }
             }
           ]
         },
