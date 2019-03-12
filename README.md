@@ -1,8 +1,7 @@
 # Mobile for Pets
 Mobile App for Pets by React Native    
 
-[Get it from Google Play](https://play.google.com/store/apps/details?id=com.smilings)  
-[Web for Pets](http://pet.nextvisioner.com)
+(No longer maintained)  
   
 <img src="https://github.com/byn9826/Thousanday-Mobile/blob/master/example.gif?raw=true" width="200px" />  
 
